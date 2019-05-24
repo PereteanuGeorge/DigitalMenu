@@ -1,6 +1,7 @@
 package com.example.george.digitalmenu;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Vibrator;
@@ -16,8 +17,11 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.IOException;
+
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,10 +30,32 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     BarcodeDetector detector;
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        askForCameraPermissionAndScanQrCode();
+
+
+    }
+
+    private void askForCameraPermissionAndScanQrCode() {
+        new RxPermissions(this).request(Manifest.permission.CAMERA)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean granted) {
+                        if (granted) {
+                            scanQrCode();
+                        } else {
+                            askForCameraPermissionAndScanQrCode();
+                        }
+                    }
+                });
+    }
+
+    private void scanQrCode() {
 
         surfaceView = findViewById(R.id.camerapreview);
         textView = findViewById(R.id.textView);
@@ -88,5 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
 }
