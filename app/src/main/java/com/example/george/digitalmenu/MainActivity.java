@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
@@ -36,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        surfaceView = findViewById(R.id.camerapreview);
+        textView = findViewById(R.id.textView);
+        surfaceView.setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
+
         askForCameraPermissionAndScanQrCode();
 
 
@@ -57,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void scanQrCode() {
 
-        surfaceView = findViewById(R.id.camerapreview);
-        textView = findViewById(R.id.textView);
+        surfaceView.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.VISIBLE);
 
         detector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
