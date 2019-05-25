@@ -5,4 +5,5 @@ package com.example.george.digitalmenu;
 public interface RestaurantDatabase {
 
     void getRestaurantEntry(String key);
+    void getRestaurant(String restaurant);
 }

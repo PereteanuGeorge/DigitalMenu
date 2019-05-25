@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         db = new RestaurantFirestore();
-                        db.getRestaurantEntry("restaurants");
+                        db.getRestaurant("bestmangal");
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInAnonymously:failure", task.getException());
