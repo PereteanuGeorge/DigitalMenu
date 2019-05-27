@@ -76,7 +76,8 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayCategory(Restaurant r, String c) {
         LayoutInflater inflater = getLayoutInflater();
-        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, rootLayout, false);
+        LinearLayout menu_panel = rootLayout.findViewById(R.id.menu_panel);
+        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menu_panel, false);
 
         TextView infoText = clist.findViewById(R.id.category_text);
         infoText.setText(c);
