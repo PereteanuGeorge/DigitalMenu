@@ -8,24 +8,21 @@
     tools:context=".MainActivity">
 
     <ScrollView
-        android:id="@+id/scrollView3"
+        android:id="@+id/scrollMenu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="72dp"
-        tools:layout_editor_absoluteY="186dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/menu_panel"
+            android:id="@+id/menuPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <ImageView
-                android:id="@+id/theme_picture"
+                android:id="@+id/themePicture"
                 android:layout_width="match_parent"
-                android:layout_height="192dp"
+                android:layout_height="wrap_content"
                 tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
     </ScrollView>
-
 </android.support.constraint.ConstraintLayout>

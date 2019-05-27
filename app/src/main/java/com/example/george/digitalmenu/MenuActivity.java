@@ -23,17 +23,13 @@ public class MenuActivity extends AppCompatActivity {
     private static final String TAG = "MenuActivity";
     private RestaurantDatabase db;
 
-    private ConstraintLayout previousCard;
     private ConstraintLayout rootLayout;
-    private ConstraintSet constraintSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_1);
-
+        setContentView(R.layout.activityMenu);
         rootLayout = findViewById(R.id.rootLayout);
-        constraintSet = new ConstraintSet();
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
@@ -76,15 +72,15 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayCategory(Restaurant r, String c) {
         LayoutInflater inflater = getLayoutInflater();
-        LinearLayout menu_panel = rootLayout.findViewById(R.id.menu_panel);
-        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menu_panel, false);
+        LinearLayout menuPanel = rootLayout.findViewById(R.id.menuPanel);
+        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.categoryList, menuPanel, false);
 
-        TextView infoText = clist.findViewById(R.id.category_text);
+        TextView infoText = clist.findViewById(R.id.categoryText);
         infoText.setText(c);
 
         displayDishes(r.getDishes(c), clist);
         clist.setId(View.generateViewId());
-        rootLayout.addView(clist);
+        menuPanel.addView(clist);
     }
 
     private void displayDishes(List<Dish> dishes, LinearLayout clist) {
@@ -94,7 +90,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void displayThemePicture(Restaurant r) {
-        ImageView picture = rootLayout.findViewById(R.id.theme_picture);
+        ImageView picture = rootLayout.findViewById(R.id.themePicture);
         db.downloadThemePicture(r, bm -> picture.setImageBitmap(bm));
     }
 
@@ -102,23 +98,23 @@ public class MenuActivity extends AppCompatActivity {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout dish_card = (ConstraintLayout) inflater.inflate(R.layout.dish_card, clist, false);
+        ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dishCard, clist, false);
 
-        TextView infoText = dish_card.findViewById(R.id.description);
+        TextView infoText = dishCard.findViewById(R.id.description);
         infoText.setText(d.getDescription());
 
-        TextView nameText = dish_card.findViewById(R.id.name);
+        TextView nameText = dishCard.findViewById(R.id.name);
         nameText.setText(d.getName());
 
-        TextView priceText = dish_card.findViewById(R.id.price);
+        TextView priceText = dishCard.findViewById(R.id.price);
         priceText.setText(String.valueOf(d.getPrice()));
 
-        ImageView foodImage = dish_card.findViewById(R.id.foodPicture);
+        ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
 
-        dish_card.setId(View.generateViewId());
+        dishCard.setId(View.generateViewId());
 
         // Add to existing list of cards
-        clist.addView(dish_card);
+        clist.addView(dishCard);
     }
 }
