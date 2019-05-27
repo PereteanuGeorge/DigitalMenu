@@ -7,8 +7,22 @@
     android:id="@+id/rootLayout"
     tools:context=".MainActivity">
 
+    <SurfaceView
+        android:id="@+id/camerapreview"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
     <TextView
         android:id="@+id/textView"
+<<<<<<< HEAD
         android:layout_width="wrap_content"
         android:layout_height="21dp"
         android:text="Hello World!"
@@ -16,5 +30,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+=======
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/camerapreview"
+        android:gravity="center"
+        android:text="Please focus on QR code"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/camerapreview"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
+>>>>>>> qrcode
 
 </android.support.constraint.ConstraintLayout>
