@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout android:id="@+id/menu_card"
     android:layout_width="match_parent"
     android:layout_height="95dp"
+    android:background="@drawable/dish_card_border"
     tools:layout_editor_absoluteX="16dp"
     tools:layout_editor_absoluteY="296dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
