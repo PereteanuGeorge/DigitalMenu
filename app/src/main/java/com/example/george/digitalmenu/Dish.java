@@ -10,9 +10,9 @@ class Dish {
     private String description;
     private Double price;
     private List<String> categories;
+    private List<Tag> tags; // ? do not to if it can be converted to this type
 
     /*
-    private List<Tag> tags; // ? do not to if it can be converted to this type
     private List<String> sides; // ? create side class
     private String time_start; // ? use local variable
     private String time_end; // ? same as above
@@ -23,12 +23,17 @@ class Dish {
 
     public Dish() {}
 
-    public Dish(String name, String pic_url, String description, Double price, List<String> categories) {
+    public Dish(String name, String pic_url, String description, Double price, List<String> categories, List<Tag> tags) {
         this.name = name;
         this.pic_url = pic_url;
         this.description = description;
         this.price = price;
         this.categories = categories;
+        this.tags = tags;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 
     public String getName() {

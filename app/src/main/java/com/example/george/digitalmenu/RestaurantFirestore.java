@@ -56,7 +56,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     DocumentSnapshot document = task.getResult();
                     Log.d(TAG, "Cached document data " + restaurant + " " + document.getData());
                     Restaurant restaurant = document.toObject(Restaurant.class);
-                    Log.d(TAG, "Converted " + restaurant.getDishes().get(0).getName());
+                    Log.d(TAG, "Converted " + restaurant.getDishes().get(0).getTags().get(0));
                     downloadPictures(restaurant);
                 } else {
                     Log.d(TAG, "Cached get failed ", task.getException());
@@ -75,7 +75,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "Download picture for " + dish.getName() + " falied", e);
+                            Log.d(TAG, "Download picture for " + dish.getName() + " failed", e);
                         }
                     });
                 }
