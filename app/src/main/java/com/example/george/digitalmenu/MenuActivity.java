@@ -1,6 +1,7 @@
 package com.example.george.digitalmenu;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu2);
+        setContentView(R.layout.activity_menu);
         rootLayout = findViewById(R.id.rootLayout);
 
         // Get the Intent that started this activity and extract the string
@@ -108,12 +109,36 @@ public class MenuActivity extends AppCompatActivity {
         TextView priceText = dishCard.findViewById(R.id.price);
         priceText.setText(String.valueOf(d.getPrice()));
 
+        TextView currencyText = dishCard.findViewById(R.id.currency);
+        priceText.setText(String.valueOf(d.getCurrency()));
+
         ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
+
+        displayTags(d, dishCard);
 
         dishCard.setId(View.generateViewId());
 
         // Add to existing list of cards
         clist.addView(dishCard);
+    }
+
+    private void displayTags(Dish d, ConstraintLayout dishCard) {
+        for (Tag t: d.getEnumTags()) {
+            displayTag(t, dishCard.findViewById(R.id.tags));
+        }
+    }
+
+    private void displayTag(Tag t, LinearLayout tagPanel) {
+        /* Create card view with fields. */
+        LayoutInflater inflater = getLayoutInflater();
+        ConstraintLayout tag = (ConstraintLayout) inflater.inflate(R.layout.tag_card, tagPanel, false);
+
+        ImageView tagIcon = tag.findViewById(R.id.tag_icon);
+        if (t.iconDownload()) {
+            byte[] bytes = t.getPicture();
+            tagIcon.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }
+        db.downloadTagPicture(t, bm -> tagIcon.setImageBitmap(bm));
     }
 }

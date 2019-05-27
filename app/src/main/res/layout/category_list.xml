@@ -10,18 +10,19 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bar"
         android:layout_width="match_parent"
-        android:layout_height="39dp"
+        android:layout_height="wrap_content"
         android:background="#00BCD4">
 
         <TextView
-            android:id="@+id/categoryText"
+            android:id="@+id/category_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Cold Starters"
-            android:textColor="#FCF6F6"
+            android:layout_marginBottom="8dp"
+            android:text="Soft Drinks"
+            android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

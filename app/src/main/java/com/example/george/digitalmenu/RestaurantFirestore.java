@@ -108,4 +108,24 @@ public class RestaurantFirestore implements RestaurantDatabase {
             }
         });
     }
+
+    @Override
+    public void downloadTagPicture(Tag tag, Consumer<Bitmap> callback) {
+        StorageReference ref = storage.getReferenceFromUrl(tag.getPic_url());
+        ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                tag.setPicture(bytes);
+                Log.d(TAG, "Download picture for " + tag + " succeeded");
+
+                callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Download picture for " + tag + " falied", e);
+            }
+        });
+    }
 }

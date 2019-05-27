@@ -1,8 +1,10 @@
 package com.example.george.digitalmenu;
 
-import com.google.type.DayOfWeek;
+import android.icu.util.Currency;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 class Dish {
     private String name;
@@ -11,6 +13,7 @@ class Dish {
     private double price;
     private List<String> categories;
     private List<String> tags; // ? do not to if it can be converted to this type
+    private String currency;
 
     /*
     private List<String> sides; // ? create side class
@@ -21,6 +24,7 @@ class Dish {
 
     private byte[] picture;
 
+
     public Dish() {}
 
     public Dish(String name, String pic_url, String description, Double price, List<String> categories, List<String> tags) {
@@ -30,6 +34,7 @@ class Dish {
         this.price = price;
         this.categories = categories;
         this.tags = tags;
+        this.currency = Currency.getInstance(Locale.UK).toString(); //need to change
     }
 
     public List<String> getTags() {
@@ -62,5 +67,21 @@ class Dish {
 
     public byte[] getPicture() {
         return picture;
+    }
+
+    public String getCurrency() {
+        return this.currency;
+    }
+
+    public List<Tag> getEnumTags() {
+        List<Tag> etags = new ArrayList<>();
+        for (String t: tags) {
+            try {
+                etags.add(Tag.valueOf(t));
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        return etags;
     }
 }

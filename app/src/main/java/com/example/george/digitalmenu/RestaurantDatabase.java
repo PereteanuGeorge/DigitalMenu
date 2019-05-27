@@ -12,4 +12,5 @@ public interface RestaurantDatabase {
     void getRestaurant(String restaurant, Consumer<Restaurant> callback);
     void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback);
     void downloadThemePicture(Restaurant restaurant, Consumer<Bitmap> callback);
+    void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
 }
