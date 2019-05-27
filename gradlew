@@ -26,6 +26,9 @@ cd "$SAVED" >/dev/null
 
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`
+yes | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-28"
+
+yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;27.0.3"
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS=""

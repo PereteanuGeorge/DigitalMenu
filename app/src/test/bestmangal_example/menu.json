@@ -1,0 +1,50 @@
+{
+    "restaurant" : "Best Mangal II",
+    "address":  "66 North End Road, West Kensington, London, W14 9EP",
+    "telephone": "+44 020 7602 0212",
+    "website": "www.bestmangal.com",
+    "categories": ["Mangal Lunch Plate"],
+    "tags": ["Halal", "vegetarian"],
+    "menu" : [
+      {
+        "name": "Lamb Doner",
+        "description": "House special doner kebab 100% lamb.",
+        "category": "Mangal Lunch Plate",
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "time_start": "12:00",
+        "time_end": "15:00"
+        "sides": [["Humus", "Cacik"], ["Rice", "Chips"], ["Salad"], ["Chilli Sauce"], ["Garlic Sauce"], ["Can of Softdrinks"], ["Homemade Bread"]],
+        "visibility": "true"
+      },
+      {
+        "name": "Chicken Beyti",
+        "description": "Minced breast of chicken seasoned with herbs.",
+        "category": "Mangal Lunch Plate",
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "time_start": "12:00",
+        "time_end": "15:00"
+        "sides": [["Humus", "Cacik"], ["Rice", "Chips"], ["Salad"], ["Chilli Sauce"], ["Garlic Sauce"], ["Can of Softdrinks"], ["Homemade Bread"]],
+        "visibility": "true"
+      },
+      {
+        "name": "Adana Kofte",
+        "description": "Lamb Kofte Kebab barbecued on skewers.",
+        "category": "Mangal Lunch Plate",
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "time_start": "12:00",
+        "time_end": "15:00"
+        "sides": [["Humus", "Cacik"], ["Rice", "Chips"], ["Salad"], ["Chilli Sauce"], ["Garlic Sauce"], ["Can of Softdrinks"], ["Homemade Bread"]],
+        "visibility": "true"
+      },
+      {
+        "name": "Chicken Shish",
+        "description": "Marinated Cubes of chicken seasoned with herbs.",
+        "category": "Mangal Lunch Plate",
+        "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "time_start": "12:00",
+        "time_end": "15:00"
+        "sides": [["Humus", "Cacik"], ["Rice", "Chips"], ["Salad"], ["Chilli Sauce"], ["Garlic Sauce"], ["Can of Softdrinks"], ["Homemade Bread"]],
+        "visibility": "true"
+      }
+    ]
+}
