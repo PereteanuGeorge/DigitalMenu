@@ -3,7 +3,6 @@ package com.example.george.digitalmenu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +27,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activityMenu);
+        setContentView(R.layout.activity_menu2);
         rootLayout = findViewById(R.id.rootLayout);
 
         // Get the Intent that started this activity and extract the string
@@ -73,7 +72,7 @@ public class MenuActivity extends AppCompatActivity {
     private void displayCategory(Restaurant r, String c) {
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menuPanel);
-        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.categoryList, menuPanel, false);
+        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
 
         TextView infoText = clist.findViewById(R.id.categoryText);
         infoText.setText(c);
@@ -98,7 +97,7 @@ public class MenuActivity extends AppCompatActivity {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dishCard, clist, false);
+        ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dish_card, clist, false);
 
         TextView infoText = dishCard.findViewById(R.id.description);
         infoText.setText(d.getDescription());
