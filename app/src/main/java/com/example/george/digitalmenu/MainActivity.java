@@ -13,12 +13,6 @@ public class MainActivity extends AppCompatActivity {
 
     private QrCodeScanner scanner;
     public static final String INTENT_KEY = "bestmangal";
-    private RestaurantDatabase db;
-    private String TAG = "MainActivity";
-
-    private CardView previousCard;
-    private ConstraintLayout rootLayout;
-    private ConstraintSet constraintSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +21,16 @@ public class MainActivity extends AppCompatActivity {
         new Network().checkIfNetworkIsAvailable(this);
 
         SurfaceView surfaceView = findViewById(R.id.camerapreview);
-        TextView textView = findViewById(R.id.textView);
 
-        //scanner = new RestaurantQrCodeScanner(surfaceView, textView);
+        scanner = new RestaurantQrCodeScanner(surfaceView);
+        scanner.askForCameraPermissionAndScanQrCode(this);
 
-        rootLayout = findViewById(R.id.rootLayout);
-        constraintSet = new ConstraintSet();
-
-        //scanner.askForCameraPermissionAndScanQrCode(this);
-
-        Intent intent = new Intent(this, MenuActivity.class);
-        intent.putExtra(INTENT_KEY, "bestmangal");
-        startActivity(intent);
     }
 
+    public void createSecondActivity(String value) {
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra(INTENT_KEY, value);
+        startActivity(intent);
+
+    }
 }

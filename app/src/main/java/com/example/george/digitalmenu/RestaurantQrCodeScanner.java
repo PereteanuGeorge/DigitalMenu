@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
@@ -22,14 +23,12 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
 
     private SurfaceView surfaceView;
     private CameraSource cameraSource;
-    private TextView textView;
+    private String value;
 
-    public RestaurantQrCodeScanner(SurfaceView surfaceView, TextView textView) {
+    public RestaurantQrCodeScanner(SurfaceView surfaceView) {
         this.surfaceView = surfaceView;
-        this.textView = textView;
 
-//        surfaceView.setVisibility(View.GONE);
-//        textView.setVisibility(View.GONE);
+        surfaceView.setVisibility(View.GONE);
     }
 
     @Override
@@ -47,8 +46,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
 
     private void scanQrCode(MainActivity mainActivity) {
 
-//        surfaceView.setVisibility(View.VISIBLE);
-//        textView.setVisibility(View.VISIBLE);
+        surfaceView.setVisibility(View.VISIBLE);
 
         BarcodeDetector detector = new BarcodeDetector.Builder(mainActivity)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
@@ -92,12 +90,10 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
                 if (qrCodes.size() != 0) {
-                    textView.post(() -> {
-                        Vibrator vibrator = (Vibrator) mainActivity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                        vibrator.vibrate(1000);
-                        textView.setText(qrCodes.valueAt(0).displayValue);
-                    });
-
+                    Vibrator vibrator = (Vibrator) mainActivity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1000);
+                    value = qrCodes.valueAt(0).displayValue;
+                    mainActivity.createSecondActivity(value);
                 }
 
             }
