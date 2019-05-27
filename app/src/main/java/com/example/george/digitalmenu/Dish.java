@@ -8,7 +8,7 @@ class Dish {
     private String name;
     private String pic_url;
     private String description;
-    private Double price;
+    private double price;
     private List<String> categories;
     private List<String> tags; // ? do not to if it can be converted to this type
 
@@ -48,7 +48,7 @@ class Dish {
         return description;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -58,5 +58,9 @@ class Dish {
 
     public void setPicture(byte[] picture) {
         this.picture = picture;
+    }
+
+    public byte[] getPicture() {
+        return picture;
     }
 }

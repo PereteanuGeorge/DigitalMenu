@@ -1,5 +1,7 @@
 package com.example.george.digitalmenu;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.Log;;
 
@@ -14,6 +16,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.function.Consumer;
 
 
 // Adapter implementation for firebase solution.
@@ -46,7 +50,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 }
             });
     }
-    public void getRestaurant(final String restaurant) {
+    public void getRestaurant(final String restaurant, final Consumer<Restaurant> callback) {
         DocumentReference ref = db.collection("restaurants").document(restaurant);
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
@@ -56,29 +60,31 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     DocumentSnapshot document = task.getResult();
                     Log.d(TAG, "Cached document data " + restaurant + " " + document.getData());
                     Restaurant restaurant = document.toObject(Restaurant.class);
-                    Log.d(TAG, "Converted " + restaurant.getDishes().get(0).getTags().get(0));
-                    downloadPictures(restaurant);
+                    Log.d(TAG, "Converted " + restaurant.getDishes().get(0).getTags());
+
+                    callback.accept(restaurant);
                 } else {
                     Log.d(TAG, "Cached get failed ", task.getException());
                 }
             }
+        });
+    }
 
-            private void downloadPictures(Restaurant restaurant) {
-                for (final Dish dish: restaurant.getDishes()) {
-                    StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
-                    ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            dish.setPicture(bytes);
-                            Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "Download picture for " + dish.getName() + " failed", e);
-                        }
-                    });
-                }
+    public void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback) {
+        StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
+        ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                dish.setPicture(bytes);
+                Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
+
+                callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Download picture for " + dish.getName() + " falied", e);
             }
         });
     }

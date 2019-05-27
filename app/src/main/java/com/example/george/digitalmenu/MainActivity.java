@@ -12,6 +12,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
         rootLayout = findViewById(R.id.rootLayout);
         constraintSet = new ConstraintSet();
 
-        addMenuItem();
-        addMenuItem();
-
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously()
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         db = new RestaurantFirestore();
-                        db.getRestaurant("bestmangal");
+                        db.getRestaurant("bestmangal", r -> addMenuItems(r));
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInAnonymously:failure", task.getException());
@@ -68,10 +66,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addMenuItem() {
+    private void addMenuItems(Restaurant r) {
+        for (Dish d : r.getDishes()) {
+            addMenuItem(d);
+        }
+    }
+
+    private void addMenuItem(Dish d) {
+
+        /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
         CardView card = (CardView) inflater.inflate(R.layout.menu_item_card, rootLayout, false);
+
+        TextView infoText = card.findViewById(R.id.foodInfo);
+        infoText.setText(d.getDescription());
+
+        TextView nameText = card.findViewById(R.id.foodName);
+        nameText.setText(d.getName());
+
+        TextView priceText = card.findViewById(R.id.foodPrice);
+        priceText.setText(String.valueOf(d.getPrice()));
+
+        ImageView foodImage = card.findViewById(R.id.foodPicture);
+        db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
+
         card.setId(View.generateViewId());
+
+        /* Add to existing list of cards*/
         rootLayout.addView(card);
 
         if (previousCard != null) {
