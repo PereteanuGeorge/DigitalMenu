@@ -10,11 +10,11 @@ public class Network {
     public void checkIfNetworkIsAvailable(MainActivity mainActivity) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (!(activeNetworkInfo != null && activeNetworkInfo.isConnected())) {
             Context context = mainActivity.getApplicationContext();
-        Toast toast = Toast.makeText(context, "Please connect to the internet", Toast.LENGTH_SHORT);
-        toast.show();
+            Toast toast = Toast.makeText(context, "Please connect to the internet", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
-}
 }

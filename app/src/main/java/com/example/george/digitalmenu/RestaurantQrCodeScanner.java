@@ -8,7 +8,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
@@ -29,8 +28,8 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
         this.surfaceView = surfaceView;
         this.textView = textView;
 
-        surfaceView.setVisibility(View.GONE);
-        textView.setVisibility(View.GONE);
+//        surfaceView.setVisibility(View.GONE);
+//        textView.setVisibility(View.GONE);
     }
 
     @Override
@@ -48,8 +47,8 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
 
     private void scanQrCode(MainActivity mainActivity) {
 
-        surfaceView.setVisibility(View.VISIBLE);
-        textView.setVisibility(View.VISIBLE);
+//        surfaceView.setVisibility(View.VISIBLE);
+//        textView.setVisibility(View.VISIBLE);
 
         BarcodeDetector detector = new BarcodeDetector.Builder(mainActivity)
                 .setBarcodeFormats(Barcode.QR_CODE).build();

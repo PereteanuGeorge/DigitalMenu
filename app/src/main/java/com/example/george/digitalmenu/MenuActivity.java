@@ -32,14 +32,14 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_main);
 
         rootLayout = findViewById(R.id.rootLayout);
         constraintSet = new ConstraintSet();
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String restaurantName = intent.getStringExtra(MainActivity.RESTAURANT_NAME);
+        String restaurantName = intent.getStringExtra(MainActivity.INTENT_KEY);
 
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously()
