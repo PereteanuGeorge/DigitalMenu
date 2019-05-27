@@ -10,7 +10,7 @@ class Dish {
     private String description;
     private Double price;
     private List<String> categories;
-    private List<Tag> tags; // ? do not to if it can be converted to this type
+    private List<String> tags; // ? do not to if it can be converted to this type
 
     /*
     private List<String> sides; // ? create side class
@@ -23,7 +23,7 @@ class Dish {
 
     public Dish() {}
 
-    public Dish(String name, String pic_url, String description, Double price, List<String> categories, List<Tag> tags) {
+    public Dish(String name, String pic_url, String description, Double price, List<String> categories, List<String> tags) {
         this.name = name;
         this.pic_url = pic_url;
         this.description = description;
@@ -32,7 +32,7 @@ class Dish {
         this.tags = tags;
     }
 
-    public List<Tag> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
