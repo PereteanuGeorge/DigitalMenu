@@ -140,5 +140,8 @@ public class MenuActivity extends AppCompatActivity {
             tagIcon.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
         }
         db.downloadTagPicture(t, bm -> tagIcon.setImageBitmap(bm));
+
+        tag.setId(View.generateViewId());
+        tagPanel.addView(tag);
     }
 }
