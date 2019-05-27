@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         //scanner.askForCameraPermissionAndScanQrCode(this);
 
+
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra(INTENT_KEY, "bestmangal");
         startActivity(intent);

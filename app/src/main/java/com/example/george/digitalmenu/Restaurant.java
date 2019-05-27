@@ -1,6 +1,11 @@
 package com.example.george.digitalmenu;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 class Restaurant {
     private String address;
@@ -8,15 +13,20 @@ class Restaurant {
     private String telephone;
     private String website;
     private List<Dish> dishes;
+    private String pic_url;
+
+    private byte[] picture;
 
     public Restaurant() {}
 
-    public Restaurant(String address, List<String> categories, String telephone, String website, List<Dish> dishes) {
+    public Restaurant(String address, List<String> categories, String telephone, String website,
+                      List<Dish> dishes, String pic_url) {
         this.address = address;
         this.categories = categories;
         this.telephone = telephone;
         this.website = website;
         this.dishes = dishes;
+        this.pic_url = pic_url;
     }
 
     public String getAddress() {
@@ -36,6 +46,29 @@ class Restaurant {
     }
 
     public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public String getPic_url() {
+        return pic_url;
+    }
+
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
+    }
+
+    public byte[] getPicture() {
+        return picture;
+    }
+
+    public List<Dish> getDishes(String c) {
+        /*List<Dish> cdishes = new ArrayList<>();
+        for (Dish d: dishes) {
+            Log.d(TAG, "getting dishes for " + c + d.getCategories());
+            if (d.getCategories().contains(c)) {
+                cdishes.add(d);
+            }
+        }*/
         return dishes;
     }
 }
