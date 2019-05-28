@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,23 +44,15 @@ public class MenuActivity extends AppCompatActivity {
         String restaurantName = intent.getStringExtra(INTENT_KEY);
 
         createMenu(restaurantName);
-//        respondToDishClick();
-    }
-
-    private void respondToDishClick() {
-        Log.d(TAG, "The key set size" + dishIds.keySet().size());
-        for (Integer id : dishIds.keySet()) {
-            Log.d(TAG, "creating clicker");
-            View dishView = findViewById(id);
-            dishView.setOnClickListener(v -> displayInfoFood(dishIds.get(id)));
-        }
     }
 
     private void displayInfoFood(Dish dish) {
-        Log.d(TAG, "clicking " +  dish.getName());
-        Intent intent = new Intent(this, DishInfoActivity.class);
-        intent.putExtra(DISH_KEY, dish);
-        startActivity(intent);
+        getIntent().putExtra(DISH_KEY, dish);
+        DishInfoFragment fragment = new DishInfoFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.dish_info_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void createMenu(String restaurantName) {
@@ -95,7 +89,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void displayCategory(String c, List<Dish> dishes) {
-        if (dishes == null) return;
+        if (dishes == null) dishes = new ArrayList<>();
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
@@ -137,7 +131,7 @@ public class MenuActivity extends AppCompatActivity {
         TextView currencyText = dishCard.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(d.getCurrency()));
 
-        ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
+        ImageView foodImage = dishCard.findViewById(R.id.food_picture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
 
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
@@ -149,6 +143,9 @@ public class MenuActivity extends AppCompatActivity {
         Log.d(TAG, "The size of dish" + dishIds.size());
         View dishView = findViewById(dishCard.getId());
         dishView.setOnClickListener(v -> displayInfoFood(d));
+
+        //
+
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {

@@ -27,4 +27,12 @@
                 tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
     </ScrollView>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/dish_info_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

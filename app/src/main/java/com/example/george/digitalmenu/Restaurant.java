@@ -68,7 +68,8 @@ class Restaurant {
             List<String> cate = d.getCategories();
             if (cate == null) cate = new ArrayList<>();
             for (String c: cate){
-                List<Dish> dishList = map.getOrDefault(c, new ArrayList<>());
+                List<Dish> dishList = map.get(c);
+                if (dishList == null) dishList = new ArrayList<>();
                 dishList.add(d);
                 map.put(c,dishList);
             }
