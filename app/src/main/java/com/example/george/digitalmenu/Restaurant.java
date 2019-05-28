@@ -3,7 +3,9 @@ package com.example.george.digitalmenu;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -61,14 +63,13 @@ class Restaurant {
         return picture;
     }
 
-    public List<Dish> getDishes(String c) {
-        /*List<Dish> cdishes = new ArrayList<>();
+    public Map<String, List<Dish>> getDishesForCategories() {
+        Map<String, List<Dish>> map = new HashMap<>();
         for (Dish d: dishes) {
-            Log.d(TAG, "getting dishes for " + c + d.getCategories());
-            if (d.getCategories().contains(c)) {
-                cdishes.add(d);
+            for (String c: d.getCategories()) {
+                map.get(c).add(d);
             }
-        }*/
-        return dishes;
+        }
+        return map;
     }
 }

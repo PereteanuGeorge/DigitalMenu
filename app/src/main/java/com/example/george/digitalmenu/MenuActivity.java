@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ListMenuItemView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -65,12 +68,13 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayCategories(Restaurant r) {
         List<String> categories = r.getCategories();
+        Map<String, List<Dish>> map = r.getDishesForCategories();
         for (String c: categories) {
-            displayCategory(r, c);
+            displayCategory(c, map.getOrDefault(c, new ArrayList<>()));
         }
     }
 
-    private void displayCategory(Restaurant r, String c) {
+    private void displayCategory(String c, List<Dish> dishes) {
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menuPanel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
@@ -78,7 +82,7 @@ public class MenuActivity extends AppCompatActivity {
         TextView infoText = clist.findViewById(R.id.categoryText);
         infoText.setText(c);
 
-        displayDishes(r.getDishes(c), clist);
+        displayDishes(dishes, clist);
         clist.setId(View.generateViewId());
         menuPanel.addView(clist);
     }
