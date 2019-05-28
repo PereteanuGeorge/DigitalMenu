@@ -1,7 +1,6 @@
 package com.example.george.digitalmenu;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,16 +15,21 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
+
 public class MenuActivity extends AppCompatActivity {
+
+    public static final String DISH_KEY = "DishKey";
 
     private static final String TAG = "MenuActivity";
     private RestaurantDatabase db;
 
     private ConstraintLayout rootLayout;
+    private Map<Integer, Dish> dishIds = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +39,30 @@ public class MenuActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String restaurantName = intent.getStringExtra(MainActivity.INTENT_KEY);
+        String restaurantName = intent.getStringExtra(INTENT_KEY);
 
         createMenu(restaurantName);
+        respondToDishClick();
+    }
+
+    private void respondToDishClick() {
+        for (Integer id : dishIds.keySet()) {
+
+            View dishView = findViewById(id);
+            dishView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayInfoFood(dishIds.get(id));
+                }
+            });
+        }
+
+    }
+
+    private void displayInfoFood(Dish dish) {
+        Intent intent = new Intent(getApplicationContext(), DishInfoActivity.class);
+        intent.putExtra(DISH_KEY, dish);
+        startActivity(intent);
     }
 
     private void createMenu(String restaurantName) {
@@ -119,10 +144,11 @@ public class MenuActivity extends AppCompatActivity {
         ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard.findViewById(R.id.tags));
+        displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         dishCard.setId(View.generateViewId());
+        dishIds.put(dishCard.getId(), d);
         clist.addView(dishCard);
     }
 

@@ -27,6 +27,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra(INTENT_KEY, value);
         startActivity(intent);
-
     }
 }
