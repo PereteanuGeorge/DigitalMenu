@@ -69,11 +69,12 @@ public class MenuActivity extends AppCompatActivity {
         List<String> categories = r.getCategories();
         Map<String, List<Dish>> map = r.getDishesForCategories();
         for (String c: categories) {
-            displayCategory(c, map.getOrDefault(c, new ArrayList<>()));
+            displayCategory(c, map.get(c));
         }
     }
 
     private void displayCategory(String c, List<Dish> dishes) {
+        if (dishes == null) return;
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
@@ -118,17 +119,17 @@ public class MenuActivity extends AppCompatActivity {
         ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard);
-
-        dishCard.setId(View.generateViewId());
+        displayTags(d, dishCard.findViewById(R.id.tags));
 
         // Add to existing list of cards
+        dishCard.setId(View.generateViewId());
         clist.addView(dishCard);
     }
 
-    private void displayTags(Dish d, ConstraintLayout dishCard) {
+    private void displayTags(Dish d, LinearLayout tagPanel) {
+        Log.d(TAG, "Downloading picture for tags" + d.getTags() );
         for (Tag t: d.getEnumTags()) {
-            displayTag(t, dishCard.findViewById(R.id.tags));
+            displayTag(t, tagPanel);
         }
     }
 
@@ -138,10 +139,6 @@ public class MenuActivity extends AppCompatActivity {
         ConstraintLayout tag = (ConstraintLayout) inflater.inflate(R.layout.tag_card, tagPanel, false);
 
         ImageView tagIcon = tag.findViewById(R.id.tag_icon);
-        if (t.iconDownload()) {
-            byte[] bytes = t.getPicture();
-            tagIcon.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        }
         db.downloadTagPicture(t, bm -> tagIcon.setImageBitmap(bm));
 
         tag.setId(View.generateViewId());

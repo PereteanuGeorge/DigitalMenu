@@ -11,8 +11,8 @@
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="0dp"
-        android:layout_height="23dp"
+        android:layout_width="118dp"
+        android:layout_height="21dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Bacon Double Cheeseburger"
@@ -24,14 +24,17 @@
 
     <TextView
         android:id="@+id/description"
-        android:layout_width="231dp"
-        android:layout_height="49dp"
+        android:layout_width="285dp"
+        android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="For nutritional and allergen information for our food please visit http://mcdonalds.co.uk/ntrition..."
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/foodPicture"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -47,13 +50,13 @@
 
     <ImageView
         android:id="@+id/foodPicture"
-        android:layout_width="85dp"
-        android:layout_height="85dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -74,16 +77,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:layout_width="69dp"
-        android:layout_height="26dp"
+        android:id="@+id/tags"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="0dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/foodPicture"
-        app:layout_constraintStart_toEndOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/price"></LinearLayout>
+        app:layout_constraintBottom_toTopOf="@+id/description"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintHorizontal_bias="0.068"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"></LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

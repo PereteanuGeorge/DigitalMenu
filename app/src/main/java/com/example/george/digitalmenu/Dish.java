@@ -1,10 +1,13 @@
 package com.example.george.digitalmenu;
 
 import android.icu.util.Currency;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static android.support.constraint.Constraints.TAG;
 
 class Dish {
     private String name;
@@ -76,11 +79,8 @@ class Dish {
         List<Tag> etags = new ArrayList<>();
         if (tags == null) tags = new ArrayList<>();
         for (String t: tags) {
-            try {
-                etags.add(Tag.valueOf(t));
-            } catch (Exception e) {
-                continue;
-            }
+            Tag.valueOf(t.toUpperCase());
+            etags.add(Tag.valueOf(t));
         }
         return etags;
     }

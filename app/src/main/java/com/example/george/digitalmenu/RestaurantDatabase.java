@@ -2,8 +2,8 @@ package com.example.george.digitalmenu;
 
 
 import android.graphics.Bitmap;
+import android.support.v4.util.Consumer;
 
-import java.util.function.Consumer;
 
 // Adapter interface for database.
 public interface RestaurantDatabase {
