@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu;
 
+import android.graphics.Movie;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,6 +17,20 @@ class Dish implements Parcelable {
     private List<String> tags; // ? do not to if it can be converted to this type
     private String currency;
 
+    private byte[] picture;
+
+    public static final Parcelable.Creator<Dish> CREATOR =  new Parcelable.Creator<Dish>() {
+
+        @Override
+        public Dish createFromParcel(Parcel source) {
+            return new Dish(source);
+        }
+
+        @Override
+        public Dish[] newArray(int size) {
+            return new Dish[size];
+        }
+    };
     /*
     private List<String> sides; // ? create side class
     private String time_start; // ? use local variable
@@ -23,7 +38,7 @@ class Dish implements Parcelable {
     private List<DayOfWeek> days;// ? is it usable
     */
 
-    private byte[] picture;
+
 
     public Dish() {}
 

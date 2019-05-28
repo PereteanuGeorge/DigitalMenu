@@ -23,7 +23,7 @@ import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
 
 public class MenuActivity extends AppCompatActivity {
 
-    public static final String DISH_KEY = "DishKey";
+    public static final String DISH_KEY = "dish_key";
 
     private static final String TAG = "MenuActivity";
     private RestaurantDatabase db;
@@ -47,20 +47,14 @@ public class MenuActivity extends AppCompatActivity {
 
     private void respondToDishClick() {
         for (Integer id : dishIds.keySet()) {
-
             View dishView = findViewById(id);
-            dishView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    displayInfoFood(dishIds.get(id));
-                }
-            });
+            dishView.setOnClickListener(v -> displayInfoFood(dishIds.get(id)));
         }
-
     }
 
     private void displayInfoFood(Dish dish) {
-        Intent intent = new Intent(getApplicationContext(), DishInfoActivity.class);
+        Log.d(TAG, "clicking " +  dish.getName());
+        Intent intent = new Intent(this, DishInfoActivity.class);
         intent.putExtra(DISH_KEY, dish);
         startActivity(intent);
     }
@@ -103,13 +97,13 @@ public class MenuActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
+        menuPanel.addView(clist);
+        clist.setId(View.generateViewId());
 
         TextView infoText = clist.findViewById(R.id.category_text);
         infoText.setText(c);//
 
         displayDishes(dishes, clist);
-        clist.setId(View.generateViewId());
-        menuPanel.addView(clist);
     }
 
     private void displayDishes(List<Dish> dishes, LinearLayout clist) {
@@ -147,9 +141,9 @@ public class MenuActivity extends AppCompatActivity {
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
+        clist.addView(dishCard);
         dishCard.setId(View.generateViewId());
         dishIds.put(dishCard.getId(), d);
-        clist.addView(dishCard);
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {
