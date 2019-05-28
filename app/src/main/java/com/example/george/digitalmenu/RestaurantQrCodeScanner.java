@@ -44,6 +44,11 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                 });
     }
 
+    @Override
+    public String getValue() {
+        return this.value;
+    }
+
     private void scanQrCode(MainActivity mainActivity) {
 
         surfaceView.setVisibility(View.VISIBLE);

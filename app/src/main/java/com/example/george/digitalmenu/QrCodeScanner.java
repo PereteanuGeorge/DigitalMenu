@@ -4,4 +4,5 @@ interface QrCodeScanner {
 
     void askForCameraPermissionAndScanQrCode(MainActivity mainActivity);
 
+    String getValue();
 }
