@@ -42,11 +42,13 @@ public class MenuActivity extends AppCompatActivity {
         String restaurantName = intent.getStringExtra(INTENT_KEY);
 
         createMenu(restaurantName);
-        respondToDishClick();
+//        respondToDishClick();
     }
 
     private void respondToDishClick() {
+        Log.d(TAG, "The key set size" + dishIds.keySet().size());
         for (Integer id : dishIds.keySet()) {
+            Log.d(TAG, "creating clicker");
             View dishView = findViewById(id);
             dishView.setOnClickListener(v -> displayInfoFood(dishIds.get(id)));
         }
@@ -144,6 +146,9 @@ public class MenuActivity extends AppCompatActivity {
         clist.addView(dishCard);
         dishCard.setId(View.generateViewId());
         dishIds.put(dishCard.getId(), d);
+        Log.d(TAG, "The size of dish" + dishIds.size());
+        View dishView = findViewById(dishCard.getId());
+        dishView.setOnClickListener(v -> displayInfoFood(d));
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {

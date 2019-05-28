@@ -13,11 +13,10 @@ class Dish implements Parcelable {
     private String pic_url;
     private String description;
     private double price;
-    private List<String> categories;
-    private List<String> tags; // ? do not to if it can be converted to this type
+    private List<String> categories = new ArrayList<>();
+    private List<String> tags = new ArrayList<>(); // ? do not to if it can be converted to this type
     private String currency;
-
-    private byte[] picture;
+    private byte[] picture = new byte[1024*1024];
 
     public static final Parcelable.Creator<Dish> CREATOR =  new Parcelable.Creator<Dish>() {
 
@@ -50,6 +49,7 @@ class Dish implements Parcelable {
         parcel.readStringList(this.categories);
         parcel.readStringList(tags);
         this.currency = parcel.readString();
+        picture = parcel.createByteArray();
     }
 
     public Dish(String name, String pic_url, String description, Double price, List<String> categories, List<String> tags) {
@@ -99,7 +99,6 @@ class Dish implements Parcelable {
 
     public List<Tag> getEnumTags() {
         List<Tag> etags = new ArrayList<>();
-        if (tags == null) tags = new ArrayList<>();
         for (String t: tags) {
             etags.add(Tag.valueOf(t));
         }
@@ -121,6 +120,6 @@ class Dish implements Parcelable {
         dest.writeStringList(categories);
         dest.writeStringList(tags);
         dest.writeString(currency);
+        dest.writeByteArray(picture);
     }
-
 }
