@@ -34,7 +34,6 @@ class Dish {
         this.price = price;
         this.categories = categories;
         this.tags = tags;
-        this.currency = Currency.getInstance(Locale.UK).toString(); //need to change
     }
 
     public List<String> getTags() {
@@ -70,11 +69,12 @@ class Dish {
     }
 
     public String getCurrency() {
-        return this.currency;
+        return "$";
     }
 
     public List<Tag> getEnumTags() {
         List<Tag> etags = new ArrayList<>();
+        if (tags == null) tags = new ArrayList<>();
         for (String t: tags) {
             try {
                 etags.add(Tag.valueOf(t));

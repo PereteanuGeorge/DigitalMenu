@@ -1,13 +1,12 @@
 package com.example.george.digitalmenu;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.support.constraint.Constraints.TAG;
+//TODO; Protect data from null pointer
 
 class Restaurant {
     private String address;
@@ -66,8 +65,12 @@ class Restaurant {
     public Map<String, List<Dish>> getDishesForCategories() {
         Map<String, List<Dish>> map = new HashMap<>();
         for (Dish d: dishes) {
-            for (String c: d.getCategories()) {
-                map.get(c).add(d);
+            List<String> cate = d.getCategories();
+            if (cate == null) cate = new ArrayList<>();
+            for (String c: cate){
+                List<Dish> dishList = map.getOrDefault(c, new ArrayList<>());
+                dishList.add(d);
+                map.put(c,dishList);
             }
         }
         return map;

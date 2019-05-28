@@ -8,18 +8,18 @@
     tools:context=".MainActivity">
 
     <ScrollView
-        android:id="@+id/scrollMenu"
+        android:id="@+id/scroll_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/menuPanel"
+            android:id="@+id/menu_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <ImageView
-                android:id="@+id/themePicture"
+                android:id="@+id/theme_picture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:srcCompat="@tools:sample/avatars" />

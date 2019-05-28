@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ListMenuItemView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,11 +75,11 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayCategory(String c, List<Dish> dishes) {
         LayoutInflater inflater = getLayoutInflater();
-        LinearLayout menuPanel = rootLayout.findViewById(R.id.menuPanel);
+        LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
 
-        TextView infoText = clist.findViewById(R.id.categoryText);
-        infoText.setText(c);
+        TextView infoText = clist.findViewById(R.id.category_text);
+        infoText.setText(c);//
 
         displayDishes(dishes, clist);
         clist.setId(View.generateViewId());
@@ -94,7 +93,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void displayThemePicture(Restaurant r) {
-        ImageView picture = rootLayout.findViewById(R.id.themePicture);
+        ImageView picture = rootLayout.findViewById(R.id.theme_picture);
         db.downloadThemePicture(r, bm -> picture.setImageBitmap(bm));
     }
 
@@ -114,7 +113,7 @@ public class MenuActivity extends AppCompatActivity {
         priceText.setText(String.valueOf(d.getPrice()));
 
         TextView currencyText = dishCard.findViewById(R.id.currency);
-        priceText.setText(String.valueOf(d.getCurrency()));
+        currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.foodPicture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
