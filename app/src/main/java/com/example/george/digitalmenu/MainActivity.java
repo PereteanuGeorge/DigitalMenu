@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
         scanner = new RestaurantQrCodeScanner(surfaceView);
         scanner.askForCameraPermissionAndScanQrCode(this);
-        //createSecondActivity(scanner.getValue());
     }
 
     public void createSecondActivity(String value) {
