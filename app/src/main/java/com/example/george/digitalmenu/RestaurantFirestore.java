@@ -2,15 +2,16 @@ package com.example.george.digitalmenu;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Consumer;
-import android.util.Log;;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,7 +19,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 
 
 // Adapter implementation for firebase solution.
@@ -127,4 +127,26 @@ public class RestaurantFirestore implements RestaurantDatabase {
             }
         });
     }
+
+    @Override
+    public void init(Runnable onSuccess, Runnable onFailure) {
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.signInAnonymously()
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInAnonymously:success");
+//                            FirebaseUser user = mAuth.getCurrentUser();
+                        onSuccess.run();
+
+                    } else {
+                        Log.d(TAG, "signInAnonymously:failure" + task.getException());
+                        onFailure.run();
+
+                    }
+                }
+            });
+    }
+
 }

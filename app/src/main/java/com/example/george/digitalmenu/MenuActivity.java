@@ -13,9 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,15 +20,17 @@ import java.util.Map;
 
 import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
 
-public class MenuActivity extends AppCompatActivity {
+/* Responsible for android-OS specific and UI logic */
+public class MenuActivity extends AppCompatActivity implements MenuContract.View {
 
     public static final String DISH_KEY = "dish_key";
 
     private static final String TAG = "MenuActivity";
-    private RestaurantDatabase db;
 
     private ConstraintLayout rootLayout;
     private Map<Integer, Dish> dishIds = new HashMap<>();
+
+    MenuContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +38,12 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         rootLayout = findViewById(R.id.rootLayout);
 
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
-        String restaurantName = intent.getStringExtra(INTENT_KEY);
-
-        createMenu(restaurantName);
+        presenter = new MenuPresenter(this, new RestaurantFirestore());
+        presenter.onViewCompleteCreate();
     }
 
-    private void displayInfoFood(Dish dish) {
+    @Override
+    public void displayInfoFood(Dish dish) {
         getIntent().putExtra(DISH_KEY, dish);
         DishInfoFragment fragment = new DishInfoFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -55,29 +52,23 @@ public class MenuActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void createMenu(String restaurantName) {
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInAnonymously:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-
-                        db = new RestaurantFirestore();
-                        db.getRestaurant(restaurantName, r -> displayMenu(r));
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInAnonymously:failure", task.getException());
-                        Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+    @Override
+    public String getRestaurantName() {
+        // Get the Intent that started this activity and extract the string
+        Intent intent = getIntent();
+        return intent.getStringExtra(INTENT_KEY);
     }
 
-    private void displayMenu(Restaurant r) {
+    @Override
+    public void displayMenu(Restaurant r) {
         displayThemePicture(r);
         displayCategories(r);
+    }
+
+    @Override
+    public void notifyModelInitFailure() {
+        Toast.makeText(getApplicationContext(), "Authentication failed.",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void displayCategories(Restaurant r) {
@@ -110,7 +101,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private void displayThemePicture(Restaurant r) {
         ImageView picture = rootLayout.findViewById(R.id.theme_picture);
-        db.downloadThemePicture(r, bm -> picture.setImageBitmap(bm));
+        presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
     }
 
     private void displayDish(Dish d, LinearLayout clist) {
@@ -132,7 +123,7 @@ public class MenuActivity extends AppCompatActivity {
         currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.food_picture);
-        db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
+        presenter.fetchFoodImage(d, bm -> foodImage.setImageBitmap(bm));
 
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
@@ -142,10 +133,9 @@ public class MenuActivity extends AppCompatActivity {
         dishIds.put(dishCard.getId(), d);
         Log.d(TAG, "The size of dish" + dishIds.size());
         View dishView = findViewById(dishCard.getId());
-        dishView.setOnClickListener(v -> displayInfoFood(d));
 
-        //
-
+        // Register click event to presenter.
+        dishView.setOnClickListener(v -> presenter.onDishItemClick(d));
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {
@@ -161,7 +151,7 @@ public class MenuActivity extends AppCompatActivity {
         ConstraintLayout tag = (ConstraintLayout) inflater.inflate(R.layout.tag_card, tagPanel, false);
 
         ImageView tagIcon = tag.findViewById(R.id.tag_icon);
-        db.downloadTagPicture(t, bm -> tagIcon.setImageBitmap(bm));
+        presenter.fetchTagImage(t, bm -> tagIcon.setImageBitmap(bm));
 
         tag.setId(View.generateViewId());
         tagPanel.addView(tag);
