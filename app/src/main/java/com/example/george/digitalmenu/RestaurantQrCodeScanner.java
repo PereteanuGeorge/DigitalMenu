@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -32,7 +32,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
     }
 
     @Override
-    public void askForCameraPermissionAndScanQrCode(MainActivity mainActivity) {
+    public void askForCameraPermissionAndScanQrCode(AppCompatActivity mainActivity) {
 
         new RxPermissions(mainActivity).request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
@@ -44,7 +44,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                 });
     }
 
-    private void scanQrCode(MainActivity mainActivity) {
+    private void scanQrCode(AppCompatActivity mainActivity) {
 
         surfaceView.setVisibility(View.VISIBLE);
 
@@ -93,7 +93,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                     Vibrator vibrator = (Vibrator) mainActivity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(1000);
                     value = qrCodes.valueAt(0).displayValue;
-                    mainActivity.createSecondActivity(value);
+                    ((MainActivity) mainActivity).createSecondActivity(value);
                 }
 
             }

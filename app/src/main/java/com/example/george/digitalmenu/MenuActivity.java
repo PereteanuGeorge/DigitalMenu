@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
+
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -43,7 +45,18 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String restaurantName = intent.getStringExtra(INTENT_KEY);
 
+        setSlideBackToScanning();
         createMenu(restaurantName);
+    }
+
+    private void setSlideBackToScanning() {
+        final ImageButton scan_button = findViewById(R.id.scan_button);
+        scan_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        });
     }
 
     private void displayInfoFood(Dish dish) {
@@ -134,7 +147,8 @@ public class MenuActivity extends AppCompatActivity {
         ImageView foodImage = dishCard.findViewById(R.id.food_picture);
         db.downloadDishPicture(d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard.findViewById(R.id.tag_panel));
+        //displayTags
+        // (d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);

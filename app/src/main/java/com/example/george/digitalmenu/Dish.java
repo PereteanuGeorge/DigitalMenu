@@ -16,7 +16,7 @@ class Dish implements Parcelable {
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>(); // ? do not to if it can be converted to this type
     private String currency;
-    private byte[] picture = new byte[1024*1024];
+    private byte[] picture = new byte[512*512];
 
     public static final Parcelable.Creator<Dish> CREATOR =  new Parcelable.Creator<Dish>() {
 

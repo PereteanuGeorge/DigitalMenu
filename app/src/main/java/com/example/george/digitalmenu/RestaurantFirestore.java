@@ -2,10 +2,9 @@ package com.example.george.digitalmenu;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.renderscript.RenderScript;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Consumer;
-import android.util.Log;;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,7 +25,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final static long MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
+    private final static long MAX_DOWNLOAD_SIZE_BYTES = 512*512;
 
     private final String TAG = "Firestore";
 

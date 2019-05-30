@@ -3,11 +3,12 @@ package com.example.george.digitalmenu;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 public class Network {
 
-    public void checkIfNetworkIsAvailable(MainActivity mainActivity) {
+    public void checkIfNetworkIsAvailable(AppCompatActivity mainActivity) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
