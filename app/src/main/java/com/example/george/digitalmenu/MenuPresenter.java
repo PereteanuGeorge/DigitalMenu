@@ -14,7 +14,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void fetchFoodImage(Dish d, Consumer<Bitmap> callback) {
+    public void fetchDishImage(Dish d, Consumer<Bitmap> callback) {
         db.downloadDishPicture(d, callback);
     }
 
