@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void switchToMenuActivity(String s) {
         Intent intent = new Intent(this, MenuActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(INTENT_KEY, s);
         startActivity(intent);
     }
