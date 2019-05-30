@@ -137,8 +137,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ImageView foodImage = dishCard.findViewById(R.id.food_picture);
         presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
 
-        //displayTags
-        // (d, dishCard.findViewById(R.id.tag_panel));
+        displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);

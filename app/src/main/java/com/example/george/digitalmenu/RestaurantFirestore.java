@@ -34,23 +34,6 @@ public class RestaurantFirestore implements RestaurantDatabase {
         db = FirebaseFirestore.getInstance();
     }
 
-    public void getRestaurantEntry(String key) {
-        db.collection(key)
-            .get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                        }
-
-                    } else {
-                        Log.w(TAG, "Error getting documents.", task.getException());
-                    }
-                }
-            });
-    }
     public void getRestaurant(final String restaurant, final Consumer<Restaurant> callback) {
         DocumentReference ref = db.collection("restaurants").document(restaurant);
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
