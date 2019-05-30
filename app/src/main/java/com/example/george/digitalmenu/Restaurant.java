@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.george.digitalmenu.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
+
 //TODO; Protect data from null pointer
 
 class Restaurant {
@@ -16,7 +18,7 @@ class Restaurant {
     private List<Dish> dishes;
     private String pic_url;
 
-    private byte[] picture;
+    private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
 
     public Restaurant() {}
 

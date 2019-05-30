@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.george.digitalmenu.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
+
 class Dish implements Parcelable {
 
     private String name;
@@ -16,7 +18,7 @@ class Dish implements Parcelable {
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>(); // ? do not to if it can be converted to this type
     private String currency;
-    private byte[] picture = new byte[1024*1024];
+    private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
 
     public static final Parcelable.Creator<Dish> CREATOR =  new Parcelable.Creator<Dish>() {
 

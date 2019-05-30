@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = new MenuPresenter(this, new RestaurantFirestore());
         presenter.onViewCompleteCreate();
+//        setSlideBackToScanning();
     }
 
     @Override
@@ -51,6 +53,16 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+//    private void setSlideBackToScanning() {
+//        final ImageButton scan_button = findViewById(R.id.scan_button);
+//        scan_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            }
+//        });
+//    }
 
     @Override
     public String getRestaurantName() {
@@ -125,7 +137,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ImageView foodImage = dishCard.findViewById(R.id.food_picture);
         presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard.findViewById(R.id.tag_panel));
+        //displayTags
+        // (d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);

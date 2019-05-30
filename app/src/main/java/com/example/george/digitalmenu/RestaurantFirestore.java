@@ -26,7 +26,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final static long MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
+    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
 
     private final String TAG = "Firestore";
 
