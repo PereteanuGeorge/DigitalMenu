@@ -1,6 +1,9 @@
 package com.example.george.digitalmenu;
 
+import android.util.Log;
 import android.widget.Toast;
+
+import java.util.logging.Handler;
 
 public class MainPresenter implements MainContract.Presenter {
 
@@ -23,6 +26,7 @@ public class MainPresenter implements MainContract.Presenter {
         if (s.equals("bestmangal")) {
             view.switchToMenuActivity(s);
         } else {
+            Log.d("MainPresenter", "Not best mangal!");
             view.notifyScanFailure();
         }
     }

@@ -79,8 +79,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void notifyModelInitFailure() {
-        Toast.makeText(getApplicationContext(), "Authentication failed.",
-                Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> {
+            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void displayCategories(Restaurant r) {
