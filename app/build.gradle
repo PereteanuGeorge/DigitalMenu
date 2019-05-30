@@ -51,6 +51,9 @@ dependencies {
 
     // For slidable
     implementation 'com.r0adkll:slidableactivity:2.0.6'
+
+    def appCenterSdkVersion = '2.0.0'
+    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
 }
 
 // Firebase
