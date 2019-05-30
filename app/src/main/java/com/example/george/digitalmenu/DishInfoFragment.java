@@ -1,16 +1,13 @@
 package com.example.george.digitalmenu;
 
 
+import android.app.Fragment;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import static com.example.george.digitalmenu.MenuActivity.DISH_KEY;
@@ -43,7 +40,7 @@ public class DishInfoFragment extends Fragment {
 
     private void setInformation(Dish dish, View dish_info) {
         ImageView picture = dish_info.findViewById(R.id.dish_picture);
-        picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
+        picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(), 0, dish.getPicture().length));
 
         TextView infoText = dish_info.findViewById(R.id.description);
         infoText.setText(dish.getDescription());

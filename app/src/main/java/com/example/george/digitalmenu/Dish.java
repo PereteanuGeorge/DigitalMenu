@@ -1,6 +1,5 @@
 package com.example.george.digitalmenu;
 
-import android.graphics.Movie;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,7 +19,7 @@ class Dish implements Parcelable {
     private String currency;
     private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
 
-    public static final Parcelable.Creator<Dish> CREATOR =  new Parcelable.Creator<Dish>() {
+    public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {
 
         @Override
         public Dish createFromParcel(Parcel source) {
@@ -40,8 +39,8 @@ class Dish implements Parcelable {
     */
 
 
-
-    public Dish() {}
+    public Dish() {
+    }
 
     public Dish(Parcel parcel) {
         this.name = parcel.readString();
@@ -101,7 +100,7 @@ class Dish implements Parcelable {
 
     public List<Tag> getEnumTags() {
         List<Tag> etags = new ArrayList<>();
-        for (String t: tags) {
+        for (String t : tags) {
             etags.add(Tag.valueOf(t));
         }
         return etags;
