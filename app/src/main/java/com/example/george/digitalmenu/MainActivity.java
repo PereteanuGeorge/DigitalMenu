@@ -1,18 +1,21 @@
 package com.example.george.digitalmenu;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
 
 import android.support.v4.util.Consumer;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
     private QrCodeScanner scanner;
-    private Network network;
     public static final String INTENT_KEY = "bestmangal";
-    MainContract.Presenter presenter;
+    private MainContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +24,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         setContentView(R.layout.activity_main);
 
         SurfaceView surfaceView = findViewById(R.id.camerapreview);
-        scanner = new RestaurantQrCodeScanner(surfaceView);
+        scanner = new RestaurantQrCodeScanner(surfaceView, this);
 
-        network = new Network();
-
-        presenter = new MainPresenter(network, scanner);
-        presenter.registerView(this);
+        presenter = new MainPresenter(this, scanner);
 
         presenter.onViewCompleteCreate();
 
@@ -41,16 +41,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void checkNetworkConnectivity() {
-        network.checkIfNetworkIsAvailable(this);
-    }
-
-    @Override
-    public void turnScannerOn() {
-        scanner.askForCameraPermissionAndScanQrCode(this, new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                presenter.submitScanResult(s);
-            }
-        });
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (!(activeNetworkInfo != null && activeNetworkInfo.isConnected())) {
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Please connect to the internet", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 }

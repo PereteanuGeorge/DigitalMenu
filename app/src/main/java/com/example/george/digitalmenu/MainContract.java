@@ -5,9 +5,6 @@ public interface MainContract {
 
         void onViewCompleteCreate();
 
-        void registerView(View view);
-
-        void submitScanResult(String s);
     }
 
     interface View {
@@ -16,6 +13,5 @@ public interface MainContract {
 
         void checkNetworkConnectivity();
 
-        void turnScannerOn();
     }
 }

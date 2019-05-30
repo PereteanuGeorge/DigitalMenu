@@ -26,40 +26,45 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
     private SurfaceView surfaceView;
     private CameraSource cameraSource;
     private String value;
+    private AppCompatActivity activityToShowScanner;
 
-    public RestaurantQrCodeScanner(SurfaceView surfaceView) {
+    public RestaurantQrCodeScanner(SurfaceView surfaceView, AppCompatActivity activity) {
         this.surfaceView = surfaceView;
-
         surfaceView.setVisibility(View.GONE);
+        activityToShowScanner = activity;
     }
 
     @Override
-    public void askForCameraPermissionAndScanQrCode(AppCompatActivity activity, Consumer<String> callback) {
+    public void scan(Consumer<String> callback) {
+        askForCameraPermissionAndScanQrCode(callback);
+    }
 
-        new RxPermissions(activity).request(Manifest.permission.CAMERA)
+    private void askForCameraPermissionAndScanQrCode(Consumer<String> callback) {
+
+        new RxPermissions(activityToShowScanner).request(Manifest.permission.CAMERA)
                 .subscribe(granted -> {
                     if (granted) {
-                        scanQrCode(activity, callback);
+                        scanQrCode(callback);
                     } else {
-                        askForCameraPermissionAndScanQrCode(activity, callback);
+                        askForCameraPermissionAndScanQrCode(callback);
                     }
                 });
     }
 
-    private void scanQrCode(AppCompatActivity mainActivity, Consumer<String> callback) {
+    private void scanQrCode(Consumer<String> callback) {
 
         surfaceView.setVisibility(View.VISIBLE);
 
-        BarcodeDetector detector = new BarcodeDetector.Builder(mainActivity)
+        BarcodeDetector detector = new BarcodeDetector.Builder(activityToShowScanner)
                 .setBarcodeFormats(Barcode.QR_CODE).build();
 
-        this.cameraSource = new CameraSource.Builder(mainActivity, detector)
+        this.cameraSource = new CameraSource.Builder(activityToShowScanner, detector)
                 .setRequestedPreviewSize(640, 480).build();
 
         this.surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                if (ActivityCompat.checkSelfPermission(mainActivity.getApplicationContext(),
+                if (ActivityCompat.checkSelfPermission(activityToShowScanner.getApplicationContext(),
                         Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
@@ -92,7 +97,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
 
                 if (qrCodes.size() != 0) {
-                    Vibrator vibrator = (Vibrator) mainActivity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    Vibrator vibrator = (Vibrator) activityToShowScanner.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(1000);
                     value = qrCodes.valueAt(0).displayValue;
 
