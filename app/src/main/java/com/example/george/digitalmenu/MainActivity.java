@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
 
-        AppCenter.start(getApplication(), "8c0a4068-3689-46f7-b4bc-8eaaf16b1661",
-                Analytics.class, Crashes.class);
         SurfaceView surfaceView = findViewById(R.id.camerapreview);
         scanner = new RestaurantQrCodeScanner(surfaceView, this);
 
