@@ -1,5 +1,7 @@
 package com.example.george.digitalmenu;
 
+import android.widget.Toast;
+
 public class MainPresenter implements MainContract.Presenter {
 
     private MainContract.View view;
@@ -17,6 +19,11 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     private void submitScanResult(String s) {
-        view.switchToMenuActivity(s);
+
+        if (s.equals("bestmangal")) {
+            view.switchToMenuActivity(s);
+        } else {
+            view.notifyScanFailure();
+        }
     }
 }

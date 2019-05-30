@@ -13,5 +13,6 @@ public interface MainContract {
 
         void checkNetworkConnectivity();
 
+        void notifyScanFailure();
     }
 }

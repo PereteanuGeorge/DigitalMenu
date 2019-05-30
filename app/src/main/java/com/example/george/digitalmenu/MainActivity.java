@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         presenter = new MainPresenter(this, scanner);
 
         presenter.onViewCompleteCreate();
-
     }
 
     @Override
@@ -49,5 +48,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             Toast toast = Toast.makeText(context, "Please connect to the internet", Toast.LENGTH_SHORT);
             toast.show();
         }
+    }
+
+    @Override
+    public void notifyScanFailure() {
+        Toast.makeText(getApplicationContext(), "Could not recognize the QrCode", Toast.LENGTH_SHORT).show();
     }
 }
