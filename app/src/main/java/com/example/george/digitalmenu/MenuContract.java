@@ -6,7 +6,7 @@ import android.support.v4.util.Consumer;
 public interface MenuContract {
     interface Presenter {
 
-        void fetchFoodImage(Dish d, Consumer<Bitmap> callback);
+        void fetchDishImage(Dish d, Consumer<Bitmap> callback);
 
         void fetchTagImage(Tag t, Consumer<Bitmap> callback);
 

@@ -123,7 +123,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.food_picture);
-        presenter.fetchFoodImage(d, bm -> foodImage.setImageBitmap(bm));
+        presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
 
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
