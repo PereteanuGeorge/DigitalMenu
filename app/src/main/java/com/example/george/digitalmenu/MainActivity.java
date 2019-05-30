@@ -23,13 +23,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         setContentView(R.layout.activity_scan);
 
         SurfaceView surfaceView = findViewById(R.id.camerapreview);
-        scanner = new RestaurantQrCodeScanner(surfaceView, this);
+        //scanner = new RestaurantQrCodeScanner(surfaceView, this);
 
-        presenter = new MainPresenter(this, scanner);
+        //presenter = new MainPresenter(this, scanner);
 
         context = getApplicationContext();
 
-        presenter.onViewCompleteCreate();
+        //presenter.onViewCompleteCreate();
     }
 
     @Override
