@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
     private QrCodeScanner scanner;
@@ -22,14 +26,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
 
-        SurfaceView surfaceView = findViewById(R.id.camerapreview);
-        //scanner = new RestaurantQrCodeScanner(surfaceView, this);
+        AppCenter.start(getApplication(), "528f052c-8d9a-42ef-ae3b-a248467fa1f7",
+                Analytics.class, Crashes.class);
 
-        //presenter = new MainPresenter(this, scanner);
+        SurfaceView surfaceView = findViewById(R.id.camerapreview);
+        scanner = new RestaurantQrCodeScanner(surfaceView, this);
+
+        presenter = new MainPresenter(this, scanner);
 
         context = getApplicationContext();
 
-        //presenter.onViewCompleteCreate();
+        presenter.onViewCompleteCreate();
     }
 
     @Override
