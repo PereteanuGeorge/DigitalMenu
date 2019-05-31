@@ -1,4 +1,4 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +8,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
 
-import android.support.v4.util.Consumer;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
+import com.example.george.digitalmenu.menu.MenuActivity;
+import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.QrCodeScanner;
+import com.example.george.digitalmenu.utils.RestaurantQrCodeScanner;
+
+public class MainActivity extends AppCompatActivity implements MainContract.View{
+
+    public static final Order ORDER = new Order();
 
     private QrCodeScanner scanner;
     public static final String INTENT_KEY = "bestmangal";

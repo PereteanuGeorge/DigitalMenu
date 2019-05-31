@@ -1,4 +1,4 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.utils;
 
 import android.Manifest;
 import android.content.Context;

@@ -3,6 +3,11 @@ package com.example.george.digitalmenu;
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
+import com.example.george.digitalmenu.menu.MenuContract;
+import com.example.george.digitalmenu.menu.MenuPresenter;
+import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.RestaurantDatabase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;

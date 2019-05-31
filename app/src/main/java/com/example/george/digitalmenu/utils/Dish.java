@@ -1,15 +1,14 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.utils;
 
-import android.graphics.Movie;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.george.digitalmenu.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
+import static com.example.george.digitalmenu.utils.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
 
-class Dish implements Parcelable {
+public class Dish implements Parcelable {
 
     private String name;
     private String pic_url;

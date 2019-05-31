@@ -1,16 +1,13 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.utils;
 
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
+import static com.example.george.digitalmenu.utils.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
 
-//TODO; Protect data from null pointer
-
-class Restaurant {
+public class Restaurant {
     private String address;
     private List<String> categories;
     private String telephone;

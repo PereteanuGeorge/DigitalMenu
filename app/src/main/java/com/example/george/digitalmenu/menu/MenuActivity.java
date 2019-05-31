@@ -1,4 +1,4 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.menu;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -8,21 +8,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.OrderedDish;
+import com.example.george.digitalmenu.utils.Restaurant;
+import com.example.george.digitalmenu.utils.RestaurantFirestore;
+import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
+import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 
 /* Responsible for android-OS specific and UI logic */
-public class MenuActivity extends AppCompatActivity implements MenuContract.View {
+public class MenuActivity extends AppCompatActivity implements MenuContract.View, DishFragmentListener {
 
     public static final String DISH_KEY = "dish_key";
 
@@ -48,6 +54,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void displayInfoFood(Dish dish) {
         getIntent().putExtra(DISH_KEY, dish);
         DishInfoFragment fragment = new DishInfoFragment();
+        fragment.addListener(this);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -167,5 +174,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         tag.setId(View.generateViewId());
         tagPanel.addView(tag);
+    }
+
+    @Override
+    public void addDishToOrder(OrderedDish dish) {
+        presenter.addDishToOrder(dish);
     }
 }
