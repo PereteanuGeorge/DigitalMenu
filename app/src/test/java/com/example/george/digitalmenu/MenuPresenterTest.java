@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu;
 
+import android.app.Service;
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
@@ -43,7 +44,11 @@ public class MenuPresenterTest {
     public void init() {
         mockModel = mock(RestaurantDatabase.class);
         mockView = mock(MenuContract.View.class);
-        presenter = new MenuPresenter(mockView,mockModel);
+
+        ServiceRegistry.getInstance().registerService(RestaurantDatabase.class, mockModel);
+
+        presenter = new MenuPresenter();
+        presenter.registerView(mockView);
     }
 
     @Test

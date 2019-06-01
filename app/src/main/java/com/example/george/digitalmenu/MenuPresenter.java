@@ -8,9 +8,13 @@ public class MenuPresenter implements MenuContract.Presenter {
     private MenuContract.View view;
     private RestaurantDatabase db;
 
-    public MenuPresenter(MenuContract.View view, RestaurantDatabase db) {
+    public MenuPresenter() {
+        this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
+    }
+
+    @Override
+    public void registerView(MenuContract.View view) {
         this.view = view;
-        this.db = db;
     }
 
     @Override

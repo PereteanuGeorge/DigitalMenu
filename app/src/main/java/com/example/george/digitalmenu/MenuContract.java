@@ -15,6 +15,8 @@ public interface MenuContract {
         void onViewCompleteCreate();
 
         void onDishItemClick(Dish d);
+
+        void registerView(MenuContract.View view);
     }
 
     interface View {

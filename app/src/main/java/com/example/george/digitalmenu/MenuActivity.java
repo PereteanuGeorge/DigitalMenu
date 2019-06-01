@@ -1,6 +1,7 @@
 package com.example.george.digitalmenu;
 
 import android.app.FragmentTransaction;
+import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -39,7 +40,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         setContentView(R.layout.activity_menu);
         rootLayout = findViewById(R.id.rootLayout);
 
-        presenter = new MenuPresenter(this, new RestaurantFirestore());
+        ServiceRegistry registry = ServiceRegistry.getInstance();
+
+        presenter = registry.getService(MenuContract.Presenter.class);
+        presenter.registerView(this);
         presenter.onViewCompleteCreate();
 //        setSlideBackToScanning();
     }
