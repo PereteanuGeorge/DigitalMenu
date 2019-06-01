@@ -57,6 +57,11 @@ public class MenuPresenter implements MenuContract.Presenter {
         ORDER.add(dish);
     }
 
+    @Override
+    public void cleanOrder() {
+        ORDER.clean();
+    }
+
     private void fetchData(String restaurantName) {
         db.getRestaurant(restaurantName, this::onFetchDataComplete);
     }

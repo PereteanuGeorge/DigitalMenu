@@ -14,7 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.main.MainActivity;
+import com.example.george.digitalmenu.order.OrderActivity;
 import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantFirestore;
@@ -47,8 +50,15 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = new MenuPresenter(this, new RestaurantFirestore());
         presenter.onViewCompleteCreate();
-//        setSlideBackToScanning();
+        setScanButton();
+        setCheckoutButton();
     }
+
+    private void setCheckoutButton() {
+        final View button = findViewById(R.id.scan_button);
+        button.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), OrderActivity.class)));
+    }
+
 
     @Override
     public void displayInfoFood(Dish dish) {
@@ -61,15 +71,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         transaction.commit();
     }
 
-//    private void setSlideBackToScanning() {
-//        final ImageButton scan_button = findViewById(R.id.scan_button);
-//        scan_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            }
-//        });
-//    }
+    private void setScanButton() {
+        final View scan_button = findViewById(R.id.scan_button);
+        scan_button.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            presenter.cleanOrder();
+        });
+    }
 
     @Override
     public String getRestaurantName() {

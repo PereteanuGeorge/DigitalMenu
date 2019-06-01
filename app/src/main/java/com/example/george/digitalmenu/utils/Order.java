@@ -9,4 +9,8 @@ public class Order {
     public void add(OrderedDish dish) {
         dishes.add(dish);
     }
+
+    public void clean() {
+        dishes.clear();
+    }
 }

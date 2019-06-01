@@ -14,16 +14,50 @@
         android:layout_height="match_parent"
         tools:context=".main.MainActivity">
 
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/scan_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:icon="@drawable/scan"
+                android:text="scan" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/menu_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:icon="@drawable/menu"
+                android:text="Menu" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/order_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:icon="@drawable/checkout"
+                android:text="Orders" />
+        </android.support.design.widget.TabLayout>
+
         <ScrollView
             android:id="@+id/scroll_menu"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/tabLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:id="@+id/menu_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/theme_picture"
@@ -38,19 +72,22 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/dish_info_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteY="200dp">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/scroll_menu">
 
         </android.support.constraint.ConstraintLayout>
 
         <!--<ImageButton-->
-            <!--android:id="@+id/scan_button"-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toTopOf="parent"-->
-            <!--tools:srcCompat="@android:drawable/btn_star" />-->
+        <!--android:id="@+id/scan_button"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--tools:srcCompat="@android:drawable/btn_star" />-->
 
 
     </android.support.constraint.ConstraintLayout>
