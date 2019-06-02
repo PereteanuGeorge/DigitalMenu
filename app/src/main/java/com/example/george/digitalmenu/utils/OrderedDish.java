@@ -8,4 +8,24 @@ public class OrderedDish {
         this.dish = dish;
         this.number = number;
     }
+
+    public String getName() {
+        return dish.getName();
+    }
+
+    public Double getPrice() {
+        return number*dish.getPrice();
+    }
+
+    public String getCurrency() {
+        return dish.getCurrency();
+    }
+
+    public byte[] getPicture() {
+        return dish.getPicture();
+    }
+
+    public Integer getNumber() {
+        return this.number;
+    }
 }

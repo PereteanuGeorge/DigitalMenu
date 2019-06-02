@@ -13,4 +13,16 @@ public class Order {
     public void clean() {
         dishes.clear();
     }
+
+    public List<OrderedDish> getOrderedDishes() {
+        return dishes;
+    }
+
+    public Double getTotalPrice() {
+        Double price = 0.0;
+        for (OrderedDish dish: dishes) {
+            price += dish.getPrice();
+        }
+        return price;
+    }
 }

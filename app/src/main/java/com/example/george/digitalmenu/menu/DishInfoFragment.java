@@ -44,7 +44,6 @@ public class DishInfoFragment extends Fragment {
         setInformation(dish, dish_info);
         setGoBack(dish_info);
 
-
         return dish_info;
     }
 
@@ -86,6 +85,9 @@ public class DishInfoFragment extends Fragment {
     private void setGoBack(View dish_info) {
         View back = dish_info.findViewById(R.id.dish_info_back);
         back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
+
+        View card = dish_info.findViewById(R.id.dish_board);
+        card.setOnClickListener(v -> {});
     }
 
     public void addListener(DishFragmentListener listener) {

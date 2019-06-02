@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         tools:context=".main.MainActivity">
 
-        <android.support.design.widget.TabLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/tabLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,27 +22,45 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <android.support.design.widget.TabItem
+            <ImageView
                 android:id="@+id/scan_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:icon="@drawable/scan"
-                android:text="scan" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/scan" />
 
-            <android.support.design.widget.TabItem
+            <ImageView
                 android:id="@+id/menu_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:icon="@drawable/menu"
-                android:text="Menu" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/order_button"
+                app:layout_constraintStart_toEndOf="@+id/scan_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/menu" />
 
-            <android.support.design.widget.TabItem
+            <ImageView
                 android:id="@+id/order_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:icon="@drawable/checkout"
-                android:text="Orders" />
-        </android.support.design.widget.TabLayout>
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/checkout" />
+        </android.support.constraint.ConstraintLayout>
 
         <ScrollView
             android:id="@+id/scroll_menu"
@@ -76,10 +94,22 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/scroll_menu">
+            app:layout_constraintTop_toTopOf="@+id/scroll_menu"
+            app:layout_constraintVertical_bias="0.0">
+
 
         </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/order_fragment_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!--<ImageButton-->
         <!--android:id="@+id/scan_button"-->

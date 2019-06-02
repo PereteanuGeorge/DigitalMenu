@@ -23,9 +23,6 @@
         <activity
             android:name=".menu.MenuActivity"
             android:label="@string/app_name" />
-        <activity
-            android:name=".order.OrderActivity"
-            android:label="Digital Order" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
