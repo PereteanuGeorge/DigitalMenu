@@ -53,11 +53,6 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void addDishToOrder(OrderedDish dish) {
-        ORDER.add(dish);
-    }
-
-    @Override
     public void cleanOrder() {
         ORDER.clean();
     }

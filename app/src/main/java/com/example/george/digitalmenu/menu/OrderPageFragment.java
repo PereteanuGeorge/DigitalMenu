@@ -1,42 +1,35 @@
 package com.example.george.digitalmenu.menu;
 
 
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.RequiresApi;
+import android.app.FragmentTransaction;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
+import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OrderFragment extends Fragment {
+public class OrderPageFragment extends Fragment {
 
     View order;
     View previousView;
 
-    public OrderFragment() {
+    public OrderPageFragment() {
         // Required empty public constructor
     }
 
@@ -93,24 +86,30 @@ public class OrderFragment extends Fragment {
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);
 
-        setOrderInfoButton(orderCard);
+        orderCard.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Open", Toast.LENGTH_LONG).show();
+            DISH = dish;
+            OrderBoardFragment fragment = new OrderBoardFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.dish_info_fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
     }
 
     private void addItem(ConstraintLayout orderCard, ConstraintLayout orderPanel) {
         orderPanel.addView(orderCard);
 
+        //TODO: show items nicely
         if (previousView != null) {
             ConstraintSet constraintSet = new ConstraintSet();
             constraintSet.clone(orderPanel);
-            constraintSet.connect(orderCard.getId(), ConstraintSet.LEFT,
-                    previousView.getId(),  ConstraintSet.RIGHT,4);
+            constraintSet.connect(orderCard.getId(), ConstraintSet.TOP,
+                    orderPanel.getId(), ConstraintSet.BOTTOM, 4);
             constraintSet.applyTo(orderPanel);
         }
         previousView = orderCard;
-    }
-
-    private void setOrderInfoButton(View view) {
-        view.setOnClickListener(v -> Toast.makeText(getActivity(), "Open", Toast.LENGTH_LONG));
     }
 
     private void setGoBackButton() {

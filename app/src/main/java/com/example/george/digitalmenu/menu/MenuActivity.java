@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
 import com.example.george.digitalmenu.utils.Dish;
-import com.example.george.digitalmenu.utils.OrderedDish;
+import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantFirestore;
 import com.example.george.digitalmenu.utils.Tag;
@@ -28,9 +28,9 @@ import java.util.Map;
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 
 /* Responsible for android-OS specific and UI logic */
-public class MenuActivity extends AppCompatActivity implements MenuContract.View, DishFragmentListener {
+public class MenuActivity extends AppCompatActivity implements MenuContract.View {
 
-    public static final String DISH_KEY = "dish_key";
+    public static DisplayableDish DISH = new Dish();
 
     private static final String TAG = "MenuActivity";
 
@@ -53,7 +53,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private void setCheckoutButton() {
         final View button = findViewById(R.id.order_button);
         button.setOnClickListener(v -> {
-            OrderFragment fragment = new OrderFragment();
+            OrderPageFragment fragment = new OrderPageFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.order_fragment_container, fragment);
             transaction.addToBackStack(null);
@@ -64,9 +64,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void displayInfoFood(Dish dish) {
-        getIntent().putExtra(DISH_KEY, dish);
-        DishInfoFragment fragment = new DishInfoFragment();
-        fragment.addListener(this);
+        DISH = dish;
+        OrderBoardFragment fragment = new OrderBoardFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -133,7 +132,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
     }
 
-    private void displayDish(Dish d, LinearLayout clist) {
+    private void displayDish(DisplayableDish d, LinearLayout clist) {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
@@ -152,16 +151,16 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.picture);
-        presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
+        presenter.fetchDishImage((Dish) d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard.findViewById(R.id.tag_panel));
+        displayTags((Dish) d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);
         dishCard.setId(View.generateViewId());
 
         // Register click event to presenter.
-        dishCard.setOnClickListener(v -> presenter.onDishItemClick(d));
+        dishCard.setOnClickListener(v -> presenter.onDishItemClick((Dish) d));
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {
@@ -181,10 +180,5 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         tag.setId(View.generateViewId());
         tagPanel.addView(tag);
-    }
-
-    @Override
-    public void addDishToOrder(OrderedDish dish) {
-        presenter.addDishToOrder(dish);
     }
 }

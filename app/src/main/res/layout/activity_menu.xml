@@ -89,6 +89,15 @@
         </ScrollView>
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/order_fragment_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/dish_info_fragment_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -101,23 +110,6 @@
 
 
         </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/order_fragment_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!--<ImageButton-->
-        <!--android:id="@+id/scan_button"-->
-        <!--android:layout_width="50dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--tools:srcCompat="@android:drawable/btn_star" />-->
 
 
     </android.support.constraint.ConstraintLayout>

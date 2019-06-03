@@ -21,8 +21,6 @@ public interface MenuContract {
 
         void onDishItemClick(Dish d);
 
-        void addDishToOrder(OrderedDish dish);
-
         void cleanOrder();
     }
 

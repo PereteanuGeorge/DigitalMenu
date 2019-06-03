@@ -25,4 +25,8 @@ public class Order {
         }
         return price;
     }
+
+    public void delete(OrderedDish dish) {
+        dishes.remove(dish);
+    }
 }
