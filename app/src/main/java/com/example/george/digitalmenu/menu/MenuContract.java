@@ -11,6 +11,8 @@ import com.example.george.digitalmenu.utils.Tag;
 public interface MenuContract {
     interface Presenter {
 
+        void registerView(View view);
+
         void fetchDishImage(Dish d, Consumer<Bitmap> callback);
 
         void fetchTagImage(Tag t, Consumer<Bitmap> callback);

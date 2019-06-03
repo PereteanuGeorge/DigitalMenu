@@ -20,6 +20,7 @@ import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantFirestore;
+import com.example.george.digitalmenu.utils.ServiceRegistry;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.ArrayList;
@@ -45,10 +46,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         setContentView(R.layout.activity_menu);
         rootLayout = findViewById(R.id.rootLayout);
 
-        presenter = new MenuPresenter(this, new RestaurantFirestore());
-        presenter.onViewCompleteCreate();
+        presenter = ServiceRegistry.getInstance().getService(MenuContract.Presenter.class);
+        presenter.registerView(this);
+
         setScanButton();
         setCheckoutButton();
+
+        presenter.onViewCompleteCreate();
     }
 
     private void setCheckoutButton() {
