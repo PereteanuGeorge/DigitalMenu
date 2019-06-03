@@ -17,6 +17,7 @@ import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
 import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.DisplayableDish;
+import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantFirestore;
 import com.example.george.digitalmenu.utils.Tag;
@@ -64,7 +65,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void displayInfoFood(Dish dish) {
-        DISH = dish;
+        DISH = new OrderedDish(dish,1);
         OrderBoardFragment fragment = new OrderBoardFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);

@@ -7,6 +7,7 @@ public class OrderedDish implements DisplayableDish{
     private final Map<String, Boolean> options;
     DisplayableDish dish;
     Integer number;
+    private boolean ordered = false;
 
     public OrderedDish(DisplayableDish dish, Integer number) {
         this.dish = dish;
@@ -65,12 +66,12 @@ public class OrderedDish implements DisplayableDish{
 
     @Override
     public boolean isOrdered() {
-        return true;
+        return ordered;
     }
 
     @Override
     public Map<String, Boolean> getOptions() {
-        return dish.getOptions();
+        return options;
     }
 
     @Override
@@ -84,5 +85,9 @@ public class OrderedDish implements DisplayableDish{
 
     public Integer getNumber() {
         return this.number;
+    }
+
+    public void setIsOrdered(boolean b) {
+        this.ordered = b;
     }
 }

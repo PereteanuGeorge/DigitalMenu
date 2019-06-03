@@ -72,6 +72,9 @@ public class OrderBoardFragment extends Fragment {
         TextView portionText = order.findViewById(R.id.number);
         portionText.setText(String.valueOf(dish.getPortion()));
 
+        TextView descriptionText = order.findViewById(R.id.description);
+        descriptionText.setText(dish.getDescription());
+
         setOptions(dish.getOptions(), order.findViewById(R.id.options_panel));
         
         if (dish.isOrdered()) {
@@ -93,6 +96,7 @@ public class OrderBoardFragment extends Fragment {
         optionText.setChecked(isChecked);
         optionText.setOnClickListener(v -> {
             optionText.setChecked(!optionText.isChecked());
+            Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
             dish.put(optionText.getText().toString(), optionText.isChecked());
         });
 
@@ -107,6 +111,7 @@ public class OrderBoardFragment extends Fragment {
         button.setOnClickListener(v -> {
             ORDER.delete(dish);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
+            getActivity().getFragmentManager().popBackStack();
         });
     }
 
@@ -116,7 +121,9 @@ public class OrderBoardFragment extends Fragment {
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
             ORDER.add(dish);
+            dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
+            getActivity().getFragmentManager().popBackStack();
         });
 
 

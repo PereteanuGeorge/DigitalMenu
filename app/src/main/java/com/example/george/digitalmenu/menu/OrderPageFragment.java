@@ -10,12 +10,16 @@ import android.support.constraint.ConstraintSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.OrderedDish;
+
+import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
@@ -28,6 +32,7 @@ public class OrderPageFragment extends Fragment {
 
     View order;
     View previousView;
+    private LayoutInflater inflater;
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -38,6 +43,7 @@ public class OrderPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        this.inflater = inflater;
         order = inflater.inflate(R.layout.fragment_order, container, false);
         displayOrders(inflater);
         setTotalPrice();
@@ -59,13 +65,13 @@ public class OrderPageFragment extends Fragment {
 
     private void displayOrders(LayoutInflater inflater) {
         // init
-        ConstraintLayout orderPanel = order.findViewById(R.id.order_panel);
+        LinearLayout orderPanel = order.findViewById(R.id.order_panel);
         for (OrderedDish dish: ORDER.getOrderedDishes()) {
             displayOrder(inflater, dish,orderPanel);
         }
     }
 
-    private void displayOrder(LayoutInflater inflater, OrderedDish dish, ConstraintLayout orderPanel) {
+    private void displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
         ConstraintLayout orderCard = (ConstraintLayout) inflater.inflate(R.layout.order_card, orderPanel, false);
 
         TextView nameText = orderCard.findViewById(R.id.name);
@@ -83,6 +89,8 @@ public class OrderPageFragment extends Fragment {
         ImageView picture = orderCard.findViewById(R.id.picture);
         picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
 
+        displayOptions(dish.getOptions(), orderCard.findViewById(R.id.options_panel));
+
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);
 
@@ -98,18 +106,23 @@ public class OrderPageFragment extends Fragment {
 
     }
 
-    private void addItem(ConstraintLayout orderCard, ConstraintLayout orderPanel) {
-        orderPanel.addView(orderCard);
-
-        //TODO: show items nicely
-        if (previousView != null) {
-            ConstraintSet constraintSet = new ConstraintSet();
-            constraintSet.clone(orderPanel);
-            constraintSet.connect(orderCard.getId(), ConstraintSet.TOP,
-                    orderPanel.getId(), ConstraintSet.BOTTOM, 4);
-            constraintSet.applyTo(orderPanel);
+    private void displayOptions(Map<String, Boolean> options, LinearLayout options_panel) {
+        for (String s: options.keySet()) {
+            if (options.get(s)) {
+                displayOption(s, options_panel);
+            }
         }
-        previousView = orderCard;
+    }
+
+    private void displayOption(String option, LinearLayout options_panel) {
+        CheckedTextView optionText = (CheckedTextView) inflater.inflate(R.layout.option_text, options_panel, false);
+        optionText.setText(option);
+        optionText.setChecked(true);
+        options_panel.addView(optionText);
+    }
+
+    private void addItem(ConstraintLayout orderCard, LinearLayout orderPanel) {
+        orderPanel.addView(orderCard);
     }
 
     private void setGoBackButton() {
