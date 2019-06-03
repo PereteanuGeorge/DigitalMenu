@@ -71,6 +71,9 @@ public class OrderPageFragment extends Fragment {
     private void displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
         ConstraintLayout orderCard = (ConstraintLayout) inflater.inflate(R.layout.order_card, orderPanel, false);
 
+        TextView descriptionText = orderCard.findViewById(R.id.description);
+        descriptionText.setText(dish.getDescription());
+
         TextView nameText = orderCard.findViewById(R.id.name);
         nameText.setText(dish.getName());
 
