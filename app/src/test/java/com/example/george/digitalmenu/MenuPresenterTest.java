@@ -7,6 +7,7 @@ import com.example.george.digitalmenu.menu.MenuContract;
 import com.example.george.digitalmenu.menu.MenuPresenter;
 import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
+import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,25 +31,35 @@ public class MenuPresenterTest {
     MenuContract.Presenter presenter;
     private static final String testRestaurantName = "bestmangal";
     private Dish testDish = new Dish(
-            "testName",
-            "testUrl",
-            "testDescription",
-            20.0,
-            Arrays.asList(
-                    "cat1",
-                    "cat2"
-            ),
-            Arrays.asList(
-                    "tag1",
-                    "tag2"
-            )
+        "testName",
+        "testUrl",
+        "testDescription",
+        20.0,
+        Arrays.asList(
+            "cat1",
+            "cat2"
+        ),
+        Arrays.asList(
+            "tag1",
+            "tag2"
+        ),
+        Arrays.asList(
+            "option1",
+            "option2"
+        )
     );
 
     @Before
     public void init() {
         mockModel = mock(RestaurantDatabase.class);
         mockView = mock(MenuContract.View.class);
-        presenter = new MenuPresenter(mockView,mockModel);
+
+        ServiceRegistry registry = ServiceRegistry.getInstance();
+        registry.registerService(RestaurantDatabase.class, mockModel);
+        registry.registerService(MenuContract.View.class, mockView);
+
+        presenter = new MenuPresenter();
+        presenter.registerView(mockView);
     }
 
     @Test

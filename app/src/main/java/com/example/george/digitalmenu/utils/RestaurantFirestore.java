@@ -23,13 +23,14 @@ import com.google.firebase.storage.StorageReference;
 public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage;
     public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
 
     private final String TAG = "Firestore";
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
     }
 
     public void getRestaurant(final String restaurant, final Consumer<Restaurant> callback) {

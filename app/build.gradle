@@ -20,6 +20,12 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -49,6 +55,9 @@ dependencies {
     implementation 'com.github.tbruyelle:rxpermissions:0.10.1'
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
     implementation "com.google.firebase:firebase-messaging:18.0.0"
+
+    // Robolectric
+    testImplementation 'org.robolectric:robolectric:4.3'
 
     // For slidable
     implementation 'com.r0adkll:slidableactivity:2.0.6'
