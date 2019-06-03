@@ -1,5 +1,9 @@
 package com.example.george.digitalmenu;
 
+import com.example.george.digitalmenu.main.MainContract;
+import com.example.george.digitalmenu.main.MainPresenter;
+import com.example.george.digitalmenu.utils.QrCodeScanner;
+
 import org.junit.Before;
 import org.junit.Test;
 

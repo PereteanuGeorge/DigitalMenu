@@ -1,4 +1,4 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
+import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.menu.MenuActivity;
+import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.QrCodeScanner;
+import com.example.george.digitalmenu.utils.RestaurantQrCodeScanner;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
+
+public class MainActivity extends AppCompatActivity implements MainContract.View{
+
+    public static final Order ORDER = new Order();
 
     private QrCodeScanner scanner;
     public static final String INTENT_KEY = "bestmangal";
@@ -57,8 +62,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void notifyScanFailure() {
-        runOnUiThread(() -> {
-            Toast.makeText(context, "Could not recognize the QrCode", Toast.LENGTH_SHORT).show();
-        });
+        runOnUiThread(() -> Toast.makeText(context, "Could not recognize the QrCode", Toast.LENGTH_SHORT).show());
     }
 }

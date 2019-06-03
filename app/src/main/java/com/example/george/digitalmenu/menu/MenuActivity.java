@@ -1,4 +1,4 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.menu;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -8,28 +8,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.main.MainActivity;
+import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.DisplayableDish;
+import com.example.george.digitalmenu.utils.Restaurant;
+import com.example.george.digitalmenu.utils.RestaurantFirestore;
+import com.example.george.digitalmenu.utils.Tag;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.MainActivity.INTENT_KEY;
+import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 
 /* Responsible for android-OS specific and UI logic */
 public class MenuActivity extends AppCompatActivity implements MenuContract.View {
 
-    public static final String DISH_KEY = "dish_key";
+    public static DisplayableDish DISH = new Dish();
 
     private static final String TAG = "MenuActivity";
 
     private ConstraintLayout rootLayout;
-    private Map<Integer, Dish> dishIds = new HashMap<>();
 
     MenuContract.Presenter presenter;
 
@@ -41,32 +46,43 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = new MenuPresenter(this, new RestaurantFirestore());
         presenter.onViewCompleteCreate();
-//        setSlideBackToScanning();
+        setScanButton();
+        setCheckoutButton();
     }
+
+    private void setCheckoutButton() {
+        final View button = findViewById(R.id.order_button);
+        button.setOnClickListener(v -> {
+            OrderPageFragment fragment = new OrderPageFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.order_fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+    }
+
 
     @Override
     public void displayInfoFood(Dish dish) {
-        getIntent().putExtra(DISH_KEY, dish);
-        DishInfoFragment fragment = new DishInfoFragment();
+        DISH = dish;
+        OrderBoardFragment fragment = new OrderBoardFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
-//    private void setSlideBackToScanning() {
-//        final ImageButton scan_button = findViewById(R.id.scan_button);
-//        scan_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//            }
-//        });
-//    }
+    private void setScanButton() {
+       View view = findViewById(R.id.scan_button);
+       view.setOnClickListener(v -> {
+           presenter.cleanOrder();
+           startActivity(new Intent(getApplicationContext(), MainActivity.class));
+       });
+    }
 
+    // Get the Intent that started this activity and extract the string
     @Override
     public String getRestaurantName() {
-        // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
         return intent.getStringExtra(INTENT_KEY);
     }
@@ -118,7 +134,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
     }
 
-    private void displayDish(Dish d, LinearLayout clist) {
+    private void displayDish(DisplayableDish d, LinearLayout clist) {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
@@ -136,20 +152,17 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         TextView currencyText = dishCard.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(d.getCurrency()));
 
-        ImageView foodImage = dishCard.findViewById(R.id.food_picture);
-        presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
+        ImageView foodImage = dishCard.findViewById(R.id.picture);
+        presenter.fetchDishImage((Dish) d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags(d, dishCard.findViewById(R.id.tag_panel));
+        displayTags((Dish) d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);
         dishCard.setId(View.generateViewId());
-        dishIds.put(dishCard.getId(), d);
-        Log.d(TAG, "The size of dish" + dishIds.size());
-        View dishView = findViewById(dishCard.getId());
 
         // Register click event to presenter.
-        dishView.setOnClickListener(v -> presenter.onDishItemClick(d));
+        dishCard.setOnClickListener(v -> presenter.onDishItemClick((Dish) d));
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {

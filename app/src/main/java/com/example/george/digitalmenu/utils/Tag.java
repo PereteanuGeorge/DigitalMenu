@@ -1,8 +1,8 @@
-package com.example.george.digitalmenu;
+package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 
-enum Tag {
+public enum Tag {
     GLUTEN_FREE("Gluten Free", "https://firebasestorage.googleapis.com/v0/b/digitalmenu-6df05.appspot.com/o/tag_icons%2Fgluten_free.png?alt=media&token=13ab19ba-d1dd-42a8-8324-4f1fb746ea27"),
     HALAL("Halal", "https://firebasestorage.googleapis.com/v0/b/digitalmenu-6df05.appspot.com/o/tag_icons%2Fhalal.png?alt=media&token=ce6b9054-bd73-445e-b1bd-919216d007a8"),
     KOSHER("Kosher", "https://firebasestorage.googleapis.com/v0/b/digitalmenu-6df05.appspot.com/o/tag_icons%2FKosher.png?alt=media&token=fbd0f605-207f-4f8a-9947-4ed3321f3bac"),
