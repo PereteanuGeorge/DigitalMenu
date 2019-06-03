@@ -16,6 +16,7 @@ public class App extends Application {
         initServiceRegistry();
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
