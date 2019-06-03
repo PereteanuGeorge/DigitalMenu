@@ -97,7 +97,7 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
 
                 if (qrCodes.size() != 0) {
                     Vibrator vibrator = (Vibrator) activityToShowScanner.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(1000);
+                    vibrator.vibrate(100);
                     value = qrCodes.valueAt(0).displayValue;
                     callback.accept(value);
                 }

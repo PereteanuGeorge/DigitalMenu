@@ -32,6 +32,7 @@ public class OrderBoardFragment extends Fragment {
 
     private LayoutInflater inflater;
     private DisplayableDish dish;
+    int counter = 1;
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -69,18 +70,39 @@ public class OrderBoardFragment extends Fragment {
         TextView currencyText = order.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(dish.getCurrency()));
 
-        TextView portionText = order.findViewById(R.id.number);
-        portionText.setText(String.valueOf(dish.getPortion()));
-
         TextView descriptionText = order.findViewById(R.id.description);
         descriptionText.setText(dish.getDescription());
 
         setOptions(dish.getOptions(), order.findViewById(R.id.options_panel));
-        
+
+        Button increment = order.findViewById(R.id.increment);
+        Button decrement = order.findViewById(R.id.decrement);
+
+        TextView count = order.findViewById(R.id.counter);
+        count.setText(String.valueOf(counter));
+        increment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter++;
+                count.setText(String.valueOf(counter));
+            }
+        });
+        decrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter--;
+                if(counter >= 1) {
+                    count.setText(String.valueOf(counter));
+                } else {
+                    counter = 1;
+                }
+            }
+        });
+
         if (dish.isOrdered()) {
             setDeleteButton(order, (OrderedDish) dish);
         } else {
-            setAddButton(order, new OrderedDish(dish, 1));
+            setAddButton(order, new OrderedDish(dish, counter));
         }
     }
 
@@ -109,7 +131,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete(dish);
+            ORDER.delete(dish,counter);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
         });
@@ -120,7 +142,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
-            ORDER.add(dish);
+            ORDER.add(dish,counter);
             dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();

@@ -13,8 +13,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/dish_board"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
+        android:layout_width="329dp"
+        android:layout_height="432dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -56,8 +56,6 @@
             android:id="@+id/operation_button"
             android:layout_width="87dp"
             android:layout_height="43dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
             android:background="#F44336"
             android:text="Delete"
             android:textColor="#FFFFFF"
@@ -68,7 +66,7 @@
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginBottom="16dp"
             android:text="Price"
             android:textSize="20sp"
@@ -85,27 +83,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/price" />
 
-        <EditText
-            android:id="@+id/number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:ems="1"
-            android:inputType="textPersonName"
-            android:text="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/portion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="72dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="16dp"
             android:text=" Portion"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/number" />
+            app:layout_constraintEnd_toStartOf="@+id/price" />
 
         <ScrollView
             android:id="@+id/scrollView2"
@@ -134,6 +121,38 @@
 
             </LinearLayout>
         </ScrollView>
+
+        <TextView
+            android:id="@+id/counter"
+            android:layout_width="19dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="37dp"
+            android:layout_marginBottom="12dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/decrement"
+            app:layout_constraintStart_toStartOf="@+id/decrement" />
+
+        <Button
+            android:id="@+id/decrement"
+            android:layout_width="33dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:text="-"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/increment"
+            android:layout_width="33dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/portion"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/counter" />
 
     </android.support.constraint.ConstraintLayout>
 
