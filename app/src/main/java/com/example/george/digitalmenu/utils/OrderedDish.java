@@ -1,15 +1,50 @@
 package com.example.george.digitalmenu.utils;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.primitives.Ints.max;
 
+@IgnoreExtraProperties
 public class OrderedDish implements DisplayableDish{
-    private final Map<String, Boolean> options;
-    DisplayableDish dish;
-    Integer number;
-    private boolean ordered = false;
+    private DisplayableDish dish;
+    private Integer number;
+    private Map<String, Boolean> options = new HashMap<>();
+    private Boolean ordered = false;
+
+    @Exclude
+    public DisplayableDish getDish() {
+        return dish;
+    }
+
+    public void setDish(DisplayableDish dish) {
+        this.dish = dish;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public void setOptions(Map<String, Boolean> options) {
+        this.options = options;
+    }
+
+    public void setOrdered(Boolean ordered) {
+        this.ordered = ordered;
+    }
+
+    public OrderedDish() {}
+
+    public OrderedDish(DisplayableDish dish, Integer number, Map<String, Boolean> options, Boolean ordered) {
+        this.dish = dish;
+        this.number = number;
+        this.options = options;
+        this.ordered = ordered;
+    }
 
     public OrderedDish(DisplayableDish dish, Integer number) {
         this.dish = dish;
@@ -17,7 +52,7 @@ public class OrderedDish implements DisplayableDish{
         this.options = dish.getOptions();
     }
 
-    @Override
+    @Exclude @Override
     public List<String> getTags() {
         return null;
     }
@@ -26,12 +61,12 @@ public class OrderedDish implements DisplayableDish{
         return dish.getName();
     }
 
-    @Override
+    @Exclude @Override
     public String getPic_url() {
         return dish.getPic_url();
     }
 
-    @Override
+    @Exclude @Override
     public String getDescription() {
         return dish.getDescription();
     }
@@ -41,12 +76,12 @@ public class OrderedDish implements DisplayableDish{
         return number*dish.getPrice();
     }
 
-    @Override
+   @Override
     public List<String> getCategories() {
         return null;
     }
 
-    @Override
+    @Exclude @Override
     public void setPicture(byte[] picture) {
         dish.setPicture(picture);
     }
@@ -56,17 +91,17 @@ public class OrderedDish implements DisplayableDish{
         return dish.getCurrency();
     }
 
-    @Override
+    @Exclude @Override
     public List<Tag> getEnumTags() {
         return null;
     }
 
-    @Override
+    @Exclude @Override
     public Integer getPortion() {
         return this.number;
     }
 
-    @Override
+    @Exclude @Override
     public boolean isOrdered() {
         return ordered;
     }
@@ -91,6 +126,8 @@ public class OrderedDish implements DisplayableDish{
         number = max(--number, 1);
     }
 
+
+    @Exclude
     public byte[] getPicture() {
         return dish.getPicture();
     }

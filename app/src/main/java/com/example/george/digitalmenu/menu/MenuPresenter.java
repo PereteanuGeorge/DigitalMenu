@@ -30,9 +30,9 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void fetchDishImage(Dish dish, Consumer<Bitmap> callback) {
-        if (!dish.isDownlaoded()) {
+        if (!dish.isDownloaded()) {
             db.downloadDishPicture(dish, callback);
-            dish.setDownloaded();
+            dish.setDownloaded(true);
         }
         callback.accept(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
     }
@@ -66,6 +66,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void cleanOrder() {
         ORDER.clean();
+    }
+
+    @Override
+    public void sendOrder() {
+        db.saveOrder(ORDER);
     }
 
     private void fetchData(String restaurantName) {

@@ -24,6 +24,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
+    private String restaurantName=null;
     public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
 
     private final String TAG = "Firestore";
@@ -34,6 +35,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     public void getRestaurant(final String restaurant, final Consumer<Restaurant> callback) {
+        this.restaurantName = restaurant;
         DocumentReference ref = db.collection("restaurants").document(restaurant);
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
@@ -131,4 +133,16 @@ public class RestaurantFirestore implements RestaurantDatabase {
             });
     }
 
+    @Override
+    public void saveOrder(Order order) {
+        db.collection("restaurantOrders").document(restaurantName)
+                .collection("orders").add(order)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Upload oder successfully");
+                    } else {
+                        Log.d(TAG, "Uploading failed");
+                    }
+                });
+    }
 }

@@ -17,6 +17,8 @@ import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
@@ -31,6 +33,7 @@ public class OrderPageFragment extends Fragment {
     View order;
     View previousView;
     private LayoutInflater inflater;
+    private List<FragmentListener> listeners = new ArrayList<>();
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -62,7 +65,12 @@ public class OrderPageFragment extends Fragment {
     }
 
     private void setConfirmButton() {
-        order.findViewById(R.id.confirm_button).setOnClickListener(v -> Toast.makeText(getActivity(), "Confirmed", Toast.LENGTH_LONG).show());
+        order.findViewById(R.id.confirm_button).setOnClickListener(v -> {
+            for (FragmentListener listener: listeners) {
+                listener.sendOrder();
+            }
+            Toast.makeText(getActivity(), "Confirmed", Toast.LENGTH_LONG).show();
+        });
 
     }
 
@@ -116,4 +124,7 @@ public class OrderPageFragment extends Fragment {
         back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
     }
 
+    public void addListener(FragmentListener listener) {
+        listeners.add(listener);
+    }
 }

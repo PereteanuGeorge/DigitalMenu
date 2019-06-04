@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
@@ -141,6 +142,7 @@ public class OrderBoardFragment extends Fragment {
         if (dish.isOrdered()) {
             getActivity().getFragmentManager().popBackStack();
             OrderPageFragment fragment = new OrderPageFragment();
+            fragment.addListener((FragmentListener) getActivity());
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.order_fragment_container, fragment);
             transaction.addToBackStack(null);

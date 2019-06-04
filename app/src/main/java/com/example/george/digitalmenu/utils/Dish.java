@@ -3,6 +3,9 @@ package com.example.george.digitalmenu.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +13,7 @@ import java.util.Map;
 
 import static com.example.george.digitalmenu.utils.RestaurantFirestore.MAX_DOWNLOAD_SIZE_BYTES;
 
-
+@IgnoreExtraProperties
 public class Dish implements Parcelable, DisplayableDish {
 
     private String name;
@@ -22,7 +25,48 @@ public class Dish implements Parcelable, DisplayableDish {
     private String currency;
     private List<String> options = new ArrayList<>();
     private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
-    private boolean downlaoded = false;
+    private boolean downloaded = false;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isDownloaded() {
+        return downloaded;
+    }
+
+    public void setPic_url(String pic_url) {
+        this.pic_url = pic_url;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = options;
+    }
+
+
+    public void setDownloaded(boolean downloaded) {
+        this.downloaded = downloaded;
+    }
 
     public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {
 
@@ -59,7 +103,7 @@ public class Dish implements Parcelable, DisplayableDish {
         this.currency = parcel.readString();
         parcel.readStringList(this.options);
         picture = parcel.createByteArray();
-        this.downlaoded = parcel.readByte() != 0;
+        this.downloaded = parcel.readByte() != 0;
     }
 
     public Dish(String name, String pic_url, String description, Double price,
@@ -118,7 +162,7 @@ public class Dish implements Parcelable, DisplayableDish {
         return "$";
     }
 
-    @Override
+    @Exclude @Override
     public List<Tag> getEnumTags() {
         List<Tag> etags = new ArrayList<>();
         for (String t : tags) {
@@ -178,14 +222,6 @@ public class Dish implements Parcelable, DisplayableDish {
         dest.writeString(currency);
         dest.writeStringList(options);
         dest.writeByteArray(picture);
-        dest.writeByte((byte) (downlaoded ? 1 : 0));
-    }
-
-    public boolean isDownlaoded() {
-        return downlaoded;
-    }
-
-    public void setDownloaded() {
-        this.downlaoded = true;
+        dest.writeByte((byte) (downloaded ? 1 : 0));
     }
 }

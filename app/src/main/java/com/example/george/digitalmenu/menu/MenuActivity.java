@@ -32,7 +32,7 @@ import java.util.Map;
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 
 /* Responsible for android-OS specific and UI logic */
-public class MenuActivity extends AppCompatActivity implements MenuContract.View {
+public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener {
 
     public static DisplayableDish DISH = new Dish();
 
@@ -62,6 +62,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         final View button = findViewById(R.id.order_button);
         button.setOnClickListener(v -> {
             OrderPageFragment fragment = new OrderPageFragment();
+            fragment.addListener(this);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.order_fragment_container, fragment);
             transaction.addToBackStack(null);
@@ -154,7 +155,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
     }
 
-    private void displayDish(DisplayableDish d, LinearLayout clist) {
+    private void displayDish(Dish d, LinearLayout clist) {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
@@ -173,9 +174,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.picture);
-        presenter.fetchDishImage((Dish) d, bm -> foodImage.setImageBitmap(bm));
+        presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
 
-        displayTags((Dish) d, dishCard.findViewById(R.id.tag_panel));
+        displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
         clist.addView(dishCard);
@@ -202,5 +203,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         tag.setId(View.generateViewId());
         tagPanel.addView(tag);
+    }
+
+    @Override
+    public void sendOrder() {
+        presenter.sendOrder();
     }
 }

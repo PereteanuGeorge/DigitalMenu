@@ -24,6 +24,8 @@ public interface MenuContract {
         void onDishItemClick(Dish d);
 
         void cleanOrder();
+
+        void sendOrder();
     }
 
     interface View {

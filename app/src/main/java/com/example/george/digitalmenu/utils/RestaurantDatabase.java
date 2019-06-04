@@ -13,4 +13,6 @@ public interface RestaurantDatabase {
     void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
 
     void init(Runnable success, Runnable failure);
+
+    void saveOrder(Order order);
 }
