@@ -138,12 +138,14 @@ public class OrderBoardFragment extends Fragment {
 
     private void reFreshOrderPage() {
         getActivity().getFragmentManager().popBackStack();
-        getActivity().getFragmentManager().popBackStack();
-        OrderPageFragment fragment = new OrderPageFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.order_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        if (dish.isOrdered()) {
+            getActivity().getFragmentManager().popBackStack();
+            OrderPageFragment fragment = new OrderPageFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.order_fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     private void setAddButton(View view, OrderedDish dish) {
@@ -156,8 +158,6 @@ public class OrderBoardFragment extends Fragment {
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
         });
-
-
     }
 
 
