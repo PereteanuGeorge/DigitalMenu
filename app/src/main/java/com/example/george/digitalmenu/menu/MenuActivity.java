@@ -3,6 +3,7 @@ package com.example.george.digitalmenu.menu;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.example.george.digitalmenu.utils.ServiceRegistry;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private ConstraintLayout rootLayout;
 
     MenuContract.Presenter presenter;
+    private Map<String, Boolean> open = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +119,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     private void displayCategory(String c, List<Dish> dishes) {
         if (dishes == null) dishes = new ArrayList<>();
+        open.put(c, false);
+
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
         LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
@@ -125,13 +130,23 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         TextView infoText = clist.findViewById(R.id.category_text);
         infoText.setText(c);//
 
-        displayDishes(dishes, clist);
+        displayDishes(dishes, clist, c);
     }
 
-    private void displayDishes(List<Dish> dishes, LinearLayout clist) {
-        for (Dish d: dishes) {
-            displayDish(d, clist);
-        }
+
+    private void displayDishes(List<Dish> dishes, LinearLayout clist, String c) {
+        clist.setOnClickListener(v -> {
+            if (!open.get(c)) {
+                for (Dish d : dishes) {
+                    displayDish(d, clist);
+                }
+                Toast.makeText(getApplicationContext(), "Opened a category", Toast.LENGTH_LONG);
+            } else {
+                clist.removeViews(1, clist.getChildCount()-1);
+                Toast.makeText(getApplicationContext(), "Closed a category", Toast.LENGTH_LONG);
+            }
+            open.put(c, !open.get(c));
+        });
     }
 
     private void displayThemePicture(Restaurant r) {
