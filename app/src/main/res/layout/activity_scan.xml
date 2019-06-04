@@ -4,36 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#AB000000"
-    tools:context=".main.MainActivity">
+    android:background="#00FFFFFF"
+    tools:context=".main.MainActivity"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:id="@+id/cameraContainer">
+
+    <SurfaceView
+        android:id="@+id/camerapreview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/cameraContainer"
+        app:layout_constraintEnd_toEndOf="@id/cameraContainer"
+        app:layout_constraintStart_toStartOf="@id/cameraContainer"
+        app:layout_constraintTop_toTopOf="@id/cameraContainer" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:src="@drawable/rectangle"
+        app:layout_constraintBottom_toBottomOf="@id/cameraContainer"
+        app:layout_constraintEnd_toEndOf="@id/cameraContainer"
+        app:layout_constraintStart_toStartOf="@id/cameraContainer"
+        app:layout_constraintTop_toTopOf="@id/cameraContainer" />
 
     <TextView
         android:id="@+id/notification"
         android:layout_width="wrap_content"
         android:layout_height="21dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Please scan the QR code on the table"
-        android:textColor="#ADF7F3F3"
+        android:textColor="#FFFFFF"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/camerapreview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <SurfaceView
-        android:id="@+id/camerapreview"
-        android:layout_width="225dp"
-        android:layout_height="227dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintEnd_toEndOf="@id/cameraContainer"
+        app:layout_constraintStart_toStartOf="@id/cameraContainer"
+        app:layout_constraintTop_toTopOf="@+id/camerapreview" />
 
 </android.support.constraint.ConstraintLayout>

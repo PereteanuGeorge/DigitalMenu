@@ -55,8 +55,10 @@
 
         <Button
             android:id="@+id/operation_button"
-            android:layout_width="87dp"
-            android:layout_height="43dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="#F44336"
             android:text="Delete"
             android:textColor="#FFFFFF"
@@ -114,11 +116,12 @@
 
         <TextView
             android:id="@+id/counter"
-            android:layout_width="19dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="37dp"
+            android:layout_width="22dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="33dp"
             android:layout_marginBottom="12dp"
             android:text="TextView"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/decrement"
             app:layout_constraintStart_toStartOf="@+id/decrement" />

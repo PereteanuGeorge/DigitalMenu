@@ -77,15 +77,36 @@ public class OrderBoardFragment extends Fragment {
 
         setOptions(dish.getOptions(), order.findViewById(R.id.options_panel));
 
+        Button increment = order.findViewById(R.id.increment);
+        Button decrement = order.findViewById(R.id.decrement);
+
+        TextView count = order.findViewById(R.id.counter);
+        count.setText(String.valueOf(counter));
+        increment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter++;
+                count.setText(String.valueOf(counter));
+            }
+        });
+        decrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter--;
+                dish.decrement();
+                if(counter >= 1) {
+                    count.setText(String.valueOf(counter));
+                } else {
+                    counter = 1;
+                }
+            }
+        });
 
         if (dish.isOrdered()) {
             setDeleteButton(order, (OrderedDish) dish);
         } else {
-            dish = new OrderedDish(dish, 1);
-            setAddButton(order, (OrderedDish) dish);
+            setAddButton(order, new OrderedDish(dish, counter));
         }
-
-        setCounter(order, dish);
     }
 
     private void setCounter(View order, DisplayableDish dish) {
@@ -130,7 +151,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete(dish);
+            ORDER.delete(dish,counter);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             reFreshOrderPage();
         });
@@ -153,6 +174,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
+            dish.setNumber(counter);
             ORDER.add(dish,counter);
             dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();

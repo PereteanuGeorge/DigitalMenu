@@ -102,4 +102,8 @@ public class OrderedDish implements DisplayableDish{
     public void setIsOrdered(boolean b) {
         this.ordered = b;
     }
+
+    public void setNumber(int nr) {
+        this.number = nr;
+    }
 }

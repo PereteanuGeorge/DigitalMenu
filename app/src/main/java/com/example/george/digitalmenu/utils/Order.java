@@ -7,9 +7,7 @@ public class Order {
     private List<OrderedDish> dishes = new ArrayList<>();
 
     public void add(OrderedDish dish, int numberOfPortions) {
-        for(int i = 0; i < numberOfPortions; i++) {
-            dishes.add(dish);
-        }
+        dishes.add(dish);
     }
 
     public void clean() {
@@ -22,14 +20,16 @@ public class Order {
 
     public Double getTotalPrice() {
         Double price = 0.0;
-        for (OrderedDish dish: dishes) {
+        for (OrderedDish dish : dishes) {
             price += dish.getPrice();
         }
         return roundDouble(price, 2);
     }
 
-    public void delete(OrderedDish dish) {
-        dishes.remove(dish);
+    public void delete(OrderedDish dish, int counter) {
+        for (int i = 0; i < counter; i++) {
+            dish.decrement();
+        }
     }
 
     public static double roundDouble(double value, int places) {
