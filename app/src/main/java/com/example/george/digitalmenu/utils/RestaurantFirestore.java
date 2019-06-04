@@ -18,15 +18,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 // Adapter implementation for firebase solution.
 public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
+    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024 * 1024;
 
     private final String TAG = "Firestore";
+
+    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -52,22 +58,20 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     public void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback) {
-        StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
-        ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                dish.setPicture(bytes);
-                Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
+        for (int i = 0; i < NUMBER_OF_CORES; i++) {
+            executorService.submit((Callable<Object>) () -> {
+                StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
+                ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
 
-                callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-            }
+                    dish.setPicture(bytes);
+                    Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
 
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Download picture for " + dish.getName() + " falied", e);
-            }
-        });
+                    callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + dish.getName() + " falied", e));
+                return dish;
+            });
+        }
     }
 
     @Override
@@ -114,21 +118,21 @@ public class RestaurantFirestore implements RestaurantDatabase {
     public void init(Runnable onSuccess, Runnable onFailure) {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously()
-            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "signInAnonymously:success");
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInAnonymously:success");
 //                            FirebaseUser user = mAuth.getCurrentUser();
-                        onSuccess.run();
+                            onSuccess.run();
 
-                    } else {
-                        Log.d(TAG, "signInAnonymously:failure" + task.getException());
-                        onFailure.run();
+                        } else {
+                            Log.d(TAG, "signInAnonymously:failure" + task.getException());
+                            onFailure.run();
 
+                        }
                     }
-                }
-            });
+                });
     }
 
 }
