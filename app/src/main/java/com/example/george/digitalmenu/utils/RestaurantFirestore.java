@@ -139,7 +139,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     @Override
     public void getNumberOfTables(String restaurantName, Consumer<Integer> callback) {
 
-        DocumentReference ref = db.collection("restaurantOwners").document(restaurantName);
+        DocumentReference ref = db.collection("restaurants").document(restaurantName);
 
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
@@ -158,7 +158,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void listenForOrders(String restaurantName, Consumer<Integer> callback) {
-        final DocumentReference docRef = db.collection("restaurantOwners").document(restaurantName);
+        final DocumentReference docRef = db.collection("restaurantOrders").document(restaurantName);
         docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,

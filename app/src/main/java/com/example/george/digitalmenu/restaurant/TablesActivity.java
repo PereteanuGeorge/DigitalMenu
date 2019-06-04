@@ -46,7 +46,7 @@ public class TablesActivity extends AppCompatActivity {
 
     private void displayTables(Integer numberOfTables) {
 
-        for (int i = 0; i < numberOfTables; i++) {
+        for (int i = 1; i <= numberOfTables; i++) {
             displayTable(i);
         }
 
