@@ -28,10 +28,8 @@ public class Order {
         return roundDouble(price, 2);
     }
 
-    public void delete(OrderedDish dish, int counter) {
-        for(int i = 0; i < counter; i++) {
-            dishes.remove(dish);
-        }
+    public void delete(OrderedDish dish) {
+        dishes.remove(dish);
     }
 
     public static double roundDouble(double value, int places) {

@@ -2,6 +2,7 @@ package com.example.george.digitalmenu.menu;
 
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -129,10 +130,20 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete(dish,counter);
+            ORDER.delete(dish);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-            getActivity().getFragmentManager().popBackStack();
+            reFreshOrderPage();
         });
+    }
+
+    private void reFreshOrderPage() {
+        getActivity().getFragmentManager().popBackStack();
+        getActivity().getFragmentManager().popBackStack();
+        OrderPageFragment fragment = new OrderPageFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.order_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void setAddButton(View view, OrderedDish dish) {
@@ -152,7 +163,7 @@ public class OrderBoardFragment extends Fragment {
 
     private void setGoBack(View dish_info) {
         View back = dish_info.findViewById(R.id.dish_info_back);
-        back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
+        back.setOnClickListener(v -> reFreshOrderPage());
 
         View card = dish_info.findViewById(R.id.dish_board);
         card.setOnClickListener(v -> {});
