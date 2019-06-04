@@ -1,6 +1,7 @@
 package com.example.george.digitalmenu.menu;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.util.Consumer;
 
 import com.example.george.digitalmenu.utils.Dish;
@@ -28,8 +29,12 @@ public class MenuPresenter implements MenuContract.Presenter {
 
 
     @Override
-    public void fetchDishImage(Dish d, Consumer<Bitmap> callback) {
-        db.downloadDishPicture(d, callback);
+    public void fetchDishImage(Dish dish, Consumer<Bitmap> callback) {
+        if (!dish.isDownlaoded()) {
+            db.downloadDishPicture(dish, callback);
+            dish.setDownloaded();
+        }
+        callback.accept(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
     }
 
     @Override

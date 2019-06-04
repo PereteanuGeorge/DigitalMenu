@@ -22,6 +22,7 @@ public class Dish implements Parcelable, DisplayableDish {
     private String currency;
     private List<String> options = new ArrayList<>();
     private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
+    private boolean downlaoded = false;
 
     public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {
 
@@ -35,6 +36,7 @@ public class Dish implements Parcelable, DisplayableDish {
             return new Dish[size];
         }
     };
+
 
     /*
     private List<String> sides; // ? create side class
@@ -57,6 +59,7 @@ public class Dish implements Parcelable, DisplayableDish {
         this.currency = parcel.readString();
         parcel.readStringList(this.options);
         picture = parcel.createByteArray();
+        this.downlaoded = parcel.readByte() != 0;
     }
 
     public Dish(String name, String pic_url, String description, Double price,
@@ -175,5 +178,14 @@ public class Dish implements Parcelable, DisplayableDish {
         dest.writeString(currency);
         dest.writeStringList(options);
         dest.writeByteArray(picture);
+        dest.writeByte((byte) (downlaoded ? 1 : 0));
+    }
+
+    public boolean isDownlaoded() {
+        return downlaoded;
+    }
+
+    public void setDownloaded() {
+        this.downlaoded = true;
     }
 }
