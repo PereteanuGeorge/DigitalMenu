@@ -47,8 +47,13 @@ public class OrderPageFragment extends Fragment {
         setTotalPrice();
         setGoBackButton();
         setConfirmButton();
+        setBackgroundClick();
         return order;
 
+    }
+
+    private void setBackgroundClick() {
+        order.setOnClickListener(v -> {});
     }
 
     private void setTotalPrice() {
@@ -82,19 +87,9 @@ public class OrderPageFragment extends Fragment {
         TextView priceText = orderCard.findViewById(R.id.price);
         priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(Order.roundDouble(dish.getPrice(),2))));
 
-//        TextView currencyText = orderCard.findViewById(R.id.currency);
-//        currencyText.setText();
-
-//        TextView numberText = orderCard.findViewById(R.id.portion_number);
-//        numberText.setText(String.valueOf(dish.getNumber()));
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
         numberText.setText(String.valueOf(dish.getPortion()).concat("X"));
-
-//        ImageView picture = orderCard.findViewById(R.id.picture);
-//        picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
-
-//        displayOptions(dish.getOptions(), orderCard.findViewById(R.id.options_panel));
 
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);
@@ -111,20 +106,6 @@ public class OrderPageFragment extends Fragment {
 
     }
 
-    private void displayOptions(Map<String, Boolean> options, LinearLayout options_panel) {
-        for (String s: options.keySet()) {
-            if (options.get(s)) {
-                displayOption(s, options_panel);
-            }
-        }
-    }
-
-    private void displayOption(String option, LinearLayout options_panel) {
-        CheckedTextView optionText = (CheckedTextView) inflater.inflate(R.layout.option_text, options_panel, false);
-        optionText.setText(option);
-        optionText.setChecked(true);
-        options_panel.addView(optionText);
-    }
 
     private void addItem(ConstraintLayout orderCard, LinearLayout orderPanel) {
         orderPanel.addView(orderCard);
