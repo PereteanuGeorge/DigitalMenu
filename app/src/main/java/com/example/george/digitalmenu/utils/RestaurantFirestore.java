@@ -3,8 +3,10 @@ package com.example.george.digitalmenu.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -14,7 +16,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -24,7 +28,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
+    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024 * 1024;
 
     private final String TAG = "Firestore";
 
@@ -114,21 +118,63 @@ public class RestaurantFirestore implements RestaurantDatabase {
     public void init(Runnable onSuccess, Runnable onFailure) {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously()
-            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "signInAnonymously:success");
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInAnonymously:success");
 //                            FirebaseUser user = mAuth.getCurrentUser();
-                        onSuccess.run();
+                            onSuccess.run();
 
-                    } else {
-                        Log.d(TAG, "signInAnonymously:failure" + task.getException());
-                        onFailure.run();
+                        } else {
+                            Log.d(TAG, "signInAnonymously:failure" + task.getException());
+                            onFailure.run();
 
+                        }
                     }
+                });
+    }
+
+    @Override
+    public void getNumberOfTables(String restaurantName, Consumer<Integer> callback) {
+
+        DocumentReference ref = db.collection("restaurantOwners").document(restaurantName);
+
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Log.d(TAG, "Cached document data " + restaurantName + " " + document.get("numberOfTables"));
+                    callback.accept(((Long) document.get("numberOfTables")).intValue());
+                } else {
+                    Log.d(TAG, "Cached get failed ", task.getException());
                 }
-            });
+            }
+        });
+    }
+
+    @Override
+    public void listenForOrders(String restaurantName, Consumer<Integer> callback) {
+        final DocumentReference docRef = db.collection("restaurantOwners").document(restaurantName);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    callback.accept(10);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, "Current data: " + snapshot.getData());
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
     }
 
 }

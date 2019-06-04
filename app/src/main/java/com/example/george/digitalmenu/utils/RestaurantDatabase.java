@@ -3,6 +3,7 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
+import android.widget.LinearLayout;
 
 // Adapter interface for database.
 public interface RestaurantDatabase {
@@ -13,4 +14,8 @@ public interface RestaurantDatabase {
     void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
 
     void init(Runnable success, Runnable failure);
+
+    void getNumberOfTables(String restaurantName, Consumer<Integer> callback);
+
+    void listenForOrders(String restaurantName, Consumer<Integer> callback);
 }

@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".restaurant.LoginActivity"></activity>
+        <activity android:name=".restaurant.TablesActivity"></activity>
+        <activity android:name=".restaurant.LoginActivity" />
         <activity android:name=".restaurant.EntryActivity" />
         <activity android:name=".main.MainActivity">
             <intent-filter>
