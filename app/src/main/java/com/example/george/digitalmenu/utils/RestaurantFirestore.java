@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -177,4 +178,58 @@ public class RestaurantFirestore implements RestaurantDatabase {
         });
     }
 
+    @Override
+    public void signInWithEmailAndPassword(String email, String password,
+                                           Runnable success, Runnable failure) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() != null) {
+            success.run();
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        success.run();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        failure.run();
+                    }
+
+                    // ...
+                }
+            });
+
+    }
+
+    @Override
+    public void getSignedInUserRestaurantName(Consumer<String> success, Runnable failure) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            failure.run();
+        }
+
+        DocumentReference ref = db.collection("restaurantNames").document(user.getUid());
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Log.d(TAG, "Cached document data " + user.getUid() + " " + document.getData());
+                    Restaurant restaurant = document.toObject(Restaurant.class);
+                    success.accept((String) document.get("name"));
+                } else {
+                    Log.d(TAG, "Cached get failed ", task.getException());
+                    failure.run();
+                }
+            }
+        });
+    }
 }

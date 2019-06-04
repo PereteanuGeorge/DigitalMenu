@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu.restaurant;
 
+import android.content.Intent;
 import android.support.v4.util.Consumer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,12 +31,8 @@ public class TablesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tables);
 
-//        Intent intent = getIntent();
-//        String restaurantName = intent.getStringExtra("LoginActivity");
-
-        String restaurantName = "bestmangal";
-
-        this.restaurantName = restaurantName;
+        Intent intent = getIntent();
+        this.restaurantName = intent.getStringExtra(LoginActivity.TABLES_INTENT_KEY);
 
         db.getRestaurant(restaurantName, this::fetchThemePicture);
 

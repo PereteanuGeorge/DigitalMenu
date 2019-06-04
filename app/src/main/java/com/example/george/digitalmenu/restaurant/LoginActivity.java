@@ -1,72 +1,91 @@
 package com.example.george.digitalmenu.restaurant;
 
-import android.support.annotation.NonNull;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.george.digitalmenu.utils.ServiceRegistry;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
-    /* Dependency to be injected. */
-    private FirebaseAuth mAuth;
+    LoginContract.Presenter presenter;
 
     private static final String TAG = "LoginActivity";
+    public static final String TABLES_INTENT_KEY = "LoginActivity";
+    private TextInputEditText emailEditText;
+    private TextInputEditText passwordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+
+        presenter = ServiceRegistry.getInstance().getService(LoginContract.Presenter.class);
+        presenter.registerView(this);
+
         findViewById(R.id.confirmButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onConfirmInputClicked();
+                presenter.onConfirmInputClicked();
             }
         });
-
-        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
     }
 
-    private void onConfirmInputClicked() {
-        TextInputEditText emailEditText = findViewById(R.id.emailEditText);
-        String email = emailEditText.getText().toString().trim();
-        TextInputEditText passwordEditText = findViewById(R.id.passwordEditText);
-        String password = passwordEditText.getText().toString().trim();
+    @Override
+    public void switchToTablesActivity(String restaurantName) {
+        Log.d(TAG, restaurantName);
+        Intent intent = new Intent(this, TablesActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        /* Dynamically fetch restaurant name. */
+        intent.putExtra(TABLES_INTENT_KEY, restaurantName);
+        startActivity(intent);
+    }
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
+    @Override
+    public String getEmailInput() {
+        return emailEditText.getText().toString().trim();
+    }
 
-                        // ...
-                    }
-                });
+    @Override
+    public String getPasswordInput() {
+        return passwordEditText.getText().toString().trim();
+    }
+
+    @Override
+    public void reportSignInError() {
+        passwordEditText.getText().clear();
+        new AlertDialog.Builder(LoginActivity.this)
+            .setTitle("Log In Failed")
+            .setMessage("Please check your email and password.")
+            .show();
+    }
+
+    @Override
+    public void promptPasswordInputIsEmpty() {
+        passwordEditText.requestFocus();
+    }
+
+    @Override
+    public void promptEmailInputIsEmpty() {
+        emailEditText.requestFocus();
+    }
+
+    @Override
+    public void promptEmailInputNotValid() {
+        emailEditText.requestFocus();
     }
 }

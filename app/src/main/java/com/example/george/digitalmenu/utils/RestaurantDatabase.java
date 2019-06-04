@@ -13,6 +13,10 @@ public interface RestaurantDatabase {
     void downloadThemePicture(Restaurant restaurant, Consumer<Bitmap> callback);
     void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
 
+    void signInWithEmailAndPassword(String email, String password, Runnable success, Runnable failure);
+
+    void getSignedInUserRestaurantName(Consumer<String> success, Runnable failure);
+
     void init(Runnable success, Runnable failure);
 
     void getNumberOfTables(String restaurantName, Consumer<Integer> callback);
