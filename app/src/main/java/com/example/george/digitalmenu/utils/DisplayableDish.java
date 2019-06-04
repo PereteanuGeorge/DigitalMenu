@@ -31,4 +31,8 @@ public interface DisplayableDish {
     Map<String, Boolean> getOptions();
 
     void put(String text, boolean checked);
+
+    void increment();
+
+    void decrement();
 }

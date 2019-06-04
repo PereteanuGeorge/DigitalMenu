@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.DisplayableDish;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;
@@ -65,7 +66,7 @@ public class OrderBoardFragment extends Fragment {
         nameText.setText(dish.getName());
 
         TextView priceText = order.findViewById(R.id.price);
-        priceText.setText(String.valueOf(dish.getPrice()));
+        priceText.setText(String.valueOf(Order.roundDouble(dish.getPrice(),2)));
 
         TextView currencyText = order.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(dish.getCurrency()));
@@ -75,35 +76,32 @@ public class OrderBoardFragment extends Fragment {
 
         setOptions(dish.getOptions(), order.findViewById(R.id.options_panel));
 
-        Button increment = order.findViewById(R.id.increment);
-        Button decrement = order.findViewById(R.id.decrement);
-
-        TextView count = order.findViewById(R.id.counter);
-        count.setText(String.valueOf(counter));
-        increment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter++;
-                count.setText(String.valueOf(counter));
-            }
-        });
-        decrement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter--;
-                if(counter >= 1) {
-                    count.setText(String.valueOf(counter));
-                } else {
-                    counter = 1;
-                }
-            }
-        });
 
         if (dish.isOrdered()) {
             setDeleteButton(order, (OrderedDish) dish);
         } else {
-            setAddButton(order, new OrderedDish(dish, counter));
+            dish = new OrderedDish(dish, 1);
+            setAddButton(order, (OrderedDish) dish);
         }
+
+        setCounter(order, dish);
+    }
+
+    private void setCounter(View order, DisplayableDish dish) {
+        Button increment = order.findViewById(R.id.increment);
+        Button decrement = order.findViewById(R.id.decrement);
+
+        TextView count = order.findViewById(R.id.counter);
+        count.setText(String.valueOf(dish.getPortion()));
+
+        increment.setOnClickListener(view -> {
+            dish.increment();
+            count.setText(String.valueOf(dish.getPortion()));
+        });
+        decrement.setOnClickListener(view -> {
+            dish.decrement();
+            count.setText(String.valueOf(dish.getPortion()));
+        });
     }
 
     private void setOptions(Map<String, Boolean> options, LinearLayout options_panel) {

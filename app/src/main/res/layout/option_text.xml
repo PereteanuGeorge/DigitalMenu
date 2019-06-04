@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-    android:text="CheckedTextView"
     android:checked="false"
+    android:text="CheckedTextView"
+    android:textColor="#9A000000"
     tools:layout_editor_absoluteX="94dp"
-    tools:layout_editor_absoluteY="164dp"
-    />
+    tools:layout_editor_absoluteY="164dp" />

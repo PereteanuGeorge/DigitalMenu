@@ -3,6 +3,8 @@ package com.example.george.digitalmenu.utils;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.primitives.Ints.max;
+
 public class OrderedDish implements DisplayableDish{
     private final Map<String, Boolean> options;
     DisplayableDish dish;
@@ -77,6 +79,16 @@ public class OrderedDish implements DisplayableDish{
     @Override
     public void put(String text, boolean checked) {
         options.put(text, checked);
+    }
+
+    @Override
+    public void increment() {
+        number++;
+    }
+
+    @Override
+    public void decrement() {
+        number = max(--number, 1);
     }
 
     public byte[] getPicture() {

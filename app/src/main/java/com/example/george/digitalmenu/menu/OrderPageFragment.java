@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;
@@ -77,8 +78,9 @@ public class OrderPageFragment extends Fragment {
         TextView nameText = orderCard.findViewById(R.id.name);
         nameText.setText(dish.getName());
 
+
         TextView priceText = orderCard.findViewById(R.id.price);
-        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(dish.getPrice())));
+        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(Order.roundDouble(dish.getPrice(),2))));
 
 //        TextView currencyText = orderCard.findViewById(R.id.currency);
 //        currencyText.setText();
@@ -87,7 +89,7 @@ public class OrderPageFragment extends Fragment {
 //        numberText.setText(String.valueOf(dish.getNumber()));
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
-        numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
+        numberText.setText(String.valueOf(dish.getPortion()).concat("X"));
 
 //        ImageView picture = orderCard.findViewById(R.id.picture);
 //        picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));

@@ -149,6 +149,16 @@ public class Dish implements Parcelable, DisplayableDish {
     }
 
     @Override
+    public void increment() {
+
+    }
+
+    @Override
+    public void decrement() {
+
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
