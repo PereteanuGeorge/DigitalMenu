@@ -9,4 +9,11 @@ public class Utils {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+
+    public static String truncText(String text, int length) {
+        if (text.length() < length) {
+            return text;
+        }
+        return text.substring(0, length-1) + "...";
+    }
 }

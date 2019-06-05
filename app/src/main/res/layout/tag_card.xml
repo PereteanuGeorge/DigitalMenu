@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tag_card"
-    android:layout_width="25dp"
-    android:layout_height="25dp"
+    android:layout_width="20dp"
+    android:layout_height="20dp"
     tools:layout_editor_absoluteX="69dp"
     tools:layout_editor_absoluteY="157dp">
 
     <ImageView
         android:id="@+id/tag_icon"
-        android:layout_width="25dp"
+        android:layout_width="20dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

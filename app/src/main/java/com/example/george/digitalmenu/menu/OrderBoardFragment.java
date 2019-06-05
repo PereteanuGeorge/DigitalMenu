@@ -1,6 +1,5 @@
 package com.example.george.digitalmenu.menu;
 
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.BitmapFactory;

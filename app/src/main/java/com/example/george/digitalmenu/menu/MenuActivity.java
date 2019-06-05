@@ -21,6 +21,8 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 import com.example.george.digitalmenu.utils.Tag;
+import com.example.george.digitalmenu.utils.Utils;
+import com.google.api.Distribution;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,35 +119,32 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     private void displayCategory(String c, List<Dish> dishes) {
-        if (dishes == null) dishes = new ArrayList<>();
         open.put(c, false);
 
         LayoutInflater inflater = getLayoutInflater();
+        LinearLayout categoryPanel = rootLayout.findViewById(R.id.category_panel);
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
-        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
-        menuPanel.addView(clist);
-        clist.setId(View.generateViewId());
+        ConstraintLayout categoryCard = (ConstraintLayout) inflater.inflate(R.layout.category_list, categoryPanel, false);
+        categoryPanel.addView(categoryCard);
+        categoryCard.setId(View.generateViewId());
 
-        TextView infoText = clist.findViewById(R.id.category_text);
-        infoText.setText(c);//
+        ((TextView) categoryCard.findViewById(R.id.category_text)).setText(c);
 
-        displayDishes(dishes, clist, c);
+        categoryCard.setOnClickListener(v -> {
+            menuPanel.removeAllViews();
+            displayDishes(dishes, menuPanel, c);
+            Toast.makeText(getApplicationContext(), c,  Toast.LENGTH_LONG);
+
+        });
     }
 
 
-    private void displayDishes(List<Dish> dishes, LinearLayout clist, String c) {
-        clist.setOnClickListener(v -> {
-            if (!open.get(c)) {
-                for (Dish d : dishes) {
-                    displayDish(d, clist);
-                }
-                Toast.makeText(getApplicationContext(), "Opened a category", Toast.LENGTH_LONG);
-            } else {
-                clist.removeViews(1, clist.getChildCount()-1);
-                Toast.makeText(getApplicationContext(), "Closed a category", Toast.LENGTH_LONG);
-            }
-            open.put(c, !open.get(c));
-        });
+
+    private void displayDishes(List<Dish> dishes, LinearLayout menuPanel, String c) {
+        if (dishes == null) return;
+        for (Dish d : dishes) {
+            displayDish(d, menuPanel);
+        }
     }
 
     private void displayThemePicture(Restaurant r) {
@@ -160,7 +159,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dish_card, clist, false);
 
         TextView infoText = dishCard.findViewById(R.id.description);
-        infoText.setText(d.getDescription());
+        infoText.setText(Utils.truncText(d.getDescription(), 50));
 
         TextView nameText = dishCard.findViewById(R.id.name);
         nameText.setText(d.getName());
