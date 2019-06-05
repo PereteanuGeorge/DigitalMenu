@@ -82,25 +82,8 @@ public class OrderBoardFragment extends Fragment {
 
         TextView count = order.findViewById(R.id.counter);
         count.setText(String.valueOf(counter));
-        increment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter++;
-                count.setText(String.valueOf(counter));
-            }
-        });
-        decrement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter--;
-                dish.decrement();
-                if(counter >= 1) {
-                    count.setText(String.valueOf(counter));
-                } else {
-                    counter = 1;
-                }
-            }
-        });
+
+        setNumberOfPortions(dish, increment, decrement, count);
 
         if (dish.isOrdered()) {
             setDeleteButton(order, (OrderedDish) dish);
@@ -109,20 +92,19 @@ public class OrderBoardFragment extends Fragment {
         }
     }
 
-    private void setCounter(View order, DisplayableDish dish) {
-        Button increment = order.findViewById(R.id.increment);
-        Button decrement = order.findViewById(R.id.decrement);
-
-        TextView count = order.findViewById(R.id.counter);
-        count.setText(String.valueOf(dish.getPortion()));
-
+    private void setNumberOfPortions(DisplayableDish dish, Button increment, Button decrement, TextView count) {
         increment.setOnClickListener(view -> {
-            dish.increment();
-            count.setText(String.valueOf(dish.getPortion()));
+            counter++;
+            count.setText(String.valueOf(counter));
         });
         decrement.setOnClickListener(view -> {
+            counter--;
             dish.decrement();
-            count.setText(String.valueOf(dish.getPortion()));
+            if(counter >= 1) {
+                count.setText(String.valueOf(counter));
+            } else {
+                counter = 1;
+            }
         });
     }
 

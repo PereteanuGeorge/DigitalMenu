@@ -5,9 +5,12 @@
     android:id="@+id/menu_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dish_card_border"
+    android:background="@drawable/rectangle_shape"
     tools:layout_editor_absoluteX="16dp"
-    tools:layout_editor_absoluteY="296dp">
+    android:layout_marginLeft="1dp"
+    android:layout_marginRight="1dp"
+    tools:layout_editor_absoluteY="296dp"
+    android:layout_marginBottom="1dp">
 
     <TextView
         android:id="@+id/name"
@@ -17,6 +20,7 @@
         android:layout_marginBottom="16dp"
         android:text="Bacon Double Cheeseburger"
         android:textSize="16sp"
+        android:textColor="@color/colorBlack"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/price"
@@ -32,6 +36,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:text="XX"
+        android:textColor="@color/colorBlack"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,10 +51,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="$1.99"
+        android:textColor="@color/colorBlack"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -27,8 +27,12 @@ public class Order {
     }
 
     public void delete(OrderedDish dish, int counter) {
-        for (int i = 0; i < counter; i++) {
-            dish.decrement();
+        if(dish.getNumber() <= counter) {
+            dishes.remove(dish);
+        } else {
+            for (int i = 0; i < counter; i++) {
+                dish.decrement();
+            }
         }
     }
 

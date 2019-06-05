@@ -26,7 +26,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,8 +36,8 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="21dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -54,8 +54,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout6"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -71,6 +71,8 @@
             android:layout_marginTop="50dp"
             android:layout_marginBottom="50dp"
             android:text="Send Order"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -79,9 +81,11 @@
             android:id="@+id/total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="60dp"
-            android:text="Total $16.00"
+            android:layout_marginEnd="36dp"
+            android:layout_marginBottom="35dp"
+            android:text="16.00"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold"
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -90,13 +94,16 @@
             android:id="@+id/totalCurrency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="176dp"
-            android:layout_marginBottom="60dp"
-            app:layout_constraintStart_toEndOf="@id/total_price"
+            android:layout_marginEnd="188dp"
+            android:layout_marginBottom="35dp"
             android:text="£"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack"
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.422"
+            app:layout_constraintStart_toEndOf="@id/total_price" />
 
     </android.support.constraint.ConstraintLayout>
 
