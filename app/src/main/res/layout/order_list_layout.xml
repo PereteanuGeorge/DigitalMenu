@@ -75,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/order_card">
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/name1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -88,18 +88,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/picture"
+            android:id="@+id/picture1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name1"
             tools:layout_editor_absoluteY="47dp"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/price1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -108,10 +109,10 @@
             android:text="$4.00"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture" />
+            app:layout_constraintTop_toBottomOf="@+id/picture1" />
 
         <TextView
-            android:id="@+id/portion_number"
+            android:id="@+id/portion_number1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -120,10 +121,10 @@
             android:layout_marginBottom="8dp"
             android:text="2 portions"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/price"
+            app:layout_constraintEnd_toStartOf="@+id/price1"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture"
+            app:layout_constraintTop_toBottomOf="@+id/picture1"
             app:layout_constraintVertical_bias="0.461" />
 
     </android.support.constraint.ConstraintLayout>
@@ -141,7 +142,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
         app:layout_constraintVertical_bias="0.075">
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/name2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -154,18 +155,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/picture"
+            android:id="@+id/picture2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name2"
             tools:layout_editor_absoluteY="47dp"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/price2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -174,10 +176,10 @@
             android:text="$4.00"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture" />
+            app:layout_constraintTop_toBottomOf="@+id/picture2" />
 
         <TextView
-            android:id="@+id/portion_number"
+            android:id="@+id/portion_number2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -186,10 +188,10 @@
             android:layout_marginBottom="8dp"
             android:text="2 portions"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/price"
+            app:layout_constraintEnd_toStartOf="@+id/price2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture"
+            app:layout_constraintTop_toBottomOf="@+id/picture2"
             app:layout_constraintVertical_bias="0.461" />
 
     </android.support.constraint.ConstraintLayout>
@@ -203,7 +205,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView">
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/name3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -216,7 +218,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/picture"
+            android:id="@+id/picture3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -224,11 +226,11 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name3"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/price3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -237,10 +239,10 @@
             android:text="$4.00"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture" />
+            app:layout_constraintTop_toBottomOf="@+id/picture3" />
 
         <TextView
-            android:id="@+id/portion_number"
+            android:id="@+id/portion_number3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -249,10 +251,10 @@
             android:layout_marginBottom="8dp"
             android:text="2 portions"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/price"
+            app:layout_constraintEnd_toStartOf="@+id/price3"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/picture"
+            app:layout_constraintTop_toBottomOf="@+id/picture3"
             app:layout_constraintVertical_bias="0.461" />
 
     </android.support.constraint.ConstraintLayout>
