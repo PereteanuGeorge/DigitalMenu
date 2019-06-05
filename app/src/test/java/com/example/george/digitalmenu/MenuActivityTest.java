@@ -61,7 +61,7 @@ public class MenuActivityTest {
             "testTelephone",
             "testWebsite",
             Arrays.asList(testDish),
-            "testPicUrl"
+            "testPicUrl",5
     );
 
     @Before
