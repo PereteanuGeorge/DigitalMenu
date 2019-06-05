@@ -22,11 +22,11 @@ public class EntryPresenter implements EntryContract.Presenter {
     @Override
     public void onViewCompleteCreate() {
 
-//        if (db.alreadySignedIn()) {
-//            checkUserTypeAndGoNextScreen();
-//        } else {
+        if (db.alreadySignedIn()) {
+            checkUserTypeAndGoNextScreen();
+        } else {
             view.displayCustomerRestaurantOptions();
-//        }
+        }
     }
 
     private void checkUserTypeAndGoNextScreen() {
