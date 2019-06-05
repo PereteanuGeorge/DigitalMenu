@@ -19,7 +19,5 @@ public interface RestaurantDatabase {
 
     void init(Runnable success, Runnable failure);
 
-    void getNumberOfTables(String restaurantName, Consumer<Integer> callback);
-
-    void listenForOrders(String restaurantName, Consumer<Integer> callback);
+    void listenForOrders(String restaurantName, Consumer<Order> callback);
 }

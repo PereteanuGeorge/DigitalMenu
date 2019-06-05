@@ -1,7 +1,6 @@
 package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
-import android.support.v4.util.Consumer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,15 +11,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TablesActivity extends AppCompatActivity {
 
     private RestaurantDatabase db;
     private String restaurantName;
-    private LinearLayout tableEntry;
+    private LinearLayout[] tableEntries;
+
+    public static Map<Order, Integer> orderToTable = new HashMap<>();
 
     public TablesActivity() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -34,14 +39,10 @@ public class TablesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.restaurantName = intent.getStringExtra(LoginActivity.TABLES_INTENT_KEY);
 
-        db.getRestaurant(restaurantName, this::fetchThemePicture);
+        db.getRestaurant(restaurantName, this::onReceiveRestaurantResponse);
 
-        db.getNumberOfTables(restaurantName, new Consumer<Integer>() {
-            @Override
-            public void accept(Integer numberOfTables) {
-                displayTables(numberOfTables);
-            }
-        });
+        db.listenForOrders(restaurantName, this::notifyAndStartTime);
+
     }
 
     private void displayTables(Integer numberOfTables) {
@@ -57,45 +58,61 @@ public class TablesActivity extends AppCompatActivity {
         LinearLayout tableList = findViewById(R.id.table_list);
 
         LayoutInflater inflater = getLayoutInflater();
-        this.tableEntry = (LinearLayout) inflater.inflate(R.layout.table_entry, tableList, false);
+        LinearLayout tableEntry = (LinearLayout) inflater.inflate(R.layout.table_entry, tableList, false);
 
         TextView tableNumberText = tableEntry.findViewById(R.id.table);
         tableNumberText.setText("Table " + tableNumber);
 
-        db.listenForOrders(restaurantName, this::notifyAndStartTime);
+        tableEntries[tableNumber - 1] = tableEntry;
 
         tableEntry.setId(View.generateViewId());
         tableList.addView(tableEntry);
     }
 
-    private void notifyAndStartTime(Integer numberOfItems) {
+    private void notifyAndStartTime(Order order) {
 
-        TextView itemsText = tableEntry.findViewById(R.id.number_of_items);
-        itemsText.setText(numberOfItems + " items");
+        int numberOfItems = order.getOrderedDishes().size();
+//        int tableNumber = order.getTableNumber();
 
-        TextView notification = tableEntry.findViewById(R.id.notification_order);
-        notification.setVisibility(View.VISIBLE);
+//        TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
+//        itemsText.setText(numberOfItems + " items");
+
+//        TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
+//        notification.setVisibility(View.VISIBLE);
         hideNotificationOnClick();
 
         Chronometer chronometer = findViewById(R.id.simpleChronometer);
         chronometer.setVisibility(View.VISIBLE);
         chronometer.start();
 
+//        orderToTable.put(order, tableNumber);
     }
 
     private void hideNotificationOnClick() {
-        tableEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tableEntry.findViewById(R.id.notification_order).setVisibility(View.INVISIBLE);
-            }
-        });
+//        tableEntries[tableNumber - 1].setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                tableEntries[tableNumber - 1].findViewById(R.id.notification_order).setVisibility(View.INVISIBLE);
+//            }
+//        });
     }
 
-    private void fetchThemePicture(Restaurant r) {
+    private void onReceiveRestaurantResponse(Restaurant r) {
 
+        displayThemePicture(r);
+
+        displayTableEntries(r);
+    }
+
+    private void displayThemePicture(Restaurant r) {
         ImageView restaurantLogo = findViewById(R.id.restaurantLogo);
         db.downloadThemePicture(r, bm -> restaurantLogo.setImageBitmap(bm));
-
     }
+
+    private void displayTableEntries(Restaurant r) {
+        int numberOfTables = r.getNumberOfTables();
+        tableEntries = new LinearLayout[numberOfTables];
+        displayTables(numberOfTables);
+    }
+
 }

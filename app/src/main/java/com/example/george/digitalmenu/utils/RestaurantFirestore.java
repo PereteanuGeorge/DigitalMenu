@@ -15,13 +15,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.Objects;
 
 
 // Adapter implementation for firebase solution.
@@ -137,45 +142,46 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
-    public void getNumberOfTables(String restaurantName, Consumer<Integer> callback) {
-
-        DocumentReference ref = db.collection("restaurants").document(restaurantName);
-
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-
+    public void listenForOrders(String restaurantName, Consumer<Order> callback) {
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    Log.d(TAG, "Cached document data " + restaurantName + " " + document.get("numberOfTables"));
-                    callback.accept(((Long) document.get("numberOfTables")).intValue());
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+
+                        document.getReference().addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e != null) {
+                                    Log.w(TAG, "Listen failed.", e);
+                                    int numberOfDishes = ((Dish[]) Objects.requireNonNull(document.get("dishes"))).length;
+                                    int tableNumber = (int) document.get("tableNumber");
+                                    int totalPrice = (int) document.get("totalPrice");
+//                                    Order order = new Order(numberOfDishes);
+//                                    callback.accept(order);
+                                    return;
+                                }
+
+                                if (snapshot != null && snapshot.exists()) {
+                                    Log.d(TAG, "Current data: " + snapshot.getData());
+                                } else {
+                                    Log.d(TAG, "Current data: null");
+                                }
+                            }
+                        });
+
+                    }
                 } else {
-                    Log.d(TAG, "Cached get failed ", task.getException());
+                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
+
             }
         });
-    }
 
-    @Override
-    public void listenForOrders(String restaurantName, Consumer<Integer> callback) {
-        final DocumentReference docRef = db.collection("restaurantOrders").document(restaurantName);
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    callback.accept(10);
-                    return;
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "Current data: " + snapshot.getData());
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            }
-        });
     }
 
     @Override
