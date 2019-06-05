@@ -20,10 +20,8 @@ public class Order {
         this.tableNumber = tableNumber;
     }
 
-    public void add(OrderedDish dish, int numberOfPortions) {
-        for(int i = 0; i < numberOfPortions; i++) {
-            dishes.add(dish);
-        }
+    public void add(OrderedDish dish) {
+        dishes.add(dish);
     }
 
     public void clean() {

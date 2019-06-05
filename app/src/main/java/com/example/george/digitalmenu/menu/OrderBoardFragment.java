@@ -34,7 +34,6 @@ public class OrderBoardFragment extends Fragment {
     private LayoutInflater inflater;
     private DisplayableDish dish;
     private View orderView;
-    int counter = 1;
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -159,7 +158,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
-            ORDER.add((OrderedDish) dish,counter);
+            ORDER.add((OrderedDish) dish);
             dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
