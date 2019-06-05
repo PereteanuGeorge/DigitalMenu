@@ -22,7 +22,12 @@ public class ServiceRegistry {
     }
 
     public <T> T getService(Class<T> object) {
-        return (T) services.get(object);
+        Object result = services.get(object);
+        if (result == null) {
+            throw new RuntimeException("Cannot find service in registry for: " + object.getName());
+        }
+
+        return (T) result;
     }
 
     public <T> void registerService(Class<T> objClass, T object) {
