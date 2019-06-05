@@ -3,7 +3,6 @@ package com.example.george.digitalmenu.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
@@ -14,6 +13,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -24,7 +24,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 
 // Adapter implementation for firebase solution.
@@ -33,8 +37,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
-    private String restaurantName=null;
-    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024*1024;
+    private String restaurantName = null;
+    public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024 * 1024;
     private FirebaseAuth mAuth;
 
     private final String TAG = "Firestore";
@@ -141,12 +145,10 @@ public class RestaurantFirestore implements RestaurantDatabase {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                                 @Nullable FirebaseFirestoreException e) {
-                                if (e != null) {
-                                    Log.w(TAG, "Listen failed.", e);
-                                    Order order =  document.toObject(Order.class);
-                                    callback.accept(order);
-                                    return;
-                                }
+
+                                Order order = document.toObject(Order.class);
+                                callback.accept(order);
+
 
                                 if (snapshot != null && snapshot.exists()) {
                                     Log.d(TAG, "Current data: " + snapshot.getData());
@@ -179,23 +181,23 @@ public class RestaurantFirestore implements RestaurantDatabase {
         }
 
         mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        success.run();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        failure.run();
-                    }
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            success.run();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            failure.run();
+                        }
 
-                    // ...
-                }
-            });
+                        // ...
+                    }
+                });
 
     }
 
