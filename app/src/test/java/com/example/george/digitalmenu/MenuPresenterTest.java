@@ -105,15 +105,15 @@ public class MenuPresenterTest {
         verify(mockModel, times(1)).getRestaurant(eq(testRestaurantName), any());
     }
 
-    @Test
-    public void fetchPictureDownloadsFromDatabase() {
-
-        Consumer<Bitmap> testCallback = bitmap -> {};
-
-        // When
-        presenter.fetchDishImage(testDish, testCallback);
-
-        // Then
-        verify(mockModel, times(1)).downloadDishPicture(testDish, testCallback);
-    }
+//    @Test
+//    public void fetchPictureDownloadsFromDatabase() {
+//
+//        Consumer<Bitmap> testCallback = bitmap -> {};
+//
+//        // When
+//        presenter.fetchDishImage(testDish, testCallback);
+//
+//        // Then
+//        verify(mockModel, times(1)).downloadDishPicture(testDish, testCallback);
+//    }
 }
