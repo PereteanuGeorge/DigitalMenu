@@ -2,13 +2,13 @@ package com.example.george.digitalmenu.restaurant;
 
 
 import android.support.v4.util.Consumer;
+import android.widget.Button;
 
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 public class LoginPresenter implements LoginContract.Presenter {
 
-    /* Replace with db interface */
     RestaurantDatabase db;
     LoginContract.View view;
 
@@ -23,26 +23,30 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void onConfirmInputClicked() {
+
+        view.disableButtonPress();
+
         String email = view.getEmailInput();
         String password = view.getPasswordInput();
 
         if (email.length() < 1) {
+            view.enableButtonPress();
             view.promptEmailInputIsEmpty();
             return;
         }
 
         if (password.length() < 1) {
+            view.enableButtonPress();
             view.promptPasswordInputIsEmpty();
             return;
         }
-
-
 
         Runnable success = this::onSignInSuccess;
 
         Runnable failure = new Runnable() {
             @Override
             public void run() {
+                view.enableButtonPress();
                 view.reportSignInError();
             }
         };

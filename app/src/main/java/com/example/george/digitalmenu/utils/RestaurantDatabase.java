@@ -9,8 +9,11 @@ import android.widget.LinearLayout;
 public interface RestaurantDatabase {
 
     void getRestaurant(String restaurant, Consumer<Restaurant> callback);
+
     void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback);
+
     void downloadThemePicture(Restaurant restaurant, Consumer<Bitmap> callback);
+
     void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
 
     void signInWithEmailAndPassword(String email, String password, Runnable success, Runnable failure);
@@ -20,4 +23,6 @@ public interface RestaurantDatabase {
     void init(Runnable success, Runnable failure);
 
     void listenForOrders(String restaurantName, Consumer<Order> callback);
+
+    boolean alreadySignedIn();
 }

@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
@@ -17,19 +18,24 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     private static final String TAG = "LoginActivity";
     public static final String TABLES_INTENT_KEY = "LoginActivity";
+
+    private Button confirmButton;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        emailEditText = findViewById(R.id.emailEditText);
-        passwordEditText = findViewById(R.id.passwordEditText);
 
         presenter = ServiceRegistry.getInstance().getService(LoginContract.Presenter.class);
         presenter.registerView(this);
+
+        setContentView(R.layout.activity_login);
+
+        confirmButton = findViewById(R.id.confirmButton);
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+
 
         findViewById(R.id.confirmButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,5 +93,17 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Override
     public void promptEmailInputNotValid() {
         emailEditText.requestFocus();
+    }
+
+    @Override
+    public void disableButtonPress() {
+        confirmButton.setPressed(true);
+        confirmButton.setEnabled(false);
+    }
+
+    @Override
+    public void enableButtonPress() {
+        confirmButton.setPressed(false);
+        confirmButton.setEnabled(true);
     }
 }

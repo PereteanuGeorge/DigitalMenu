@@ -16,6 +16,10 @@ public interface LoginContract {
         void promptEmailInputIsEmpty();
 
         void promptEmailInputNotValid();
+
+        void disableButtonPress();
+
+        void enableButtonPress();
     }
 
     interface Presenter {
@@ -23,5 +27,6 @@ public interface LoginContract {
         void registerView(View view);
 
         void onConfirmInputClicked();
+
     }
 }

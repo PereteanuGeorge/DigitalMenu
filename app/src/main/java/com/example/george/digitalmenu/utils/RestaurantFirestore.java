@@ -34,6 +34,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
+    private FirebaseAuth mAuth;
+
     public final static int MAX_DOWNLOAD_SIZE_BYTES = 1024 * 1024;
 
     private final String TAG = "Firestore";
@@ -41,6 +43,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     public void getRestaurant(final String restaurant, final Consumer<Restaurant> callback) {
@@ -122,7 +125,6 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void init(Runnable onSuccess, Runnable onFailure) {
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously()
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -185,10 +187,13 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
+    public boolean alreadySignedIn() {
+        return mAuth.getCurrentUser() != null;
+    }
+
+    @Override
     public void signInWithEmailAndPassword(String email, String password,
                                            Runnable success, Runnable failure) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
         if (mAuth.getCurrentUser() != null) {
             success.run();
         }
@@ -216,7 +221,6 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void getSignedInUserRestaurantName(Consumer<String> success, Runnable failure) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             failure.run();
@@ -228,9 +232,20 @@ public class RestaurantFirestore implements RestaurantDatabase {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    Log.d(TAG, "Cached document data " + user.getUid() + " " + document.getData());
-                    Restaurant restaurant = document.toObject(Restaurant.class);
-                    success.accept((String) document.get("name"));
+
+                    if (document.exists()) {
+
+                        Log.d(TAG, "Cached document data " + user.getUid() + " " + document.getData());
+                        Restaurant restaurant = document.toObject(Restaurant.class);
+                        success.accept((String) document.get("name"));
+
+                    } else {
+
+                        Log.d(TAG, "Document doesn't exist:   " + user.getUid());
+                        failure.run();
+
+                    }
+
                 } else {
                     Log.d(TAG, "Cached get failed ", task.getException());
                     failure.run();
