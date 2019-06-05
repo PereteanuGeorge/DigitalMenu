@@ -17,9 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.DisplayableDish;
-import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;
@@ -35,6 +33,7 @@ public class OrderBoardFragment extends Fragment {
 
     private LayoutInflater inflater;
     private DisplayableDish dish;
+    private View orderView;
     int counter = 1;
 
     public OrderBoardFragment() {
@@ -48,61 +47,66 @@ public class OrderBoardFragment extends Fragment {
         // Inflate the layout for this fragment
         this.dish = DISH;
         this.inflater = inflater;
-        View order = inflater.inflate(R.layout.fragment_order_board, container, false);
+        this.orderView = inflater.inflate(R.layout.fragment_order_board, container, false);
 
-        setInformation(dish, order);
-        setGoBack(order);
+        setInformation();
+        setGoBack();
 
-        return order;
+        return this.orderView;
     }
 
-    private void setInformation(DisplayableDish dish, View order) {
+    private void setInformation() {
 
-        ImageView picture = order.findViewById(R.id.picture);
+        ImageView picture = orderView.findViewById(R.id.picture);
         picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
 
-        TextView infoText = order.findViewById(R.id.description);
+        TextView infoText = orderView.findViewById(R.id.description);
         infoText.setText(dish.getDescription());
 
-        TextView nameText = order.findViewById(R.id.name);
+
+        TextView nameText = orderView.findViewById(R.id.name);
         nameText.setText(dish.getName());
 
-        TextView priceText = order.findViewById(R.id.price);
-        priceText.setText(String.valueOf(Order.roundDouble(dish.getPrice(),2)));
+        TextView priceText = orderView.findViewById(R.id.price);
+        priceText.setText(String.valueOf(dish.getPrice()));
 
-        TextView currencyText = order.findViewById(R.id.currency);
+        TextView currencyText = orderView.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(dish.getCurrency()));
 
-        TextView descriptionText = order.findViewById(R.id.description);
+        TextView descriptionText = orderView.findViewById(R.id.description);
         descriptionText.setText(dish.getDescription());
 
-        setOptions(dish.getOptions(), order.findViewById(R.id.options_panel));
+        setOptions(dish.getOptions(), orderView.findViewById(R.id.options_panel));
 
 
-        if (dish.isOrdered()) {
-            setDeleteButton(order, (OrderedDish) dish);
-        } else {
-            dish = new OrderedDish(dish, 1);
-            setAddButton(order, (OrderedDish) dish);
-        }
+        setOperationButton();
 
-        setCounter(order, dish);
+        setCounter();
     }
 
-    private void setCounter(View order, DisplayableDish dish) {
-        Button increment = order.findViewById(R.id.increment);
-        Button decrement = order.findViewById(R.id.decrement);
+    private void setOperationButton() {
+        if (dish.isOrdered()) {
+            setDeleteButton();
+        } else {
+            dish = new OrderedDish(dish, 1);
+            setAddButton();
+        }
+    }
 
-        TextView count = order.findViewById(R.id.counter);
-        count.setText(String.valueOf(dish.getPortion()));
+    private void setCounter() {
+        Button increment = orderView.findViewById(R.id.increment);
+        Button decrement = orderView.findViewById(R.id.decrement);
+
+        TextView count = orderView.findViewById(R.id.counter);
+        count.setText(String.valueOf(dish.getNumber()));
 
         increment.setOnClickListener(view -> {
             dish.increment();
-            count.setText(String.valueOf(dish.getPortion()));
+            count.setText(String.valueOf(dish.getNumber()));
         });
         decrement.setOnClickListener(view -> {
             dish.decrement();
-            count.setText(String.valueOf(dish.getPortion()));
+            count.setText(String.valueOf(dish.getNumber()));
         });
     }
 
@@ -126,12 +130,12 @@ public class OrderBoardFragment extends Fragment {
         options_panel.addView(optionText);
     }
 
-    private void setDeleteButton(View view, OrderedDish dish) {
-        Button button = view.findViewById(R.id.operation_button);
+    private void setDeleteButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete(dish);
+            ORDER.delete((OrderedDish) dish);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             reFreshOrderPage();
         });
@@ -150,12 +154,12 @@ public class OrderBoardFragment extends Fragment {
         }
     }
 
-    private void setAddButton(View view, OrderedDish dish) {
-        Button button = view.findViewById(R.id.operation_button);
+    private void setAddButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
-            ORDER.add(dish,counter);
+            ORDER.add((OrderedDish) dish,counter);
             dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
@@ -163,11 +167,11 @@ public class OrderBoardFragment extends Fragment {
     }
 
 
-    private void setGoBack(View dish_info) {
-        View back = dish_info.findViewById(R.id.dish_info_back);
+    private void setGoBack() {
+        View back = orderView.findViewById(R.id.dish_info_back);
         back.setOnClickListener(v -> reFreshOrderPage());
 
-        View card = dish_info.findViewById(R.id.dish_board);
+        View card = orderView.findViewById(R.id.dish_board);
         card.setOnClickListener(v -> {});
     }
 }

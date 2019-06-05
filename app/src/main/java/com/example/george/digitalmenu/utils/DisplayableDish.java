@@ -24,7 +24,7 @@ public interface DisplayableDish {
 
     List<Tag> getEnumTags();
 
-    Integer getPortion();
+    Integer getNumber();
 
     boolean isOrdered();
 
@@ -35,4 +35,6 @@ public interface DisplayableDish {
     void increment();
 
     void decrement();
+
+    void setIsOrdered(boolean b);
 }

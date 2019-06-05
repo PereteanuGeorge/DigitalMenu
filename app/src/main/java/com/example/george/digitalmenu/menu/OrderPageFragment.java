@@ -1,6 +1,5 @@
 package com.example.george.digitalmenu.menu;
 
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +17,6 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
@@ -31,7 +28,6 @@ import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
 public class OrderPageFragment extends Fragment {
 
     View order;
-    View previousView;
     private LayoutInflater inflater;
     private List<FragmentListener> listeners = new ArrayList<>();
 
@@ -93,11 +89,11 @@ public class OrderPageFragment extends Fragment {
 
 
         TextView priceText = orderCard.findViewById(R.id.price);
-        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(Order.roundDouble(dish.getPrice(),2))));
+        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(dish.getPrice())));
 
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
-        numberText.setText(String.valueOf(dish.getPortion()).concat("X"));
+        numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
 
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);
