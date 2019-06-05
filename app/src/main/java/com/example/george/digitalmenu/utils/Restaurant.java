@@ -55,10 +55,6 @@ public class Restaurant {
         return pic_url;
     }
 
-    public void setPicture(byte[] picture) {
-        this.picture = picture;
-    }
-
     public byte[] getPicture() {
         return picture;
     }
@@ -82,7 +78,13 @@ public class Restaurant {
         return numberOfTables;
     }
 
+    public void setPicture(byte[] picture) {
+        this.picture = picture;
+    }
+
     public void setNumberOfTables(Integer numberOfTables) {
         this.numberOfTables = numberOfTables;
     }
+
+
 }

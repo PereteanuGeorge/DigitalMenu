@@ -5,6 +5,8 @@ import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.george.digitalmenu.utils.Utils.roundDouble;
+
 public class Order {
     private Double totalPrice = 0.0;
     private List<OrderedDish> dishes = new ArrayList<>();
@@ -18,10 +20,8 @@ public class Order {
         this.tableNumber = tableNumber;
     }
 
-    public void add(OrderedDish dish, int numberOfPortions) {
-        for(int i = 0; i < numberOfPortions; i++) {
-            dishes.add(dish);
-        }
+    public void add(OrderedDish dish) {
+        dishes.add(dish);
     }
 
     public void clean() {
@@ -45,17 +45,8 @@ public class Order {
         dishes.remove(dish);
     }
 
-    public static double roundDouble(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
-    }
-
     public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+        this.totalPrice = roundDouble(totalPrice, 2);
     }
 
     public List<OrderedDish> getDishes() {

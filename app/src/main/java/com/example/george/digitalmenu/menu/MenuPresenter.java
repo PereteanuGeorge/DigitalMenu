@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.support.v4.util.Consumer;
 
 import com.example.george.digitalmenu.utils.Dish;
-import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;

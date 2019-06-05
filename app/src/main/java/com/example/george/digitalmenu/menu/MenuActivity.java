@@ -3,7 +3,6 @@ package com.example.george.digitalmenu.menu;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.LocaleList;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,7 +19,6 @@ import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
-import com.example.george.digitalmenu.utils.RestaurantFirestore;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 import com.example.george.digitalmenu.utils.Tag;
 
