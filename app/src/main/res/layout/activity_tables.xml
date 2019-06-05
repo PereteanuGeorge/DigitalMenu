@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorBlack"
     android:hapticFeedbackEnabled="false"
+    android:id="@+id/tablesActivityRoot"
     tools:context=".restaurant.TablesActivity">
 
     <ScrollView

@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu.restaurant;
 
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,21 +12,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.menu.OrderPageFragment;
+import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TablesActivity extends AppCompatActivity {
+public class TablesActivity extends AppCompatActivity implements TableOrdersFragmentListener {
 
     private RestaurantDatabase db;
     private String restaurantName;
     private LinearLayout[] tableEntries;
 
     public static Map<Order, Integer> orderToTable = new HashMap<>();
+
+    TableOrdersFragment fragment;
 
     public TablesActivity() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -39,10 +46,21 @@ public class TablesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.restaurantName = intent.getStringExtra(LoginActivity.TABLES_INTENT_KEY);
 
-        db.getRestaurant(restaurantName, this::onReceiveRestaurantResponse);
+//        db.getRestaurant(restaurantName, this::onReceiveRestaurantResponse);
 
-        db.listenForOrders(restaurantName, this::notifyAndStartTime);
+        displayFragment();
 
+//        db.listenForOrders(restaurantName, this::notifyAndStartTime);
+
+    }
+
+    private void displayFragment() {
+        fragment = new TableOrdersFragment();
+        fragment.registerListener(this);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.tablesActivityRoot, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void displayTables(Integer numberOfTables) {
@@ -115,4 +133,25 @@ public class TablesActivity extends AppCompatActivity {
         displayTables(numberOfTables);
     }
 
+    @Override
+    public void onFragmentReady() {
+
+        OrderedDish orderedDish = new OrderedDish(new Dish("Spicy Fries",
+            "test_url",
+            "test_description",
+            20.0d,
+            Arrays.asList("catOne","catTwo"),
+            Arrays.asList("tagOne","tagTwo"),
+            Arrays.asList("optionOne","optionTwo")), 5);
+
+        orderedDish.put("No spice", true);
+        orderedDish.put("No fries", true);
+
+        fragment.addOrderedDish(orderedDish);
+    }
+
+    @Override
+    public void onOrderServed(OrderedDish orderedDish) {
+
+    }
 }

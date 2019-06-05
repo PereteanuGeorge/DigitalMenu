@@ -9,8 +9,10 @@ import com.example.george.digitalmenu.menu.MenuPresenter;
 import com.example.george.digitalmenu.restaurant.EntryActivity;
 import com.example.george.digitalmenu.restaurant.EntryContract;
 import com.example.george.digitalmenu.restaurant.EntryPresenter;
+import com.example.george.digitalmenu.restaurant.LoginActivity;
 import com.example.george.digitalmenu.restaurant.LoginContract;
 import com.example.george.digitalmenu.restaurant.LoginPresenter;
+import com.example.george.digitalmenu.restaurant.TablesActivity;
 
 public class App extends Application {
 
@@ -20,7 +22,8 @@ public class App extends Application {
 
         initServiceRegistry();
 
-        Intent intent = new Intent(this, EntryActivity.class);
+        Intent intent = new Intent(this, TablesActivity.class);
+        intent.putExtra(LoginActivity.TABLES_INTENT_KEY, "bestmangal");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
