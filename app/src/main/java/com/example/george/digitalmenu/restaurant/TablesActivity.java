@@ -17,6 +17,7 @@ import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TablesActivity extends AppCompatActivity {
@@ -50,7 +51,6 @@ public class TablesActivity extends AppCompatActivity {
         for (int i = 1; i <= numberOfTables; i++) {
             displayTable(i);
         }
-
     }
 
     private void displayTable(Integer tableNumber) {
@@ -71,19 +71,11 @@ public class TablesActivity extends AppCompatActivity {
 
     private void notifyAndStartTime(Order order) {
 
-        int numberOfItems = order.getOrderedDishes().size();
         int tableNumber = order.getTableNumber();
-
-        TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
-        itemsText.setText(numberOfItems + " items");
 
         TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
         notification.setVisibility(View.VISIBLE);
         hideNotificationOnClick(tableNumber);
-
-        Chronometer chronometer = findViewById(R.id.simpleChronometer);
-        chronometer.setVisibility(View.VISIBLE);
-        chronometer.start();
 
         orderToTable.put(order, tableNumber);
     }

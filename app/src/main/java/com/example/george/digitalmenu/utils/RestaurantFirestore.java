@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
+import com.example.george.digitalmenu.restaurant.TablesActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -13,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,10 +25,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -132,40 +130,43 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void listenForOrders(String restaurantName, Consumer<Order> callback) {
-        db.collection("restaurantOrders")
-                .document(restaurantName)
-                .collection("orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        final CollectionReference colRef = db.collection("restaurantOrders").document(restaurantName).collection("orders");
+
+        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
 
-                        document.getReference().addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                                @Nullable FirebaseFirestoreException e) {
-
-                                Order order = document.toObject(Order.class);
-                                callback.accept(order);
-
-
-                                if (snapshot != null && snapshot.exists()) {
-                                    Log.d(TAG, "Current data: " + snapshot.getData());
-                                } else {
-                                    Log.d(TAG, "Current data: null");
-                                }
-                            }
-                        });
-
+                    if (documentChange.getNewIndex() == -1) {
+                        continue;
                     }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
 
+                    if (documentChange.getDocument().getId().equals("nullOrder")) {
+                        continue;
+                    }
+
+                    QueryDocumentSnapshot document = documentChange.getDocument();
+                    Log.d(TAG, documentChange.getNewIndex() + " => " + document);
+
+                    document.getReference().addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                            @Nullable FirebaseFirestoreException e) {
+
+                            Order order = document.toObject(Order.class);
+                            callback.accept(order);
+
+                            if (snapshot != null && snapshot.exists()) {
+                                Log.d(TAG, "Current data: " + snapshot.getData());
+                            } else {
+                                Log.d(TAG, "Current data: null");
+                            }
+                        }
+                    });
+                }
             }
         });
-
     }
 
     @Override
