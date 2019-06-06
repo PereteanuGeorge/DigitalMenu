@@ -213,6 +213,9 @@ public class Dish implements Parcelable, DisplayableDish {
     public void setIsOrdered(boolean b) { }
 
     @Override
+    public void setNumber(int counter) { }
+
+    @Override
     public int describeContents() {
         return 0;
     }

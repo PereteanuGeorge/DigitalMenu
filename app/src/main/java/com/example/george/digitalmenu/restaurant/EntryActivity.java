@@ -1,10 +1,8 @@
 package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.example.george.digitalmenu.R;
@@ -39,19 +37,9 @@ public class EntryActivity extends AppCompatActivity implements EntryContract.Vi
         Button customerButton = findViewById(R.id.customerButton);
         Button restaurantButton = findViewById(R.id.restaurantButton);
 
-        customerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onCustomerButtonClick();
-            }
-        });
+        customerButton.setOnClickListener(v -> presenter.onCustomerButtonClick());
 
-        restaurantButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onRestauantButtonClick();
-            }
-        });
+        restaurantButton.setOnClickListener(v -> presenter.onRestauantButtonClick());
     }
 
     @Override

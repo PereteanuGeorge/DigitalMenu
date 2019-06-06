@@ -1,14 +1,10 @@
 package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Chronometer;
@@ -93,12 +89,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
         tableEntries[tableNumber - 1] = tableEntry;
 
-        tableEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onTableEntrySelected(v, tableNumber);
-            }
-        });
+        tableEntry.setOnClickListener(v -> onTableEntrySelected(v, tableNumber));
 
         tableEntry.setId(View.generateViewId());
         tableList.addView(tableEntry);

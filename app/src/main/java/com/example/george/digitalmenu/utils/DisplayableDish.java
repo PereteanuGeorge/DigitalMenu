@@ -37,4 +37,6 @@ public interface DisplayableDish {
     void decrement();
 
     void setIsOrdered(boolean b);
+
+    void setNumber(int counter);
 }

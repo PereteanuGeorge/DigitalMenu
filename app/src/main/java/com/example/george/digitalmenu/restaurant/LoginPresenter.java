@@ -2,7 +2,6 @@ package com.example.george.digitalmenu.restaurant;
 
 
 import android.support.v4.util.Consumer;
-import android.widget.Button;
 
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
@@ -43,12 +42,9 @@ public class LoginPresenter implements LoginContract.Presenter {
 
         Runnable success = this::onSignInSuccess;
 
-        Runnable failure = new Runnable() {
-            @Override
-            public void run() {
-                view.enableButtonPress();
-                view.reportSignInError();
-            }
+        Runnable failure = () -> {
+            view.enableButtonPress();
+            view.reportSignInError();
         };
 
         db.signInWithEmailAndPassword(email, password, success, failure);
@@ -56,19 +52,9 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     private void onSignInSuccess() {
 
-        Consumer<String> success = new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                view.switchToTablesActivity(s);
-            }
-        };
+        Consumer<String> success = s -> view.switchToTablesActivity(s);
 
-        Runnable failure = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
+        Runnable failure = () -> { };
 
         db.getSignedInUserRestaurantName(success, failure);
     }

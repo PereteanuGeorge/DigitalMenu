@@ -80,12 +80,7 @@ public class TableOrdersFragment extends Fragment {
 
         ConstraintLayout orderEntry = (ConstraintLayout) inflater.inflate(R.layout.table_order_entry, tableOrdersContainer, false);
 
-        orderEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOrderEntrySelected(v, orderedDish);
-            }
-        });
+        orderEntry.setOnClickListener(v -> onOrderEntrySelected(v, orderedDish));
 
         TextView quantityText = orderEntry.findViewById(R.id.order_dish_quantity);
         quantityText.setText(String.valueOf(orderedDish.getNumber()));
@@ -114,13 +109,10 @@ public class TableOrdersFragment extends Fragment {
 
         serveButton.setEnabled(true);
         serveButton.setPressed(false);
-        serveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                notifyServedOrder(orderedDish);
+        serveButton.setOnClickListener(v -> {
+            notifyServedOrder(orderedDish);
 
-                ((ViewGroup) selectedEntry.getParent()).removeView(selectedEntry);
-            }
+            ((ViewGroup) selectedEntry.getParent()).removeView(selectedEntry);
         });
 
     }

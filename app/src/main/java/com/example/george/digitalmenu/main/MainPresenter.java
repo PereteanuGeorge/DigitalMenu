@@ -1,11 +1,8 @@
 package com.example.george.digitalmenu.main;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.george.digitalmenu.utils.QrCodeScanner;
-
-import java.util.logging.Handler;
 
 public class MainPresenter implements MainContract.Presenter {
 

@@ -36,10 +36,6 @@ public class OrderedDish implements DisplayableDish{
         this.dish = dish;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     public void setOptions(Map<String, Boolean> options) {
         this.options = options;
     }

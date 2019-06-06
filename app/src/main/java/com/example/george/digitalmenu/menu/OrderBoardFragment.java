@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.DisplayableDish;
-import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;

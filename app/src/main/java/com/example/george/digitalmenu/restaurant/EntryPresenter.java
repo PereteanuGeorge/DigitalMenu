@@ -22,28 +22,18 @@ public class EntryPresenter implements EntryContract.Presenter {
     @Override
     public void onViewCompleteCreate() {
 
-        if (db.alreadySignedIn()) {
-            checkUserTypeAndGoNextScreen();
-        } else {
+//        if (db.alreadySignedIn()) {
+//            checkUserTypeAndGoNextScreen();
+//        } else {
             view.displayCustomerRestaurantOptions();
-        }
+//        }
     }
 
     private void checkUserTypeAndGoNextScreen() {
 
-        Consumer<String> success = new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                view.switchToTablesActivity(s);
-            }
-        };
+        Consumer<String> success = s -> view.switchToTablesActivity(s);
 
-        Runnable failure = new Runnable() {
-            @Override
-            public void run() {
-                view.switchToMainActivity();
-            }
-        };
+        Runnable failure = () -> view.switchToMainActivity();
 
         db.getSignedInUserRestaurantName(success, failure);
     }
