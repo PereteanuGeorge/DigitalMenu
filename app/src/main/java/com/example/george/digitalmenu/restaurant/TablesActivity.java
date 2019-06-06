@@ -150,20 +150,23 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
     }
 
     @Override
-    public void onFragmentReady() {
-        OrderedDish orderedDish = new OrderedDish(new Dish("Spicy Fries",
-                "test_url",
-                "test_description",
-                20.0d,
-                Arrays.asList("catOne","catTwo"),
-                Arrays.asList("tagOne","tagTwo"),
-                Arrays.asList("optionOne","optionTwo")), 5);
+    public void onFragmentReady(){}
 
-        orderedDish.put("No spice", true);
-        orderedDish.put("No fries", true);
-
-
-    }
+//    @Override
+//    public void onFragmentReady() {
+//        OrderedDish orderedDish = new OrderedDish(new Dish("Spicy Fries",
+//                "test_url",
+//                "test_description",
+//                20.0d,
+//                Arrays.asList("catOne","catTwo"),
+//                Arrays.asList("tagOne","tagTwo"),
+//                Arrays.asList("optionOne","optionTwo")), 5);
+//
+//        orderedDish.put("No spice", true);
+//        orderedDish.put("No fries", true);
+//
+//
+//    }
 
     @Override
     public void onOrderServed(OrderedDish orderedDish) {

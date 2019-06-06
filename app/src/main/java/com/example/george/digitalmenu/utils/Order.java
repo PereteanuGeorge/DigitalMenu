@@ -10,7 +10,7 @@ import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 public class Order {
     private Double totalPrice = 0.0;
     private List<OrderedDish> dishes = new ArrayList<>();
-    private Integer tableNumber = 5;
+    public static Integer tableNumber = 5;
 
     public Order() {}
 
@@ -20,9 +20,6 @@ public class Order {
         this.tableNumber = tableNumber;
     }
 
-    public void add(OrderedDish dish, int numberOfPortions) {
-        dishes.add(dish);
-    }
 
     public void clean() {
         dishes.clear();
@@ -41,14 +38,8 @@ public class Order {
         return roundDouble(price, 2);
     }
 
-    public void delete(OrderedDish dish, int counter) {
-        if(dish.getNumber() <= counter) {
-            dishes.remove(dish);
-        } else {
-            for (int i = 0; i < counter; i++) {
-                dish.decrement();
-            }
-        }
+    public void delete(OrderedDish dish) {
+        dishes.remove(dish);
     }
 
     public void setTotalPrice(Double totalPrice) {
@@ -69,5 +60,10 @@ public class Order {
 
     public void setTableNumber(Integer tableNumber) {
         this.tableNumber = tableNumber;
+    }
+
+    public void add(OrderedDish dish) {
+        dishes.add(dish);
+        dish.setIsOrdered();
     }
 }
