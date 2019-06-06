@@ -15,7 +15,7 @@ import static com.example.george.digitalmenu.utils.RestaurantFirestore.MAX_DOWNL
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 @IgnoreExtraProperties
-public class Dish implements Parcelable, DisplayableDish {
+public class Dish implements Parcelable{
 
     private String name;
     private String pic_url;
@@ -67,6 +67,14 @@ public class Dish implements Parcelable, DisplayableDish {
         this.categories = categories;
         this.tags = tags;
         this.options = options;
+    }
+
+    public Dish(Dish dish) {
+        this.name = dish.name;
+        this.picture = dish.picture;
+        this.price = dish.price;
+        this.description = dish.description;
+        this.tags = dish.tags;
     }
 
     @Override
@@ -125,52 +133,42 @@ public class Dish implements Parcelable, DisplayableDish {
         return downloaded;
     }
 
-    @Override
     public List<String> getTags() {
         return tags;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getPic_url() {
         return pic_url;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
-    public double getPrice() {
+    public Double getPrice() {
         return roundDouble(price, 2);
     }
 
-    @Override
     public List<String> getCategories() {
         return categories;
     }
 
-    @Override
     public void setPicture(byte[] picture) {
         this.picture = picture;
     }
 
-    @Override
     public byte[] getPicture() {
         return picture;
     }
 
-    @Override
     public String getCurrency() {
         return "$";
     }
 
-    @Exclude @Override
     public List<Tag> getEnumTags() {
         List<Tag> etags = new ArrayList<>();
         for (String t : tags) {
@@ -179,17 +177,6 @@ public class Dish implements Parcelable, DisplayableDish {
         return etags;
     }
 
-    @Override
-    public Integer getNumber() {
-        return 1;
-    }
-
-    @Override
-    public boolean isOrdered() {
-        return false;
-    }
-
-    @Override
     public Map<String, Boolean> getOptions() {
         Map<String, Boolean> optionsMap = new HashMap<>();
         for (String s: options) {
@@ -197,23 +184,6 @@ public class Dish implements Parcelable, DisplayableDish {
         }
         return optionsMap;
     }
-
-    @Override
-    public void put(String text, boolean checked) {
-        return;
-    }
-
-    @Override
-    public void increment() {}
-
-    @Override
-    public void decrement() {}
-
-    @Override
-    public void setIsOrdered(boolean b) { }
-
-    @Override
-    public void setNumber(int counter) { }
 
     @Override
     public int describeContents() {

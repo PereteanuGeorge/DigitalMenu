@@ -4,78 +4,91 @@ import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.utils.Utils.roundDouble;
-import static com.google.common.primitives.Ints.max;
+import static java.lang.StrictMath.max;
 
 @IgnoreExtraProperties
-public class OrderedDish implements DisplayableDish{
-    private DisplayableDish dish;
+public class OrderedDish {
+    private Dish dish;
+    private String name;
     private Integer number;
     private Map<String, Boolean> options = new HashMap<>();
-    private Boolean ordered = false;
+    private Double price;
+    private boolean ordered;
 
     public OrderedDish() {}
 
-    public OrderedDish(DisplayableDish dish, Integer number, Map<String, Boolean> options, Boolean ordered) {
-        this.dish = dish;
+    public OrderedDish(String name, Integer number, Map<String, Boolean> options, Double price) {
+        this.name = name;
         this.number = number;
         this.options = options;
-        this.ordered = ordered;
+        this.price = price;
     }
 
-    public OrderedDish(DisplayableDish dish, Integer number) {
+    // Adding order
+    public OrderedDish(Dish dish) {
         this.dish = dish;
-        this.number = number;
+        this.name = dish.getName();
+        this.number = 1;
         this.options = dish.getOptions();
+        this.price = dish.getPrice();
+        this.ordered = false;
     }
 
-    public void setDish(DisplayableDish dish) {
-        this.dish = dish;
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Map<String, Boolean> getOptions() {
+        return options;
     }
 
     public void setOptions(Map<String, Boolean> options) {
         this.options = options;
     }
 
-    public void setOrdered(Boolean ordered) {
-        this.ordered = ordered;
+    public Double getPrice() {
+        this.price = this.number * dish.getPrice();
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void increment() {
+        number++;
+    }
+
+    public void decrement() {
+        number = max(0, --number);
+    }
+
+    public void put(String text, boolean checked) {
+        options.put(text, checked);
+    }
+
+
+    @Exclude
+    public void setIsOrdered() {
+        this.ordered = true;
     }
 
     @Exclude
-    public DisplayableDish getDish() {
-        return dish;
-    }
-
-    @Exclude @Override
-    public List<String> getTags() {
-        return null;
-    }
-
-    @Exclude @Override
-    public String getPic_url() {
-        return dish.getPic_url();
-    }
-
-    @Exclude @Override
-    public String getDescription() {
-        return dish.getDescription();
-    }
-
-    @Exclude @Override
-    public void setPicture(byte[] picture) {
-        dish.setPicture(picture);
-    }
-
-    @Exclude @Override
-    public List<Tag> getEnumTags() {
-        return dish.getEnumTags();
-    }
-
-    @Exclude @Override
-    public boolean isOrdered() {
+    public Boolean isOrdered() {
         return ordered;
     }
 
@@ -84,57 +97,12 @@ public class OrderedDish implements DisplayableDish{
         return dish.getPicture();
     }
 
-
-    public String getName() {
-        return dish.getName();
+    @Exclude
+    public String getDescription() {
+        return dish.getDescription();
     }
 
-    @Override
-    public double getPrice() {
-        return roundDouble(number*dish.getPrice(), 2);
-    }
-
-    @Override
-    public List<String> getCategories() {
-        return dish.getCategories();
-    }
-
-    @Override
     public String getCurrency() {
         return dish.getCurrency();
-    }
-
-
-
-    @Override
-    public Map<String, Boolean> getOptions() {
-        return options;
-    }
-
-    @Override
-    public void put(String text, boolean checked) {
-        options.put(text, checked);
-    }
-
-    @Override
-    public void increment() {
-        number++;
-    }
-
-    @Override
-    public void decrement() {
-        number = max(--number, 1);
-    }
-
-    public Integer getNumber() {
-        return this.number;
-    }
-
-    public void setIsOrdered(boolean b) {
-        this.ordered = b;
-    }
-
-    public void setNumber(int nr) {
-        this.number = nr;
     }
 }

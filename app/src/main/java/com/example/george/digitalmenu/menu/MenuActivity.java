@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
 import com.example.george.digitalmenu.utils.Dish;
-import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
@@ -32,7 +31,7 @@ import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 /* Responsible for android-OS specific and UI logic */
 public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener {
 
-    public static DisplayableDish DISH = new Dish();
+    public static OrderedDish DISH = new OrderedDish();
 
     private static final String TAG = "MenuActivity";
 
@@ -71,7 +70,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void displayInfoFood(Dish dish) {
-        DISH = new OrderedDish(dish,1);
+        DISH = new OrderedDish(dish);
         OrderBoardFragment fragment = new OrderBoardFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);
