@@ -25,7 +25,7 @@
                 android:background="@drawable/dish_card_border">
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/table_number_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"

@@ -2,9 +2,12 @@ package com.example.george.digitalmenu.restaurant;
 
 import com.example.george.digitalmenu.utils.OrderedDish;
 
+import java.util.List;
+
 public interface TableOrdersFragmentListener {
 
-    void onFragmentReady();
+    void onOrderDishesServed(int tableNumber, List<OrderedDish> orderedDishes);
 
-    void onOrderServed(OrderedDish orderedDish);
+    void onAllOrdersServed(int tableNumber);
+
 }

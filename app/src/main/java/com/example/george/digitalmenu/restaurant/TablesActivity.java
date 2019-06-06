@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
@@ -21,7 +20,6 @@ import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
     private String restaurantName;
     private LinearLayout[] tableEntries;
 
-    private Map<Integer, List<Order>> tableToOrders = new HashMap<>();
+    private Map<Integer, List<OrderedDish>> tableToOrders = new HashMap<>();
     private TableOrdersFragment fragment;
 
     public TablesActivity() {
@@ -51,6 +49,23 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         db.getRestaurant(restaurantName, this::onReceiveRestaurantResponse);
     }
 
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+
+            /* Fragment not in view. */
+            super.onBackPressed();
+
+        } else {
+
+            /* Fragment in view. */
+            getSupportFragmentManager().popBackStack();
+            fragment = null;
+        }
+    }
+
     private void displayTables(Integer numberOfTables) {
 
         for (int i = 1; i <= numberOfTables; i++) {
@@ -60,7 +75,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
     private void onTableEntrySelected(View v, Integer tableNumber) {
         v.findViewById(R.id.notification_order).setVisibility(View.INVISIBLE);
-//        displayFragment(tableNumber);
+        displayFragment(tableNumber);
     }
 
     private void displayFragment(Integer tableNumber) {
@@ -71,9 +86,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         transaction.addToBackStack(null);
         transaction.commit();
 
-        List<Order> orders = tableToOrders.get(tableNumber);
-        for (Order o : orders) {
-            fragment.addOrder(o);
+        List<OrderedDish> existingOrders = tableToOrders.get(tableNumber);
+        for (OrderedDish orderedDish : existingOrders) {
+            fragment.addOrderedDish(orderedDish);
         }
     }
 
@@ -97,19 +112,26 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
     private void onReceiveOrder(Order order) {
 
-        int numberOfItems = 0;
+//        int numberOfItems = 0;
         int tableNumber = order.getTableNumber();
 
-        tableToOrders.get(tableNumber).add(order);
+        for (OrderedDish orderedDish : order.getDishes()) {
+            tableToOrders.get(tableNumber).add(orderedDish);
+
+            if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
+                fragment.addOrderedDish(orderedDish);
+            }
+
+        }
 
         TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
         itemsText.setVisibility(View.VISIBLE);
 
-        for (Object ordered : tableToOrders.get(tableNumber)) {
-            numberOfItems += ((Order) ordered).getDishes().size();
-        }
+//        for (Object ordered : tableToOrders.get(tableNumber)) {
+//            numberOfItems += ((Order) ordered).getDishes().size();
+//        }
 
-        itemsText.setText(numberOfItems + " items");
+//        itemsText.setText(numberOfItems + " items");
 
         TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
         notification.setText(tableToOrders.get(tableNumber).size() + "");
@@ -149,27 +171,16 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         displayTables(numberOfTables);
     }
 
-    @Override
-    public void onFragmentReady(){}
-
-//    @Override
-//    public void onFragmentReady() {
-//        OrderedDish orderedDish = new OrderedDish(new Dish("Spicy Fries",
-//                "test_url",
-//                "test_description",
-//                20.0d,
-//                Arrays.asList("catOne","catTwo"),
-//                Arrays.asList("tagOne","tagTwo"),
-//                Arrays.asList("optionOne","optionTwo")), 5);
-//
-//        orderedDish.put("No spice", true);
-//        orderedDish.put("No fries", true);
-//
-//
-//    }
+    public void onOrderDishesServed(int tableNumber, List<OrderedDish> servedOrderedDishes) {
+        /* TODO: Remove from database. */
+        tableToOrders.get(tableNumber).removeAll(servedOrderedDishes);
+    }
 
     @Override
-    public void onOrderServed(OrderedDish orderedDish) {
-
+    public void onAllOrdersServed(int tableNumber) {
+        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
+        c.stop();
+        c.setBase(SystemClock.elapsedRealtime());
+        c.setVisibility(View.INVISIBLE);
     }
 }
