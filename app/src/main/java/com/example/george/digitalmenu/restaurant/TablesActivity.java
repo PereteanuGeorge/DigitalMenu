@@ -6,6 +6,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,23 +17,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TablesActivity extends AppCompatActivity {
+public class TablesActivity extends AppCompatActivity implements TableOrdersFragmentListener {
 
     private RestaurantDatabase db;
     private String restaurantName;
     private LinearLayout[] tableEntries;
 
-    public static List[] orderToTable;
+    private Map<Integer, List<Order>> tableToOrders = new HashMap<>();
+    private TableOrdersFragment fragment;
 
     public TablesActivity() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -44,18 +49,35 @@ public class TablesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tables);
 
         Intent intent = getIntent();
+
         this.restaurantName = intent.getStringExtra(LoginActivity.TABLES_INTENT_KEY);
 
         db.getRestaurant(restaurantName, this::onReceiveRestaurantResponse);
-
-        db.listenForOrders(restaurantName, this::notifyAndStartTime);
-
     }
 
     private void displayTables(Integer numberOfTables) {
 
         for (int i = 1; i <= numberOfTables; i++) {
             displayTable(i);
+        }
+    }
+
+    private void onTableEntrySelected(View v, Integer tableNumber) {
+        v.findViewById(R.id.notification_order).setVisibility(View.INVISIBLE);
+//        displayFragment(tableNumber);
+    }
+
+    private void displayFragment(Integer tableNumber) {
+        fragment = TableOrdersFragment.newInstance(tableNumber);
+        fragment.registerListener(this);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.tablesActivityRoot, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        List<Order> orders = tableToOrders.get(tableNumber);
+        for (Order o : orders) {
+            fragment.addOrder(o);
         }
     }
 
@@ -71,55 +93,59 @@ public class TablesActivity extends AppCompatActivity {
 
         tableEntries[tableNumber - 1] = tableEntry;
 
+        tableEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTableEntrySelected(v, tableNumber);
+            }
+        });
+
         tableEntry.setId(View.generateViewId());
         tableList.addView(tableEntry);
     }
 
-    private void notifyAndStartTime(Order order) {
+    private void onReceiveOrder(Order order) {
 
-        int numberOfItems = order.getOrderedDishes().size();
+        int numberOfItems = 0;
         int tableNumber = order.getTableNumber();
 
-        orderToTable[tableNumber].add(order);
+        tableToOrders.get(tableNumber).add(order);
 
         TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
         itemsText.setVisibility(View.VISIBLE);
 
-        for (Object ordered : orderToTable[tableNumber]) {
-            numberOfItems = ((Order) ordered).getDishes().size();
+        for (Object ordered : tableToOrders.get(tableNumber)) {
+            numberOfItems += ((Order) ordered).getDishes().size();
         }
 
         itemsText.setText(numberOfItems + " items");
 
         TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
-        notification.setText(orderToTable[tableNumber].size() + "");
+        notification.setText(tableToOrders.get(tableNumber).size() + "");
         notification.setVisibility(View.VISIBLE);
-        hideNotificationOnClick(tableNumber);
 
         Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
         chronometer.setVisibility(View.VISIBLE);
         chronometer.stop();
-        if (orderToTable[tableNumber].isEmpty()) {
+        if (tableToOrders.get(tableNumber).isEmpty()) {
             chronometer.setBase(SystemClock.elapsedRealtime());
         }
         chronometer.start();
     }
 
-    private void hideNotificationOnClick(int tableNumber) {
-        tableEntries[tableNumber - 1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tableEntries[tableNumber - 1].findViewById(R.id.notification_order).setVisibility(View.INVISIBLE);
-            }
-        });
-    }
-
     private void onReceiveRestaurantResponse(Restaurant r) {
-
+        initTableOrdersMap(r.getNumberOfTables());
         displayThemePicture(r);
-
         displayTableEntries(r);
+        db.listenForOrders(restaurantName, this::onReceiveOrder);
     }
+
+    private void initTableOrdersMap(int numberOfTables) {
+        for (int i = 1; i <= numberOfTables; i++) {
+            tableToOrders.put(i, new ArrayList<>());
+        }
+    }
+
 
     private void displayThemePicture(Restaurant r) {
         ImageView restaurantLogo = findViewById(R.id.restaurantLogo);
@@ -129,13 +155,27 @@ public class TablesActivity extends AppCompatActivity {
     private void displayTableEntries(Restaurant r) {
         int numberOfTables = r.getNumberOfTables();
         tableEntries = new LinearLayout[numberOfTables];
-        orderToTable = new List[numberOfTables];
-
-        for (int i = 0; i < numberOfTables; i++) {
-            orderToTable[i] = new ArrayList<Order>();
-
-        }
         displayTables(numberOfTables);
     }
 
+    @Override
+    public void onFragmentReady() {
+        OrderedDish orderedDish = new OrderedDish(new Dish("Spicy Fries",
+                "test_url",
+                "test_description",
+                20.0d,
+                Arrays.asList("catOne","catTwo"),
+                Arrays.asList("tagOne","tagTwo"),
+                Arrays.asList("optionOne","optionTwo")), 5);
+
+        orderedDish.put("No spice", true);
+        orderedDish.put("No fries", true);
+
+
+    }
+
+    @Override
+    public void onOrderServed(OrderedDish orderedDish) {
+
+    }
 }

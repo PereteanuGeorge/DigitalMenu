@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.AsyncEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -131,39 +132,31 @@ public class RestaurantFirestore implements RestaurantDatabase {
     @Override
     public void listenForOrders(String restaurantName, Consumer<Order> callback) {
 
-        final CollectionReference colRef = db.collection("restaurantOrders").document(restaurantName).collection("orders");
+        db.collection("restaurantOrders")
+            .document(restaurantName)
+            .collection("orders")
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
 
-        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                    @Nullable FirebaseFirestoreException e) {
 
-                    if (documentChange.getNewIndex() == -1) {
-                        continue;
-                    }
-
-                    if (documentChange.getDocument().getId().equals("nullOrder")) {
-                        continue;
-                    }
-
-                    QueryDocumentSnapshot document = documentChange.getDocument();
-                    Log.d(TAG, documentChange.getNewIndex() + " => " + document);
-
-                    document.getReference().addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                            @Nullable FirebaseFirestoreException e) {
-
-                            Order order = document.toObject(Order.class);
-                            callback.accept(order);
-
-                            if (snapshot != null && snapshot.exists()) {
-                                Log.d(TAG, "Current data: " + snapshot.getData());
-                            } else {
-                                Log.d(TAG, "Current data: null");
-                            }
+                    for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (change.getNewIndex() == -1) {
+                            continue;
                         }
-                    });
+
+                        if (change.getType() != DocumentChange.Type.ADDED) {
+                            continue;
+                        }
+
+                        if (change.getDocument().getId().equals("nullOrder")) {
+                            continue;
+                        }
+
+                        QueryDocumentSnapshot document = change.getDocument();
+                        Order order = document.toObject(Order.class);
+                        callback.accept(order);
                 }
             }
         });
