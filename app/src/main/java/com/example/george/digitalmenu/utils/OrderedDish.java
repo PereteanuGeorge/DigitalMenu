@@ -48,10 +48,6 @@ public class OrderedDish implements DisplayableDish{
         this.ordered = ordered;
     }
 
-    public void setIsOrdered(boolean b) {
-        this.ordered = b;
-    }
-
     @Exclude
     public DisplayableDish getDish() {
         return dish;
@@ -112,10 +108,6 @@ public class OrderedDish implements DisplayableDish{
         return dish.getCurrency();
     }
 
-    @Override
-    public Integer getNumber() {
-        return this.number;
-    }
 
 
     @Override
@@ -136,5 +128,17 @@ public class OrderedDish implements DisplayableDish{
     @Override
     public void decrement() {
         number = max(--number, 1);
+    }
+
+    public Integer getNumber() {
+        return this.number;
+    }
+
+    public void setIsOrdered(boolean b) {
+        this.ordered = b;
+    }
+
+    public void setNumber(int nr) {
+        this.number = nr;
     }
 }

@@ -27,6 +27,10 @@ import com.google.firebase.firestore.core.AsyncEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.annotation.Nullable;
 
 
@@ -41,6 +45,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private FirebaseAuth mAuth;
 
     private final String TAG = "Firestore";
+
+    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -64,13 +70,20 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     public void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback) {
-        StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
-        ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
-            dish.setPicture(bytes);
-            Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
+        for (int i = 0; i < NUMBER_OF_CORES; i++) {
+            executorService.submit((Callable<Object>) () -> {
+                StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
+                ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
 
-            callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + dish.getName() + " falied", e));
+                    dish.setPicture(bytes);
+                    Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
+
+                    callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + dish.getName() + " falied", e));
+                return dish;
+            });
+        }
     }
 
     @Override

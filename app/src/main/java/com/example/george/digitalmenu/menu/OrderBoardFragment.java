@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.DisplayableDish;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;
@@ -34,6 +35,7 @@ public class OrderBoardFragment extends Fragment {
     private LayoutInflater inflater;
     private DisplayableDish dish;
     private View orderView;
+    int counter = 1;
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -77,35 +79,36 @@ public class OrderBoardFragment extends Fragment {
 
         setOptions(dish.getOptions(), orderView.findViewById(R.id.options_panel));
 
+        Button increment = orderView.findViewById(R.id.increment);
+        Button decrement = orderView.findViewById(R.id.decrement);
 
-        setOperationButton();
+        TextView count = orderView.findViewById(R.id.counter);
+        count.setText(String.valueOf(counter));
 
-        setCounter();
-    }
+        setNumberOfPortions(dish, increment, decrement, count);
 
-    private void setOperationButton() {
         if (dish.isOrdered()) {
             setDeleteButton();
         } else {
             dish = new OrderedDish(dish, 1);
             setAddButton();
         }
+
     }
 
-    private void setCounter() {
-        Button increment = orderView.findViewById(R.id.increment);
-        Button decrement = orderView.findViewById(R.id.decrement);
-
-        TextView count = orderView.findViewById(R.id.counter);
-        count.setText(String.valueOf(dish.getNumber()));
-
+    private void setNumberOfPortions(DisplayableDish dish, Button increment, Button decrement, TextView count) {
         increment.setOnClickListener(view -> {
-            dish.increment();
-            count.setText(String.valueOf(dish.getNumber()));
+            counter++;
+            count.setText(String.valueOf(counter));
         });
         decrement.setOnClickListener(view -> {
+            counter--;
             dish.decrement();
-            count.setText(String.valueOf(dish.getNumber()));
+            if(counter >= 1) {
+                count.setText(String.valueOf(counter));
+            } else {
+                counter = 1;
+            }
         });
     }
 
@@ -134,7 +137,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete((OrderedDish) dish);
+            ORDER.delete((OrderedDish) dish,counter);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             reFreshOrderPage();
         });
@@ -158,7 +161,8 @@ public class OrderBoardFragment extends Fragment {
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
-            ORDER.add((OrderedDish) dish);
+            dish.setNumber(counter);
+            ORDER.add((OrderedDish) dish,counter);
             dish.setIsOrdered(true);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
