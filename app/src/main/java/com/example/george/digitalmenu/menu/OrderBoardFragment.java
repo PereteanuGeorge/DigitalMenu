@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.DisplayableDish;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.Map;
@@ -32,7 +31,7 @@ public class OrderBoardFragment extends Fragment {
 
 
     private LayoutInflater inflater;
-    private DisplayableDish dish;
+    private OrderedDish dish;
     private View orderView;
     int counter = 1;
 
@@ -84,33 +83,28 @@ public class OrderBoardFragment extends Fragment {
         TextView count = orderView.findViewById(R.id.counter);
         count.setText(String.valueOf(counter));
 
-        setNumberOfPortions(dish, increment, decrement, count);
-
         if (dish.isOrdered()) {
             setDeleteButton();
         } else {
-            dish = new OrderedDish(dish, 1);
             setAddButton();
         }
 
+        setNumberOfPortions(increment, decrement, count);
     }
 
-    private void setNumberOfPortions(DisplayableDish dish, Button increment, Button decrement, TextView count) {
+    private void setNumberOfPortions(Button increment, Button decrement, TextView count) {
         increment.setOnClickListener(view -> {
-            counter++;
-            count.setText(String.valueOf(counter));
+            dish.increment();
+            count.setText(String.valueOf(dish.getNumber()));
         });
         decrement.setOnClickListener(view -> {
-            counter--;
             dish.decrement();
-            if(counter >= 1) {
-                count.setText(String.valueOf(counter));
-            } else {
-                counter = 1;
-            }
+            count.setText(String.valueOf(dish.getNumber()));
         });
     }
 
+
+    //TODO; refactor this
     private void setOptions(Map<String, Boolean> options, LinearLayout options_panel) {
         for (String option: options.keySet()) {
             setOption(option, options.get(option), options_panel);
@@ -136,7 +130,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete((OrderedDish) dish,counter);
+            ORDER.delete(dish);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
             reFreshOrderPage();
         });
@@ -159,10 +153,8 @@ public class OrderBoardFragment extends Fragment {
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
-        button.setOnClickListener(v -> {
-            dish.setNumber(counter);
-            ORDER.add((OrderedDish) dish,counter);
-            dish.setIsOrdered(true);
+        button.setOnClickListener(v -> { ;
+            ORDER.add(dish);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
         });
