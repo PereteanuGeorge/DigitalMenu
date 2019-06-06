@@ -1,6 +1,11 @@
 package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +21,9 @@ import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TablesActivity extends AppCompatActivity {
@@ -25,7 +32,7 @@ public class TablesActivity extends AppCompatActivity {
     private String restaurantName;
     private LinearLayout[] tableEntries;
 
-    public static Map<Order, Integer> orderToTable = new HashMap<>();
+    public static List[] orderToTable;
 
     public TablesActivity() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -50,7 +57,6 @@ public class TablesActivity extends AppCompatActivity {
         for (int i = 1; i <= numberOfTables; i++) {
             displayTable(i);
         }
-
     }
 
     private void displayTable(Integer tableNumber) {
@@ -74,18 +80,29 @@ public class TablesActivity extends AppCompatActivity {
         int numberOfItems = order.getOrderedDishes().size();
         int tableNumber = order.getTableNumber();
 
+        orderToTable[tableNumber].add(order);
+
         TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
+        itemsText.setVisibility(View.VISIBLE);
+
+        for (Object ordered : orderToTable[tableNumber]) {
+            numberOfItems = ((Order) ordered).getDishes().size();
+        }
+
         itemsText.setText(numberOfItems + " items");
 
         TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
+        notification.setText(orderToTable[tableNumber].size() + "");
         notification.setVisibility(View.VISIBLE);
         hideNotificationOnClick(tableNumber);
 
-        Chronometer chronometer = findViewById(R.id.simpleChronometer);
+        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
         chronometer.setVisibility(View.VISIBLE);
+        chronometer.stop();
+        if (orderToTable[tableNumber].isEmpty()) {
+            chronometer.setBase(SystemClock.elapsedRealtime());
+        }
         chronometer.start();
-
-        orderToTable.put(order, tableNumber);
     }
 
     private void hideNotificationOnClick(int tableNumber) {
@@ -112,6 +129,12 @@ public class TablesActivity extends AppCompatActivity {
     private void displayTableEntries(Restaurant r) {
         int numberOfTables = r.getNumberOfTables();
         tableEntries = new LinearLayout[numberOfTables];
+        orderToTable = new List[numberOfTables];
+
+        for (int i = 0; i < numberOfTables; i++) {
+            orderToTable[i] = new ArrayList<Order>();
+
+        }
         displayTables(numberOfTables);
     }
 
