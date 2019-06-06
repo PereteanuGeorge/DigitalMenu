@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,7 +96,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void displayMenu(Restaurant r) {
-        displayThemePicture(r);
+        //displayThemePicture(r);
+
+        TextView restaurantName = rootLayout.findViewById(R.id.restaurant_Name);
+        restaurantName.setText(r.getName());
+
         displayCategories(r);
     }
 
@@ -121,26 +126,35 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         LayoutInflater inflater = getLayoutInflater();
         LinearLayout menuPanel = rootLayout.findViewById(R.id.menu_panel);
-        LinearLayout clist = (LinearLayout) inflater.inflate(R.layout.category_list, menuPanel, false);
-        menuPanel.addView(clist);
-        clist.setId(View.generateViewId());
+        CardView categoryCard = (CardView) inflater.inflate(R.layout.new_dish_card, menuPanel, false);
+        menuPanel.addView(categoryCard);
+        categoryCard.setId(View.generateViewId());
 
-        TextView infoText = clist.findViewById(R.id.category_text);
-        infoText.setText(c);//
+        TextView categoryText = categoryCard.findViewById(R.id.category_name);
+        categoryText.setText(c);//
 
-        displayDishes(dishes, clist, c);
+        ImageView categoryPicture = categoryCard.findViewById(R.id.category_picture);
+        if (dishes.size() > 0) {
+            presenter.fetchDishImage(dishes.get(0), bm -> categoryPicture.setImageBitmap(bm));
+        }
+
+        displayDishes(dishes, categoryCard, c);
     }
 
 
-    private void displayDishes(List<Dish> dishes, LinearLayout clist, String c) {
-        clist.setOnClickListener(v -> {
+    private void displayDishes(List<Dish> dishes, CardView categoryCard, String c) {
+        View openButton = categoryCard.findViewById(R.id.open_dish_button);
+        LinearLayout dishPanel = categoryCard.findViewById(R.id.dish_panel);
+        categoryCard.setOnClickListener(v -> {
             if (!open.get(c)) {
                 for (Dish d : dishes) {
-                    displayDish(d, clist);
+                    displayDish(d, dishPanel);
                 }
+                openButton.setBackground(getResources().getDrawable(R.drawable.up_white_arrow));
                 Toast.makeText(getApplicationContext(), "Opened a category", Toast.LENGTH_LONG);
             } else {
-                clist.removeViews(1, clist.getChildCount()-1);
+                dishPanel.removeAllViews();
+                openButton.setBackground(getResources().getDrawable(R.drawable.down_white_arrow));
                 Toast.makeText(getApplicationContext(), "Closed a category", Toast.LENGTH_LONG);
             }
             open.put(c, !open.get(c));
@@ -152,11 +166,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
     }
 
-    private void displayDish(Dish d, LinearLayout clist) {
+    private void displayDish(Dish d, LinearLayout dishPanel) {
 
         /* Create card view with fields. */
         LayoutInflater inflater = getLayoutInflater();
-        ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dish_card, clist, false);
+        ConstraintLayout dishCard = (ConstraintLayout) inflater.inflate(R.layout.dish_card, dishPanel, false);
 
         TextView infoText = dishCard.findViewById(R.id.description);
         infoText.setText(d.getDescription());
@@ -176,7 +190,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
         // Add to existing list of cards
-        clist.addView(dishCard);
+        dishPanel.addView(dishCard);
         dishCard.setId(View.generateViewId());
 
         // Register click event to presenter.
