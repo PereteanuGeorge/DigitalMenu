@@ -15,13 +15,14 @@ public class Restaurant {
     private List<Dish> dishes;
     private String pic_url;
     private Integer numberOfTables;
+    private String name;
 
     private byte[] picture = new byte[MAX_DOWNLOAD_SIZE_BYTES];
 
     public Restaurant() {}
 
     public Restaurant(String address, List<String> categories, String telephone, String website,
-                      List<Dish> dishes, String pic_url, Integer numberOfTables) {
+                      List<Dish> dishes, String pic_url, Integer numberOfTables, String name) {
         this.address = address;
         this.categories = categories;
         this.telephone = telephone;
@@ -29,6 +30,7 @@ public class Restaurant {
         this.dishes = dishes;
         this.pic_url = pic_url;
         this.numberOfTables = numberOfTables;
+        this.name = name;
     }
 
     public String getAddress() {
@@ -86,5 +88,13 @@ public class Restaurant {
         this.numberOfTables = numberOfTables;
     }
 
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

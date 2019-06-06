@@ -6,6 +6,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 import static java.lang.StrictMath.max;
 
 @IgnoreExtraProperties
@@ -54,7 +55,7 @@ public class OrderedDish {
 
     public Double getPrice() {
         this.price = this.number * dish.getPrice();
-        return price;
+        return roundDouble(price, 2);
     }
 
     public void setPrice(Double price) {

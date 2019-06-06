@@ -23,7 +23,7 @@
             android:background="#FFFFFF"
             android:gravity="center"
             android:text="Soft Drinks"
-            android:textColor="#00BCD4"
+            android:textColor="#737586"
 
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
