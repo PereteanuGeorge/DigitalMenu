@@ -10,7 +10,7 @@ import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 public class Order {
     private Double totalPrice = 0.0;
     private List<OrderedDish> dishes = new ArrayList<>();
-    private Integer tableNumber = 5;
+    public static Integer tableNumber;
 
     public Order() {}
 

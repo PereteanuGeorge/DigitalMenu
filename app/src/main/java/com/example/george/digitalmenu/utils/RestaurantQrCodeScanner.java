@@ -99,11 +99,18 @@ public class RestaurantQrCodeScanner implements QrCodeScanner {
                     Vibrator vibrator = (Vibrator) activityToShowScanner.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(100);
                     value = qrCodes.valueAt(0).displayValue;
-                    callback.accept(value);
+                    String restaurantName = splitInTableNrAndRestaurantName();
+                    callback.accept(restaurantName);
                 }
 
             }
         });
+    }
+
+    private String splitInTableNrAndRestaurantName() {
+        int position = value.lastIndexOf('/');
+        Order.tableNumber = Integer.valueOf(value.substring(position + 1));
+        return value.substring(0,position);
     }
 
 }
