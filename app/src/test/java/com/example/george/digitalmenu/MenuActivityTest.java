@@ -1,11 +1,6 @@
 package com.example.george.digitalmenu;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.util.Consumer;
-import android.widget.ImageView;
 
 import com.example.george.digitalmenu.menu.MenuActivity;
 import com.example.george.digitalmenu.menu.MenuContract;
@@ -18,9 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
@@ -29,8 +21,6 @@ import org.robolectric.annotation.Config;
 import java.util.Arrays;
 
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -61,7 +51,9 @@ public class MenuActivityTest {
             "testTelephone",
             "testWebsite",
             Arrays.asList(testDish),
-            "testPicUrl",5
+            "testPicUrl",
+            5,
+            "Name"
     );
 
     @Before
@@ -104,38 +96,38 @@ public class MenuActivityTest {
         assert activityController.create().get().getRestaurantName().equals(testIntentInput);
     }
 
-    @Test
-    public void displayMenuAsksForThemePictureFromPresenter() {
-        activityController.create().get().displayMenu(testRestaurant);
-        verify(mockPresenter).fetchThemeImage(eq(testRestaurant), any());
-    }
+//    @Test
+//    public void displayMenuAsksForThemePictureFromPresenter() {
+//        activityController.create().get().displayMenu(testRestaurant);
+//        verify(mockPresenter).fetchThemeImage(eq(testRestaurant), any());
+//    }
 
-    @Test
-    public void displayMenuSetsThemePictureBitmapInCorrectImageView() {
-
-        // Given
-        byte[] testByteArray = new byte[5];
-        Bitmap testBitmap = BitmapFactory.decodeByteArray(testByteArray, 0, testByteArray.length);
-
-        Mockito.doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Consumer<Bitmap> successCallback = invocation.getArgument(1);
-                successCallback.accept(testBitmap);
-                return null;
-            }
-        }).when(mockPresenter).fetchThemeImage(eq(testRestaurant), any());
-
-        MenuActivity activity = activityController.create().get();
-
-        // When
-        activity.displayMenu(testRestaurant);
-
-        // Then
-        ImageView themePictureView = activity.findViewById(R.id.theme_picture);
-        Bitmap attachedBitmap = ((BitmapDrawable) themePictureView.getDrawable()).getBitmap();
-        assert attachedBitmap.equals(testBitmap);
-    }
+//    @Test
+//    public void displayMenuSetsThemePictureBitmapInCorrectImageView() {
+//
+//        // Given
+//        byte[] testByteArray = new byte[5];
+//        Bitmap testBitmap = BitmapFactory.decodeByteArray(testByteArray, 0, testByteArray.length);
+//
+//        Mockito.doAnswer(new Answer() {
+//            @Override
+//            public Object answer(InvocationOnMock invocation) throws Throwable {
+//                Consumer<Bitmap> successCallback = invocation.getArgument(1);
+//                successCallback.accept(testBitmap);
+//                return null;
+//            }
+//        }).when(mockPresenter).fetchThemeImage(eq(testRestaurant), any());
+//
+//        MenuActivity activity = activityController.create().get();
+//
+//        // When
+//        activity.displayMenu(testRestaurant);
+//
+//        // Then
+//        ImageView themePictureView = activity.findViewById(R.id.theme_picture);
+//        Bitmap attachedBitmap = ((BitmapDrawable) themePictureView.getDrawable()).getBitmap();
+//        assert attachedBitmap.equals(testBitmap);
+//    }
 
 
 }
