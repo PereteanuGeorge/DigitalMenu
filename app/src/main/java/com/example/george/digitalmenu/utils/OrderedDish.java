@@ -18,6 +18,7 @@ public class OrderedDish {
     private Double price;
     private boolean ordered = false;
     private boolean isServed = false;
+    private boolean isSent = false;
 
     public OrderedDish() {}
 
@@ -118,5 +119,15 @@ public class OrderedDish {
 
     public String getCurrency() {
         return dish.getCurrency();
+    }
+
+    @Exclude
+    public void setIsSent() {
+        this.isSent = true;
+    }
+
+    @Exclude
+    public Boolean isSent() {
+        return this.isSent;
     }
 }

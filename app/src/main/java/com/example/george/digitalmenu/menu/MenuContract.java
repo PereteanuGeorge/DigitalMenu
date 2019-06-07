@@ -26,6 +26,8 @@ public interface MenuContract {
         void cleanOrder();
 
         void sendOrder();
+
+        void createNewOrder();
     }
 
     interface View {

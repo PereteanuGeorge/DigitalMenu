@@ -220,4 +220,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void sendOrder() {
         presenter.sendOrder();
     }
+
+    @Override
+    public void createNewOrder() {
+        presenter.createNewOrder();
+    }
 }

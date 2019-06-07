@@ -18,7 +18,7 @@ import com.example.george.digitalmenu.utils.RestaurantQrCodeScanner;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 
-    public static final Order ORDER = new Order();
+    public static Order ORDER = new Order();
 
     private QrCodeScanner scanner;
     public static final String INTENT_KEY = "bestmangal";
