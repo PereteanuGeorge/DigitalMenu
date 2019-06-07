@@ -68,11 +68,15 @@ public class OrderPageFragment extends Fragment {
 
     private void setConfirmButton() {
         orderView.findViewById(R.id.confirm_button).setOnClickListener(v -> {
-            for (FragmentListener listener: listeners) {
-                listener.sendOrder(this::refreshOrderPage);
-                listener.createNewOrder();
+            if (ORDER.isEmpty()) {
+                Toast.makeText(getActivity(), "Cannot sent empty order", Toast.LENGTH_LONG).show();
+            } else {
+                for (FragmentListener listener : listeners) {
+                    listener.sendOrder(this::refreshOrderPage);
+                    listener.createNewOrder();
+                }
+                Toast.makeText(getActivity(), "Order Sent", Toast.LENGTH_LONG).show();
             }
-            Toast.makeText(getActivity(), "Order Sent", Toast.LENGTH_LONG).show();
         });
 
     }
