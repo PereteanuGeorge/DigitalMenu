@@ -137,13 +137,13 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         notification.setText(tableToOrders.get(tableNumber).size() + "");
         notification.setVisibility(View.VISIBLE);
 
-        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
-        chronometer.setVisibility(View.VISIBLE);
-        chronometer.stop();
-        if (tableToOrders.get(tableNumber).isEmpty()) {
-            chronometer.setBase(SystemClock.elapsedRealtime());
-        }
-        chronometer.start();
+//        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
+//        chronometer.setVisibility(View.VISIBLE);
+//        chronometer.stop();
+//        if (tableToOrders.get(tableNumber).isEmpty()) {
+//            chronometer.setBase(SystemClock.elapsedRealtime());
+//        }
+//        chronometer.start();
     }
 
     private void onReceiveRestaurantResponse(Restaurant r) {
@@ -178,9 +178,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
     @Override
     public void onAllOrdersServed(int tableNumber) {
-        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
-        c.stop();
-        c.setBase(SystemClock.elapsedRealtime());
-        c.setVisibility(View.INVISIBLE);
+//        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
+//        c.stop();
+//        c.setBase(SystemClock.elapsedRealtime());
+//        c.setVisibility(View.INVISIBLE);
     }
 }

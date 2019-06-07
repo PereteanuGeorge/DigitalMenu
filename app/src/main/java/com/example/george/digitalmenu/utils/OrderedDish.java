@@ -16,15 +16,18 @@ public class OrderedDish {
     private Integer number;
     private Map<String, Boolean> options = new HashMap<>();
     private Double price;
-    private boolean ordered;
+    private boolean ordered = false;
+    private boolean isServed = false;
 
     public OrderedDish() {}
 
-    public OrderedDish(String name, Integer number, Map<String, Boolean> options, Double price) {
+    public OrderedDish(String name, Integer number, Map<String, Boolean> options,
+                       Double price, Boolean isServed) {
         this.name = name;
         this.number = number;
         this.options = options;
         this.price = price;
+        this.isServed = isServed;
     }
 
     // Adding order
@@ -70,6 +73,14 @@ public class OrderedDish {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isServed() {
+        return isServed;
+    }
+
+    public void setServed(boolean served) {
+        isServed = served;
     }
 
     public void increment() {
