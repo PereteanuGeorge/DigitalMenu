@@ -87,6 +87,11 @@ public class MenuPresenter implements MenuContract.Presenter {
         ORDER = new Order();
     }
 
+    @Override
+    public void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback) {
+        db.listenForSentOrder(id, callback);
+    }
+
     private void fetchData(String restaurantName) {
         db.getRestaurant(restaurantName, this::onFetchDataComplete);
     }

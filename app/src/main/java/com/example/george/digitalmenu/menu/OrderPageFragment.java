@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
@@ -29,9 +31,10 @@ import static com.example.george.digitalmenu.menu.MenuPresenter.PREVIOUS_ORDERS;
  */
 public class OrderPageFragment extends Fragment {
 
-    View order;
+    View orderView;
     private LayoutInflater inflater;
     private List<FragmentListener> listeners = new ArrayList<>();
+    Map<Integer, Pair<OrderedDish, ConstraintLayout>> orderDishMapFromId;
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -43,27 +46,27 @@ public class OrderPageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         this.inflater = inflater;
-        order = inflater.inflate(R.layout.fragment_order, container, false);
+        orderView = inflater.inflate(R.layout.fragment_order, container, false);
         displayOrders(inflater);
         setTotalPrice();
         setGoBackButton();
         setConfirmButton();
         setBackgroundClick();
-        return order;
+        return orderView;
 
     }
 
     private void setBackgroundClick() {
-        order.setOnClickListener(v -> {});
+        orderView.setOnClickListener(v -> {});
     }
 
     private void setTotalPrice() {
-        TextView totalPrice = order.findViewById(R.id.total_price);
+        TextView totalPrice = orderView.findViewById(R.id.total_price);
         totalPrice.setText(String.valueOf(ORDER.getTotalPrice()));
     }
 
     private void setConfirmButton() {
-        order.findViewById(R.id.confirm_button).setOnClickListener(v -> {
+        orderView.findViewById(R.id.confirm_button).setOnClickListener(v -> {
             for (FragmentListener listener: listeners) {
                 listener.sendOrder();
                 listener.createNewOrder();
@@ -86,10 +89,13 @@ public class OrderPageFragment extends Fragment {
 
     private void displayOrders(LayoutInflater inflater) {
         // init
-        LinearLayout orderPanel = order.findViewById(R.id.order_panel);
+        LinearLayout orderPanel = orderView.findViewById(R.id.order_panel);
         for (Order order: PREVIOUS_ORDERS) {
             for (OrderedDish dish : order.getOrderedDishes()) {
                 displayOrder(inflater, dish, orderPanel);
+            }
+            for (FragmentListener listener: listeners) {
+                listener.listenForOrderedDishUpdate(order.getId(), this::onServe);
             }
         }
         for (OrderedDish dish : ORDER.getOrderedDishes()) {
@@ -98,7 +104,23 @@ public class OrderPageFragment extends Fragment {
 
     }
 
-    private void displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
+    private void onServe(List<OrderedDish> updatedOrderedDishes)  {
+        for (OrderedDish updatedOrderedDish: updatedOrderedDishes) {
+            Pair<OrderedDish, ConstraintLayout> pair = orderDishMapFromId.get(updatedOrderedDish.getId());
+            OrderedDish localOrederDish = pair.first;
+            if (localOrederDish.isServed() != updatedOrderedDish.isServed()) {
+                localOrederDish.setIsServed(updatedOrderedDish.isServed());
+                updateOrderCard(pair.second);
+            }
+        }
+    }
+
+    private void updateOrderCard(ConstraintLayout orderCard) {
+        TextView nameText = orderCard.findViewById(R.id.name);
+        Toast.makeText(getActivity(), nameText.getText() + " is served", Toast.LENGTH_LONG);
+    }
+
+    private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
         ConstraintLayout orderCard = (ConstraintLayout) inflater.inflate(R.layout.order_card, orderPanel, false);
 
 
@@ -117,7 +139,7 @@ public class OrderPageFragment extends Fragment {
         addItem(orderCard, orderPanel);
 
         setOnClick(dish, orderCard);
-
+        return orderCard;
     }
 
     private void setOnClick(OrderedDish dish, ConstraintLayout orderCard) {
@@ -141,7 +163,7 @@ public class OrderPageFragment extends Fragment {
     }
 
     private void setGoBackButton() {
-        View back = order.findViewById(R.id.back_button);
+        View back = orderView.findViewById(R.id.back_button);
         back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
     }
 

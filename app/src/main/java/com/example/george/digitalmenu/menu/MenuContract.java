@@ -8,6 +8,8 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.Tag;
 
+import java.util.List;
+
 public interface MenuContract {
     interface Presenter {
 
@@ -28,6 +30,8 @@ public interface MenuContract {
         void sendOrder();
 
         void createNewOrder();
+
+        void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback);
     }
 
     interface View {

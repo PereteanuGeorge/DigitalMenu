@@ -2,12 +2,10 @@ package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -150,7 +148,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         initTableOrdersMap(r.getNumberOfTables());
         displayThemePicture(r);
         displayTableEntries(r);
-        db.listenForOrders(restaurantName, this::onReceiveOrder);
+        db.listenForCustomerOrders(restaurantName, this::onReceiveOrder);
     }
 
     private void initTableOrdersMap(int numberOfTables) {

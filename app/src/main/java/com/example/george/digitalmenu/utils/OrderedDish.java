@@ -19,16 +19,18 @@ public class OrderedDish {
     private boolean ordered = false;
     private boolean isServed = false;
     private boolean isSent = false;
+    private Integer id;
 
     public OrderedDish() {}
 
     public OrderedDish(String name, Integer number, Map<String, Boolean> options,
-                       Double price, Boolean isServed) {
+                       Double price, Boolean isServed, Integer id) {
         this.name = name;
         this.number = number;
         this.options = options;
         this.price = price;
         this.isServed = isServed;
+        this.id = id;
     }
 
     // Adding order
@@ -39,6 +41,7 @@ public class OrderedDish {
         this.options = dish.getOptions();
         this.price = dish.getPrice();
         this.ordered = false;
+        this.id = IdGenerator.generate();
     }
 
     public Integer getNumber() {
@@ -129,5 +132,26 @@ public class OrderedDish {
     @Exclude
     public Boolean isSent() {
         return this.isSent;
+    }
+
+    public Object getId() {
+        return this.id;
+    }
+
+    public void setIsServed(boolean isServed) {
+        this.isServed = isServed;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static class IdGenerator {
+
+        private static int count;
+
+        public static int generate() {
+            return ++count;
+        }
     }
 }

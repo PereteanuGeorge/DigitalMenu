@@ -2,6 +2,7 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.LocaleList;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
@@ -10,19 +11,28 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.StructuredQuery;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.annotation.Nullable;
 
 
 // Adapter implementation for firebase solution.
 public class RestaurantFirestore implements RestaurantDatabase {
 
+    public static final Map<Integer, OrderedDish> ORDER_DISH_MAP = new HashMap<>();
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
@@ -115,7 +125,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
-    public void listenForOrders(String restaurantName, Consumer<Order> callback) {
+    public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
             .document(restaurantName)
@@ -177,6 +187,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
         db.collection("restaurantOrders").document(restaurantName)
                 .collection("orders").add(order)
                 .addOnCompleteListener(task -> {
+                    order.setId(task.getResult().getId());
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Upload oder successfully");
                     } else {
@@ -184,6 +195,34 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     }
                 });
     }
+
+    public void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback) {
+
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("orders")
+                .document(id)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            Log.d(TAG, "Current data: " + snapshot.getData());
+
+                            //function)
+                            callback.accept((List<OrderedDish>) snapshot.get("dishes"));
+                        } else {
+                            Log.d(TAG, "Current data: null");
+                        }
+                    }
+                });
+    }
+
 
 
     @Override
