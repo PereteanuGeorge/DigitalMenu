@@ -27,6 +27,7 @@ public interface RestaurantDatabase {
     void saveOrder(Order order, Runnable callback);
 
     void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
+    void updateOrderedDishes(String restaurantName, Order order, List<OrderedDish> newDishes);
 
     boolean alreadySignedIn();
 

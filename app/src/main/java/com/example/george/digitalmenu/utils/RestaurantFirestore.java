@@ -2,7 +2,7 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.LocaleList;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
@@ -17,16 +17,14 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.StructuredQuery;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.annotation.Nullable;
 
 
 // Adapter implementation for firebase solution.
@@ -43,6 +41,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private final String TAG = "Firestore";
 
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+
+    private HashMap<Order, String> orderToId = new HashMap<>();
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -124,6 +124,33 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
+    public void updateOrderedDishes(String restaurantName, Order order, List<OrderedDish> newDishes) {
+
+        /* Find order to update. */
+        String orderId = order.getId();
+
+        DocumentReference docRef = db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("orders")
+                .document(orderId);
+
+        docRef.set(order).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "updateOrderedDishes:success");
+            } else {
+                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
+            }
+        });
+
+//        docRef.update("dishes", Arrays.asList(newDishes)).addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                Log.d(TAG, "updateOrderedDishes:success");
+//            } else {
+//                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
+//            }
+//        });
+    }
+
     @Override
     public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
@@ -141,12 +168,15 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         continue;
                     }
 
-                    if (change.getDocument().getId().equals("nullOrder")) {
+                    String id = change.getDocument().getId();
+                    if (id.equals("nullOrder")) {
                         continue;
                     }
 
                     QueryDocumentSnapshot document = change.getDocument();
                     Order order = document.toObject(Order.class);
+                    order.setId(document.getId());
+//                    orderToId.put(order, id);
                     callback.accept(order);
             }
         });

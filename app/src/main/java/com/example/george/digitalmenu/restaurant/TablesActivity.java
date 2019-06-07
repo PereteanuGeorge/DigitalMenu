@@ -29,6 +29,8 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
     private LinearLayout[] tableEntries;
 
     private Map<Integer, List<OrderedDish>> tableToOrders = new HashMap<>();
+    private Map<OrderedDish, Order> dishToOrder = new HashMap<>();
+
     private TableOrdersFragment fragment;
 
     public TablesActivity() {
@@ -114,6 +116,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         int tableNumber = order.getTableNumber();
 
         for (OrderedDish orderedDish : order.getDishes()) {
+
+            dishToOrder.put(orderedDish, order);
+
             tableToOrders.get(tableNumber).add(orderedDish);
 
             if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
@@ -169,9 +174,47 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         displayTables(numberOfTables);
     }
 
+    /* Assumes that all served ordered dishes come from the same order. */
     public void onOrderDishesServed(int tableNumber, List<OrderedDish> servedOrderedDishes) {
+
         /* TODO: Remove from database. */
         tableToOrders.get(tableNumber).removeAll(servedOrderedDishes);
+        if (servedOrderedDishes.size() < 1) {
+            return;
+        }
+
+
+        Order order = dishToOrder.get(servedOrderedDishes.get(0));
+        if (order == null) {
+            throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
+        }
+
+        for (OrderedDish d : servedOrderedDishes) {
+            d.setIsServed(true);
+        }
+
+        db.updateOrderedDishes(restaurantName, order, order.getDishes());
+
+
+//        if (oldOrder == null) {
+//            throw new RuntimeException("Trying to serve ");
+//        }
+//
+//        List<OrderedDish> updatedOrderedDishes = oldOrder.getOrderedDishes();
+
+        /* Remove from dishToOrder hashmap. */
+//        for (OrderedDish dish : updatedOrderedDishes) {
+//            if (servedOrderedDishes.contains(dish)) {
+//
+//            }
+//        }
+
+        /* Create new order with updated served status in ordereddishes. update order
+        * dishes array in database. */
+
+
+        /* Update the correct order, set ordereddish.isServed to true. */
+        /* Index of orderedDish in order, the order that the ordereddishes came from. */
     }
 
     @Override

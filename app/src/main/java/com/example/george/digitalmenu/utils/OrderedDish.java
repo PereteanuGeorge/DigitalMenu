@@ -3,6 +3,7 @@ package com.example.george.digitalmenu.utils;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,8 @@ import static java.lang.StrictMath.max;
 
 @IgnoreExtraProperties
 public class OrderedDish {
-    private Dish dish;
+    private Dish dish = new Dish();
+
     private String name;
     private Integer number;
     private Map<String, Boolean> options = new HashMap<>();
