@@ -7,7 +7,7 @@ import android.support.v4.util.Consumer;
 
 interface FragmentListener {
 
-    void sendOrder();
+    void sendOrder(Runnable callback);
 
     void createNewOrder();
 

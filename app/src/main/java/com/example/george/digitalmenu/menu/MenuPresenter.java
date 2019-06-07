@@ -74,8 +74,8 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void sendOrder() {
-        db.saveOrder(ORDER);
+    public void sendOrder(Runnable callback) {
+        db.saveOrder(ORDER, callback);
     }
 
     @Override

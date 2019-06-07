@@ -24,7 +24,7 @@ public interface RestaurantDatabase {
 
     void init(Runnable success, Runnable failure);
 
-    void saveOrder(Order order);
+    void saveOrder(Order order, Runnable callback);
 
     void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
 

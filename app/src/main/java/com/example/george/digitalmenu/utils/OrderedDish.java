@@ -134,7 +134,7 @@ public class OrderedDish {
         return this.isSent;
     }
 
-    public Object getId() {
+    public Integer getId() {
         return this.id;
     }
 

@@ -18,6 +18,7 @@ import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class OrderPageFragment extends Fragment {
     View orderView;
     private LayoutInflater inflater;
     private List<FragmentListener> listeners = new ArrayList<>();
-    Map<Integer, Pair<OrderedDish, ConstraintLayout>> orderDishMapFromId;
+    Map<Integer, Pair<OrderedDish, ConstraintLayout>> orderDishMapFromId = new HashMap<>();
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -68,11 +69,10 @@ public class OrderPageFragment extends Fragment {
     private void setConfirmButton() {
         orderView.findViewById(R.id.confirm_button).setOnClickListener(v -> {
             for (FragmentListener listener: listeners) {
-                listener.sendOrder();
+                listener.sendOrder(this::refreshOrderPage);
                 listener.createNewOrder();
             }
             Toast.makeText(getActivity(), "Order Sent", Toast.LENGTH_LONG).show();
-            refreshOrderPage();
         });
 
     }
@@ -134,6 +134,8 @@ public class OrderPageFragment extends Fragment {
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
         numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
+
+        orderDishMapFromId.put(dish.getId(), new Pair<>(dish, orderCard));
 
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);

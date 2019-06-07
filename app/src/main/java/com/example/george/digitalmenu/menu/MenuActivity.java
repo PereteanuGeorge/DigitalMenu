@@ -218,8 +218,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public void sendOrder() {
-        presenter.sendOrder();
+    public void sendOrder(Runnable callback) {
+        presenter.sendOrder(callback);
     }
 
     @Override

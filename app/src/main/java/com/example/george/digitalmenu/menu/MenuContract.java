@@ -27,7 +27,7 @@ public interface MenuContract {
 
         void cleanOrder();
 
-        void sendOrder();
+        void sendOrder(Runnable callback);
 
         void createNewOrder();
 
