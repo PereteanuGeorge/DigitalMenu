@@ -5,15 +5,21 @@ import android.graphics.BitmapFactory;
 import android.support.v4.util.Consumer;
 
 import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
 import com.example.george.digitalmenu.utils.Tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 
 public class MenuPresenter implements MenuContract.Presenter {
 
+    public static final List<Order> PREVIOUS_ORDERS = new ArrayList<>();
     private MenuContract.View view;
     private RestaurantDatabase db;
 
@@ -68,8 +74,22 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void sendOrder() {
-        db.saveOrder(ORDER);
+    public void sendOrder(Runnable callback) {
+        db.saveOrder(ORDER, callback);
+    }
+
+    @Override
+    public void createNewOrder() {
+        for (OrderedDish  orderedDish: ORDER.getDishes()) {
+            orderedDish.setIsSent();
+        }
+        PREVIOUS_ORDERS.add(ORDER);
+        ORDER = new Order();
+    }
+
+    @Override
+    public void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback) {
+        db.listenForSentOrder(id, callback);
     }
 
     private void fetchData(String restaurantName) {

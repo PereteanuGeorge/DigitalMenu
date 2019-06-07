@@ -11,6 +11,7 @@ public class Order {
     private Double totalPrice = 0.0;
     private List<OrderedDish> dishes = new ArrayList<>();
     public static Integer tableNumber;
+    private String id;
 
     public Order() {}
 
@@ -65,5 +66,19 @@ public class Order {
     public void add(OrderedDish dish) {
         dishes.add(dish);
         dish.setIsOrdered();
+    }
+
+    @Exclude
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Exclude
+    public boolean isEmpty() {
+        return dishes.isEmpty();
     }
 }

@@ -2,12 +2,10 @@ package com.example.george.digitalmenu.restaurant;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +29,8 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
     private LinearLayout[] tableEntries;
 
     private Map<Integer, List<OrderedDish>> tableToOrders = new HashMap<>();
+    private Map<OrderedDish, Order> dishToOrder = new HashMap<>();
+
     private TableOrdersFragment fragment;
 
     public TablesActivity() {
@@ -116,6 +116,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         int tableNumber = order.getTableNumber();
 
         for (OrderedDish orderedDish : order.getDishes()) {
+
+            dishToOrder.put(orderedDish, order);
+
             tableToOrders.get(tableNumber).add(orderedDish);
 
             if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
@@ -137,20 +140,20 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         notification.setText(tableToOrders.get(tableNumber).size() + "");
         notification.setVisibility(View.VISIBLE);
 
-        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
-        chronometer.setVisibility(View.VISIBLE);
-        chronometer.stop();
-        if (tableToOrders.get(tableNumber).isEmpty()) {
-            chronometer.setBase(SystemClock.elapsedRealtime());
-        }
-        chronometer.start();
+//        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
+//        chronometer.setVisibility(View.VISIBLE);
+//        chronometer.stop();
+//        if (tableToOrders.get(tableNumber).isEmpty()) {
+//            chronometer.setBase(SystemClock.elapsedRealtime());
+//        }
+//        chronometer.start();
     }
 
     private void onReceiveRestaurantResponse(Restaurant r) {
         initTableOrdersMap(r.getNumberOfTables());
         displayThemePicture(r);
         displayTableEntries(r);
-        db.listenForOrders(restaurantName, this::onReceiveOrder);
+        db.listenForCustomerOrders(restaurantName, this::onReceiveOrder);
     }
 
     private void initTableOrdersMap(int numberOfTables) {
@@ -171,16 +174,54 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         displayTables(numberOfTables);
     }
 
+    /* Assumes that all served ordered dishes come from the same order. */
     public void onOrderDishesServed(int tableNumber, List<OrderedDish> servedOrderedDishes) {
+
         /* TODO: Remove from database. */
         tableToOrders.get(tableNumber).removeAll(servedOrderedDishes);
+        if (servedOrderedDishes.size() < 1) {
+            return;
+        }
+
+
+        Order order = dishToOrder.get(servedOrderedDishes.get(0));
+        if (order == null) {
+            throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
+        }
+
+        for (OrderedDish d : servedOrderedDishes) {
+            d.setIsServed(true);
+        }
+
+        db.updateOrderedDishes(restaurantName, order, order.getDishes());
+
+
+//        if (oldOrder == null) {
+//            throw new RuntimeException("Trying to serve ");
+//        }
+//
+//        List<OrderedDish> updatedOrderedDishes = oldOrder.getOrderedDishes();
+
+        /* Remove from dishToOrder hashmap. */
+//        for (OrderedDish dish : updatedOrderedDishes) {
+//            if (servedOrderedDishes.contains(dish)) {
+//
+//            }
+//        }
+
+        /* Create new order with updated served status in ordereddishes. update order
+        * dishes array in database. */
+
+
+        /* Update the correct order, set ordereddish.isServed to true. */
+        /* Index of orderedDish in order, the order that the ordereddishes came from. */
     }
 
     @Override
     public void onAllOrdersServed(int tableNumber) {
-        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
-        c.stop();
-        c.setBase(SystemClock.elapsedRealtime());
-        c.setVisibility(View.INVISIBLE);
+//        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
+//        c.stop();
+//        c.setBase(SystemClock.elapsedRealtime());
+//        c.setVisibility(View.INVISIBLE);
     }
 }

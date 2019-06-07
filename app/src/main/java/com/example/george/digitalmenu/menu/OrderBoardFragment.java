@@ -81,18 +81,35 @@ public class OrderBoardFragment extends Fragment {
         Button decrement = orderView.findViewById(R.id.decrement);
 
         TextView count = orderView.findViewById(R.id.counter);
-        count.setText(String.valueOf(counter));
 
-        if (dish.isOrdered()) {
-            setDeleteButton();
+
+        if (dish.isSent()) {
+            setSentButton();
+            increment.setVisibility(View.GONE);
+            decrement.setVisibility(View.GONE);
+            count.setText(String.valueOf(dish.getNumber()) + "X");
         } else {
-            setAddButton();
+            if (dish.isOrdered()) {
+                setDeleteButton();
+            } else {
+                setAddButton();
+            }
+            setNumberOfPortions(increment, decrement, count);
         }
-
-        setNumberOfPortions(increment, decrement, count);
     }
 
+    private void setSentButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("Sent");
+        button.setBackgroundColor(Color.parseColor("#FF8C00"));
+        button.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG);
+        });
+    }
+
+
     private void setNumberOfPortions(Button increment, Button decrement, TextView count) {
+        count.setText(String.valueOf(dish.getNumber()));
         increment.setOnClickListener(view -> {
             dish.increment();
             count.setText(String.valueOf(dish.getNumber()));
@@ -115,12 +132,16 @@ public class OrderBoardFragment extends Fragment {
         CheckedTextView optionText = (CheckedTextView) inflater.inflate(R.layout.option_text, options_panel, false);
         optionText.setText(option);
         optionText.setChecked(isChecked);
-        optionText.setOnClickListener(v -> {
-            optionText.setChecked(!optionText.isChecked());
-            Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
-            dish.put(optionText.getText().toString(), optionText.isChecked());
-        });
 
+        optionText.setOnClickListener(v -> {
+            if (!DISH.isSent()) {
+                optionText.setChecked(!optionText.isChecked());
+                Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
+                dish.put(optionText.getText().toString(), optionText.isChecked());
+            } else {
+                Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG).show();
+            }
+        });
         options_panel.setId(View.generateViewId());
         options_panel.addView(optionText);
     }

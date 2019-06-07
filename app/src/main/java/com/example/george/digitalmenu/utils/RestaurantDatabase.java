@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 import android.widget.LinearLayout;
 
+import java.util.List;
+
 // Adapter interface for database.
 public interface RestaurantDatabase {
 
@@ -22,9 +24,12 @@ public interface RestaurantDatabase {
 
     void init(Runnable success, Runnable failure);
 
-    void saveOrder(Order order);
+    void saveOrder(Order order, Runnable callback);
 
-    void listenForOrders(String restaurantName, Consumer<Order> callback);
+    void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
+    void updateOrderedDishes(String restaurantName, Order order, List<OrderedDish> newDishes);
 
     boolean alreadySignedIn();
+
+    void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback);
 }

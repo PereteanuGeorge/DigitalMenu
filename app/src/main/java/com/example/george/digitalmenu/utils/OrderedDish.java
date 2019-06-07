@@ -3,6 +3,7 @@ package com.example.george.digitalmenu.utils;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,20 +12,27 @@ import static java.lang.StrictMath.max;
 
 @IgnoreExtraProperties
 public class OrderedDish {
-    private Dish dish;
+    private Dish dish = new Dish();
+
     private String name;
     private Integer number;
     private Map<String, Boolean> options = new HashMap<>();
     private Double price;
-    private boolean ordered;
+    private boolean ordered = false;
+    private boolean isServed = false;
+    private boolean isSent = false;
+    private Integer id;
 
     public OrderedDish() {}
 
-    public OrderedDish(String name, Integer number, Map<String, Boolean> options, Double price) {
+    public OrderedDish(String name, Integer number, Map<String, Boolean> options,
+                       Double price, Boolean isServed, Integer id) {
         this.name = name;
         this.number = number;
         this.options = options;
         this.price = price;
+        this.isServed = isServed;
+        this.id = id;
     }
 
     // Adding order
@@ -35,6 +43,7 @@ public class OrderedDish {
         this.options = dish.getOptions();
         this.price = dish.getPrice();
         this.ordered = false;
+        this.id = IdGenerator.generate();
     }
 
     public Integer getNumber() {
@@ -72,6 +81,14 @@ public class OrderedDish {
         this.name = name;
     }
 
+    public boolean isServed() {
+        return isServed;
+    }
+
+    public void setServed(boolean served) {
+        isServed = served;
+    }
+
     public void increment() {
         number++;
     }
@@ -107,5 +124,36 @@ public class OrderedDish {
 
     public String getCurrency() {
         return dish.getCurrency();
+    }
+
+    @Exclude
+    public void setIsSent() {
+        this.isSent = true;
+    }
+
+    @Exclude
+    public Boolean isSent() {
+        return this.isSent;
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public void setIsServed(boolean isServed) {
+        this.isServed = isServed;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public static class IdGenerator {
+
+        private static int count;
+
+        public static int generate() {
+            return ++count;
+        }
     }
 }

@@ -65,7 +65,7 @@
             android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
-            android:text="$"
+            android:text="£"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

@@ -166,7 +166,7 @@ public class Dish implements Parcelable{
     }
 
     public String getCurrency() {
-        return "$";
+        return "£";
     }
 
     public List<Tag> getEnumTags() {
