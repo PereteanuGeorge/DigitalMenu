@@ -2,8 +2,6 @@ package com.example.george.digitalmenu.menu;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.util.Pair;
@@ -18,8 +16,6 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;

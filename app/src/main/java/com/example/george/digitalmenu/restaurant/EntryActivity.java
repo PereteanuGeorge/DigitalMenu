@@ -64,4 +64,11 @@ public class EntryActivity extends AppCompatActivity implements EntryContract.Vi
         intent.putExtra(TABLES_INTENT_KEY, restaurantName);
         startActivity(intent);
     }
+
+    @Override
+    public void switchToFakeNameActivity() {
+        Intent intent = new Intent(getApplicationContext(), FakeNameActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 }

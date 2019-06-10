@@ -2,10 +2,13 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
@@ -18,7 +21,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,31 +157,31 @@ public class RestaurantFirestore implements RestaurantDatabase {
     public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
-            .document(restaurantName)
-            .collection("orders")
-            .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                .document(restaurantName)
+                .collection("orders")
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
 
-                for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
-                    if (change.getNewIndex() == -1) {
-                        continue;
-                    }
+                    for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (change.getNewIndex() == -1) {
+                            continue;
+                        }
 
-                    if (change.getType() != DocumentChange.Type.ADDED) {
-                        continue;
-                    }
+                        if (change.getType() != DocumentChange.Type.ADDED) {
+                            continue;
+                        }
 
-                    String id = change.getDocument().getId();
-                    if (id.equals("nullOrder")) {
-                        continue;
-                    }
+                        String id = change.getDocument().getId();
+                        if (id.equals("nullOrder")) {
+                            continue;
+                        }
 
-                    QueryDocumentSnapshot document = change.getDocument();
-                    Order order = document.toObject(Order.class);
-                    order.setId(document.getId());
+                        QueryDocumentSnapshot document = change.getDocument();
+                        Order order = document.toObject(Order.class);
+                        order.setId(document.getId());
 //                    orderToId.put(order, id);
-                    callback.accept(order);
-            }
-        });
+                        callback.accept(order);
+                    }
+                });
     }
 
     @Override
@@ -254,6 +256,41 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
+    @Override
+    public void saveTable(String username, Integer tableNumber) {
+        DocumentReference ref = db.collection("restaurantOrders")
+                .document(restaurantName).collection("tables").document(String.valueOf(tableNumber));
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            Table table;
+                            if(document.exists()) {
+                                Log.d(TAG, "Catched table" + tableNumber);
+                                table = document.toObject(Table.class);
+                                table.add(username);
+                            } else {
+                                Log.d(TAG, "Table" + tableNumber + " is not exist");
+                                table = new Table(tableNumber);
+                                table.add(username);
+                            }
+                            ref.set(table).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Successfully saved table" + tableNumber);
+                                    } else {
+                                        Log.d(TAG, "Failed to save table" + tableNumber);
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.d(TAG, "Failed to catch table" + tableNumber);
+                        }
+                    }
+                });
+    }
 
 
     @Override

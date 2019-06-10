@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
+import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
 
 public class MenuPresenter implements MenuContract.Presenter {
 
@@ -93,11 +94,17 @@ public class MenuPresenter implements MenuContract.Presenter {
         db.listenForSentOrder(id, callback);
     }
 
+    @Override
+    public void saveUserToTable(String username, Integer tableNumber) {
+        db.saveTable(username, tableNumber);
+    }
+
     private void fetchData(String restaurantName) {
         db.getRestaurant(restaurantName, this::onFetchDataComplete);
     }
 
     private void onFetchDataComplete(Restaurant r) {
+        saveUserToTable(USERNAME, Order.tableNumber);
         view.displayMenu(r);
     }
 }

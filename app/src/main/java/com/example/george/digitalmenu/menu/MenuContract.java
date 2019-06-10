@@ -32,6 +32,8 @@ public interface MenuContract {
         void createNewOrder();
 
         void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback);
+
+        void saveUserToTable(String username, Integer tableNumber);
     }
 
     interface View {

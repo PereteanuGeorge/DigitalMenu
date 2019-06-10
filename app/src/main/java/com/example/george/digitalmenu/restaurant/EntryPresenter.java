@@ -40,7 +40,8 @@ public class EntryPresenter implements EntryContract.Presenter {
 
     @Override
     public void onCustomerButtonClick() {
-        view.switchToMainActivity();
+        view.switchToFakeNameActivity();
+//        view.switchToMainActivity();
     }
 
     @Override
