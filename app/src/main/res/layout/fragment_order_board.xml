@@ -13,8 +13,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/dish_board"
-        android:layout_width="329dp"
-        android:layout_height="432dp"
+        android:layout_width="328dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -23,6 +23,7 @@
         android:backgroundTint="#FDFCFC"
         android:gravity="center"
         android:orientation="vertical"
+        app:layout_constrainedHeight="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -44,11 +45,10 @@
 
         <ImageView
             android:id="@+id/picture"
-            android:layout_width="0dp"
+            android:layout_width="320dp"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
@@ -86,33 +86,48 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/price" />
 
-        <ScrollView
-            android:id="@+id/scrollView2"
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/dish_card_border"
+            android:text="afdssfasdfasdfasdfasdfsadfasdfasfasdfsdfasdf"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="124dp"
+            android:layout_height="100dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/operation_button"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@+id/price"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHeight_max="100dp"
+            app:layout_constraintHorizontal_bias="0.696"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name">
+            app:layout_constraintTop_toBottomOf="@+id/description">
 
-            <LinearLayout
-                android:id="@+id/options_panel"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/description"
+                <LinearLayout
+                    android:id="@+id/options_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="afdssfasdfasdfasdfasdfsadfasdfasfasdfsdfasdf"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </ScrollView>
+                    android:orientation="vertical" />
+            </ScrollView>
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/counter"
@@ -120,8 +135,8 @@
             android:layout_height="30dp"
             android:layout_marginStart="33dp"
             android:layout_marginBottom="12dp"
-            android:text="TextView"
             android:gravity="center"
+            android:text="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/decrement"
             app:layout_constraintStart_toStartOf="@+id/decrement" />

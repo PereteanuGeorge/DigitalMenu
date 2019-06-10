@@ -143,6 +143,7 @@ public class OrderPageFragment extends Fragment {
     private void updateOrderCard(ConstraintLayout orderCard) {
         TextView nameText = orderCard.findViewById(R.id.name);
         Toast.makeText(getActivity(), nameText.getText() + " is served", Toast.LENGTH_LONG).show();
+        refreshOrderPage();
     }
 
     private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
