@@ -70,7 +70,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void cleanOrder() {
-        ORDER.clean();
+        PREVIOUS_ORDERS.clear();
+        ORDER = new Order();
     }
 
     @Override
