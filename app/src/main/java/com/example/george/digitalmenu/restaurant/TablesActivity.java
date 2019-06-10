@@ -19,8 +19,10 @@ import com.example.george.digitalmenu.utils.ServiceRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TablesActivity extends AppCompatActivity implements TableOrdersFragmentListener {
 
@@ -183,17 +185,23 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
             return;
         }
 
+        Set<Order> updatedOrders = new HashSet<>();
 
-        Order order = dishToOrder.get(servedOrderedDishes.get(0));
-        if (order == null) {
-            throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
+        for (OrderedDish orderedDish : servedOrderedDishes) {
+            Order updatedOrder = dishToOrder.get(orderedDish);
+            if (updatedOrder == null) {
+                throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
+            }
+
+            updatedOrders.add(updatedOrder);
         }
+
 
         for (OrderedDish d : servedOrderedDishes) {
             d.setIsServed(true);
         }
 
-        db.updateOrderedDishes(restaurantName, order, order.getDishes());
+        db.updateOrderedDishes(restaurantName, new ArrayList<>(updatedOrders));
 
 
 //        if (oldOrder == null) {
