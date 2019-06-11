@@ -137,8 +137,6 @@ public class MenuPresenter implements MenuContract.Presenter {
             order.setAskingForBill(true);
         }
         db.updateOrderedDishes(previousOrders, this::onAskForBillComplete);
-        previousOrders.clear();
-        currentOrder =  new Order();
     }
 
     private void onAskForBillComplete(List<Order> orders) {
@@ -148,6 +146,8 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
             db.removeListener(order.getId());
         }
+        previousOrders.clear();
+        currentOrder =  new Order();
     }
 
     public Double getTotalPrice() {
@@ -178,6 +178,9 @@ public class MenuPresenter implements MenuContract.Presenter {
     //Refactor this
     @Override
     public Integer getConfirmState() {
+        if (previousOrders.isEmpty() && currentOrder.isEmpty()) {
+            return 2;
+        }
         if (currentOrder.isEmpty()) {
             return 1;
         }
@@ -195,6 +198,18 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private void onServe(Order order)  {
         view.update(order);
+        if (everythingIsServed()) {
+            view.updateWithEverythingIsServed();
+        }
+    }
+
+    private boolean everythingIsServed() {
+        for (OrderedDish orderedDish: getOrderedDishes()) {
+            if (!orderedDish.isServed()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fetchData(String restaurantName) {
