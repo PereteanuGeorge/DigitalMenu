@@ -39,7 +39,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private ConstraintLayout rootLayout;
     MenuContract.Presenter presenter;
     private Map<String, Boolean> open = new HashMap<>();
-    private OrderPageFragment fragment = null;
+    private OrderPageFragment orderPageFragment = null;
 
 
     @Override
@@ -61,11 +61,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private void setCheckoutButton() {
         final View button = findViewById(R.id.order_button);
         button.setOnClickListener(v -> {
-            fragment = new OrderPageFragment();
-            fragment.setListener(this);
-            fragment.setOrderedDishes(presenter.getOrderedDishes());
+            orderPageFragment = new OrderPageFragment();
+            orderPageFragment.setListener(this);
+            orderPageFragment.setOrderedDishes(presenter.getOrderedDishes());
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.order_fragment_container, fragment);
+            transaction.replace(R.id.order_fragment_container, orderPageFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         });
@@ -120,8 +120,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void update(Order order) {
         for (OrderedDish updatedOrderedDish: order.getDishes()) {
             OrderedDish localOrderedDish = presenter.updateOrderedDish(updatedOrderedDish);
-            if (fragment != null) {
-                fragment.updateOrderedDish(localOrderedDish);
+            if (orderPageFragment != null) {
+                orderPageFragment.updateOrderedDish(localOrderedDish);
             }
         }
     }
@@ -232,17 +232,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void onBackPressed() {
-        fragment = null;
+        orderPageFragment = null;
     }
 
-    @Override
-    public void createNewOrder() {
-        presenter.createNewOrder();
-    }
 
     @Override
     public void goBack() {
-        fragment = null;
+        orderPageFragment = null;
         getFragmentManager().popBackStack();
     }
 
