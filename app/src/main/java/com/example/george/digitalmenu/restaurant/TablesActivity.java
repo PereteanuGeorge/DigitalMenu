@@ -132,23 +132,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         TextView itemsText = tableEntries[tableNumber - 1].findViewById(R.id.number_of_items);
         itemsText.setVisibility(View.VISIBLE);
 
-//        for (Object ordered : tableToOrders.get(tableNumber)) {
-//            numberOfItems += ((Order) ordered).getDishes().size();
-//        }
-
-//        itemsText.setText(numberOfItems + " items");
-
         TextView notification = tableEntries[tableNumber - 1].findViewById(R.id.notification_order);
         notification.setText(tableToOrders.get(tableNumber).size() + "");
         notification.setVisibility(View.VISIBLE);
-
-//        Chronometer chronometer = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
-//        chronometer.setVisibility(View.VISIBLE);
-//        chronometer.stop();
-//        if (tableToOrders.get(tableNumber).isEmpty()) {
-//            chronometer.setBase(SystemClock.elapsedRealtime());
-//        }
-//        chronometer.start();
     }
 
     private void onReceiveRestaurantResponse(Restaurant r) {
@@ -176,11 +162,9 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         displayTables(numberOfTables);
     }
 
-    /* Assumes that all served ordered dishes come from the same order. */
-    public void onOrderDishesServed(int tableNumber, List<OrderedDish> servedOrderedDishes) {
+    public void onOrderedDishesServed(int tableNumber, List<OrderedDish> servedOrderedDishes) {
 
-        /* TODO: Remove from database. */
-        tableToOrders.get(tableNumber).removeAll(servedOrderedDishes);
+//        tableToOrders.get(tableNumber).removeAll(servedOrderedDishes);
         if (servedOrderedDishes.size() < 1) {
             return;
         }
@@ -188,7 +172,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         Set<Order> updatedOrders = new HashSet<>();
 
         for (OrderedDish orderedDish : servedOrderedDishes) {
-            Order updatedOrder = dishToOrder.get(orderedDish);
+            Order updatedOrder = dishToOrder.remove(orderedDish);
             if (updatedOrder == null) {
                 throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
             }
@@ -202,34 +186,28 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         }
 
         db.updateOrderedDishes(restaurantName, new ArrayList<>(updatedOrders));
-
-
-//        if (oldOrder == null) {
-//            throw new RuntimeException("Trying to serve ");
-//        }
-//
-//        List<OrderedDish> updatedOrderedDishes = oldOrder.getOrderedDishes();
-
-        /* Remove from dishToOrder hashmap. */
-//        for (OrderedDish dish : updatedOrderedDishes) {
-//            if (servedOrderedDishes.contains(dish)) {
-//
-//            }
-//        }
-
-        /* Create new order with updated served status in ordereddishes. update order
-        * dishes array in database. */
-
-
-        /* Update the correct order, set ordereddish.isServed to true. */
-        /* Index of orderedDish in order, the order that the ordereddishes came from. */
     }
 
     @Override
-    public void onAllOrdersServed(int tableNumber) {
+    public void onAllDishesFromOrderServed(int tableNumber) {
+
+        /* Attach listener here for payment. */
+
+
 //        Chronometer c = tableEntries[tableNumber - 1].findViewById(R.id.simpleChronometer);
 //        c.stop();
 //        c.setBase(SystemClock.elapsedRealtime());
 //        c.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void onClearTable(int tableNumber) {
+        tableToOrders.get(tableNumber).clear();
+//        List<Order> orders = new ArrayList<>();
+//        List<OrderedDish>
+//
+//
+//        db.removeOrders(restaurantName, )
+    }
+
 }

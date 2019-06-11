@@ -259,8 +259,6 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
-
-
     @Override
     public void getSignedInUserRestaurantName(Consumer<String> success, Runnable failure) {
         FirebaseUser user = mAuth.getCurrentUser();

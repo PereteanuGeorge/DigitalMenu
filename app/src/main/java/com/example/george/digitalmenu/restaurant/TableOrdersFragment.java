@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +29,8 @@ public class TableOrdersFragment extends Fragment {
     private List<TableOrdersFragmentListener> listeners = new ArrayList<>();
     private Button serveButton;
     private Deque<OrderedDish> undisplayedOrderedDishes = new ArrayDeque<>();
-    private List<UnservedOrderedDish> unservedOrderedDishes = new ArrayList<>();
-    private List<UnservedOrderedDish> dishesToServe = new ArrayList<>();
+    private List<OrderedDishCard> unservedOrderedDishes = new ArrayList<>();
+    private List<OrderedDishCard> dishesOnServingTray = new ArrayList<>();
 
     private int tableNumber;
 
@@ -59,7 +61,7 @@ public class TableOrdersFragment extends Fragment {
         TextView tableNumberText = rootView.findViewById(R.id.table_number_text);
         tableNumberText.setText("Table " + tableNumber);
         serveButton = rootView.findViewById(R.id.serve_button);
-        serveButton.setOnClickListener(v -> onServeButtonClicked());
+        serveButton.setEnabled(false);
         return rootView;
     }
 
@@ -74,13 +76,34 @@ public class TableOrdersFragment extends Fragment {
 
     private void onServeButtonClicked() {
 
-        for (UnservedOrderedDish dish : dishesToServe) {
+        for (OrderedDishCard dish : dishesOnServingTray) {
             dish.serve();
         }
 
-        notifyServedOrders(dishesToServe);
-        dishesToServe.clear();
+        notifyServedOrders(dishesOnServingTray);
+        dishesOnServingTray.clear();
 
+        if (unservedOrderedDishes.isEmpty()) {
+            /* change serve button to pay */
+            serveButton.setEnabled(true);
+            serveButton.setText("Clear Table");
+            serveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onPayButtonClick();
+                }
+            });
+        }
+    }
+
+    private void onPayButtonClick() {
+        Log.d("TableOrdersFragment", "TIME TO PAYYYYY!");
+    }
+
+    private void notifyClearTable() {
+        for (TableOrdersFragmentListener listener : listeners) {
+            listener.onClearTable(tableNumber);
+        }
     }
 
     @Override
@@ -100,37 +123,19 @@ public class TableOrdersFragment extends Fragment {
     }
 
     private void displayOrderedDish(OrderedDish orderedDish) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        /* Register new OrderedDishCard which is associated with the view */
+        OrderedDishCard unservedDish = new OrderedDishCard(orderedDish);
 
-        ConstraintLayout orderEntry = (ConstraintLayout) inflater.inflate(R.layout.table_order_entry, tableOrdersContainer, false);
+        /* Display overall information of unserved dish. */
+        unservedDish.display(getActivity());
 
-        /* Register new UnservedOrderedDish which is associated with the view */
-        UnservedOrderedDish unservedDish = new UnservedOrderedDish(orderEntry, orderedDish);
-        unservedOrderedDishes.add(unservedDish);
-
-        orderEntry.setOnClickListener(v -> onUnservedOrderEntrySelected(v, unservedDish));
-
-        TextView quantityText = orderEntry.findViewById(R.id.order_dish_quantity);
-        quantityText.setText(String.valueOf(orderedDish.getNumber()));
-
-        TextView nameText = orderEntry.findViewById(R.id.order_dish_name);
-        nameText.setText(orderedDish.getName());
-
-        TextView priceText = orderEntry.findViewById(R.id.order_dish_price);
-        priceText.setText(String.valueOf(orderedDish.getPrice()));
-
-        LinearLayout orderDishOptionsList = orderEntry.findViewById(R.id.order_dish_options_list);
-
-        for (Map.Entry<String, Boolean> e : orderedDish.getOptions().entrySet()) {
-            if (e.getValue()) {
-                TextView entry = (TextView) inflater.inflate(R.layout.order_dish_option_entry, orderDishOptionsList, false);
-                entry.setText(e.getKey());
-
-                orderDishOptionsList.addView(entry);
-            }
+        /* If orderedDish has already been served, show as served. */
+        if (orderedDish.isServed()) {
+            unservedDish.showAsServed();
+        } else {
+            unservedOrderedDishes.add(unservedDish);
+            serveButton.setOnClickListener(v -> onServeButtonClicked());
         }
-
-        tableOrdersContainer.addView(orderEntry);
     }
 
     public void addOrderedDish(OrderedDish orderedDish) {
@@ -143,36 +148,43 @@ public class TableOrdersFragment extends Fragment {
         }
 
         displayOrderedDish(orderedDish);
+
+        serveButton.setEnabled(true);
+
+        if (!unservedOrderedDishes.isEmpty()) {
+            serveButton.setOnClickListener(v -> onServeButtonClicked());
+        } else {
+            serveButton.setText("Clear Table");
+            serveButton.setOnClickListener(v -> onPayButtonClick());
+        }
     }
 
     private void onUnservedOrderEntrySelected(View selectedEntry,
-                                              UnservedOrderedDish unservedOrderedDish) {
+                                              OrderedDishCard unservedOrderedDish) {
 
         unservedOrderedDish.select();
 
-        if (dishesToServe.isEmpty()) {
+        if (dishesOnServingTray.isEmpty()) {
             serveButton.setEnabled(false);
-            serveButton.setPressed(true);
         } else {
             serveButton.setEnabled(true);
-            serveButton.setPressed(false);
         }
 
     }
 
-    private void notifyServedOrders(List<UnservedOrderedDish> servedDishes) {
+    private void notifyServedOrders(List<OrderedDishCard> servedDishes) {
 
-        /* Unwrapping UnservedOrderedDish classes */
+        /* Unwrapping OrderedDishCard classes */
         List<OrderedDish> orderedDishes = new ArrayList<>(servedDishes.size());
-        for (UnservedOrderedDish dish : servedDishes) {
-            orderedDishes.add(dish.getDish());
+        for (OrderedDishCard dish : servedDishes) {
+            orderedDishes.add(dish.getOrderedDish());
         }
 
         for (TableOrdersFragmentListener listener: listeners) {
-            listener.onOrderDishesServed(tableNumber, orderedDishes);
-            if (unservedOrderedDishes.isEmpty()) {
-                listener.onAllOrdersServed(tableNumber);
-            }
+            listener.onOrderedDishesServed(tableNumber, orderedDishes);
+//            if (unservedOrderedDishes.isEmpty()) {
+//                listener.onAllDishesFromOrderServed(tableNumber);
+//            }
         }
     }
 
@@ -181,23 +193,24 @@ public class TableOrdersFragment extends Fragment {
     }
 
     /* Inner class representation of a Ordered Dish Entry in fragment. */
-    private class UnservedOrderedDish {
+    private class OrderedDishCard {
 
-        private final View rootView;
+        private View rootView;
         private final Drawable originalBackground;
         private final Drawable buttonPressedBackground;
-        OrderedDish dish;
+        private final Drawable servedBackground;
+        private final OrderedDish orderedDish;
         boolean selectedToServe = false;
 
-        public UnservedOrderedDish(View v, OrderedDish dish) {
-            this.rootView = v;
-            this.originalBackground = v.getBackground();
-            this.dish = dish;
+        public OrderedDishCard(OrderedDish dish) {
+            this.originalBackground = getResources().getDrawable(R.drawable.dish_card_border);
+            this.orderedDish = dish;
+            this.servedBackground = getResources().getDrawable(R.drawable.dish_card_border_served);
             this.buttonPressedBackground = getResources().getDrawable(R.drawable.dish_card_border_pressed);
         }
 
-        public OrderedDish getDish() {
-            return dish;
+        public OrderedDish getOrderedDish() {
+            return orderedDish;
         }
 
         public void select() {
@@ -205,10 +218,10 @@ public class TableOrdersFragment extends Fragment {
 
             if (selectedToServe) {
                 rootView.setBackground(buttonPressedBackground);
-                dishesToServe.add(this);
+                dishesOnServingTray.add(this);
             } else {
                 rootView.setBackground(originalBackground);
-                dishesToServe.remove(this);
+                dishesOnServingTray.remove(this);
             }
         }
 
@@ -218,7 +231,44 @@ public class TableOrdersFragment extends Fragment {
 
         public void serve() {
             unservedOrderedDishes.remove(this);
-            ((ViewGroup) rootView.getParent()).removeView(rootView);
+//            ((ViewGroup) rootView.getParent()).removeView(rootView);
+            showAsServed();
+        }
+
+        public void display(FragmentActivity activity) {
+            LayoutInflater inflater = activity.getLayoutInflater();
+
+            ConstraintLayout orderEntry = (ConstraintLayout) inflater.inflate(R.layout.table_order_entry, tableOrdersContainer, false);
+            this.rootView = orderEntry;
+
+            orderEntry.setOnClickListener(v -> onUnservedOrderEntrySelected(v, this));
+
+            TextView quantityText = orderEntry.findViewById(R.id.order_dish_quantity);
+            quantityText.setText(String.valueOf(orderedDish.getNumber()));
+
+            TextView nameText = orderEntry.findViewById(R.id.order_dish_name);
+            nameText.setText(orderedDish.getName());
+
+            TextView priceText = orderEntry.findViewById(R.id.order_dish_price);
+            priceText.setText(String.valueOf(orderedDish.getPrice()));
+
+            LinearLayout orderDishOptionsList = orderEntry.findViewById(R.id.order_dish_options_list);
+
+            for (Map.Entry<String, Boolean> e : orderedDish.getOptions().entrySet()) {
+                if (e.getValue()) {
+                    TextView entry = (TextView) inflater.inflate(R.layout.order_dish_option_entry, orderDishOptionsList, false);
+                    entry.setText(e.getKey());
+
+                    orderDishOptionsList.addView(entry);
+                }
+            }
+
+            tableOrdersContainer.addView(orderEntry);
+        }
+
+        public void showAsServed() {
+            rootView.setBackground(servedBackground);
+            rootView.setClickable(false);
         }
     }
 }
