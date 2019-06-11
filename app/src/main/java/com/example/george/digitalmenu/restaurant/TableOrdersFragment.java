@@ -20,8 +20,10 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TableOrdersFragment extends Fragment {
 
@@ -29,6 +31,7 @@ public class TableOrdersFragment extends Fragment {
     private List<TableOrdersFragmentListener> listeners = new ArrayList<>();
     private Button serveButton;
     private Deque<OrderedDish> undisplayedOrderedDishes = new ArrayDeque<>();
+    private Set<OrderedDishCard> dishesOnDisplay = new HashSet<>();
     private List<OrderedDishCard> unservedOrderedDishes = new ArrayList<>();
     private List<OrderedDishCard> dishesOnServingTray = new ArrayList<>();
 
@@ -85,19 +88,15 @@ public class TableOrdersFragment extends Fragment {
 
         if (unservedOrderedDishes.isEmpty()) {
             /* change serve button to pay */
-            serveButton.setEnabled(true);
-            serveButton.setText("Clear Table");
-            serveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onPayButtonClick();
-                }
-            });
+            setActionButtonToClear();
         }
     }
 
-    private void onPayButtonClick() {
+    private void onClearTableButtonClick() {
         Log.d("TableOrdersFragment", "TIME TO PAYYYYY!");
+        /* Display loading screen. */
+
+        notifyClearTable();
     }
 
     private void notifyClearTable() {
@@ -122,7 +121,7 @@ public class TableOrdersFragment extends Fragment {
         this.listeners.add(listener);
     }
 
-    private void displayOrderedDish(OrderedDish orderedDish) {
+    private OrderedDishCard displayOrderedDish(OrderedDish orderedDish) {
         /* Register new OrderedDishCard which is associated with the view */
         OrderedDishCard unservedDish = new OrderedDishCard(orderedDish);
 
@@ -134,8 +133,22 @@ public class TableOrdersFragment extends Fragment {
             unservedDish.showAsServed();
         } else {
             unservedOrderedDishes.add(unservedDish);
-            serveButton.setOnClickListener(v -> onServeButtonClicked());
+            setActionButtonToServe();
         }
+
+        return unservedDish;
+    }
+
+    private void setActionButtonToServe() {
+        serveButton.setEnabled(true);
+        serveButton.setText("SERVE");
+        serveButton.setOnClickListener(v -> onServeButtonClicked());
+    }
+
+    private void setActionButtonToClear() {
+        serveButton.setEnabled(true);
+        serveButton.setText("Clear Table");
+        serveButton.setOnClickListener(v -> onClearTableButtonClick());
     }
 
     public void addOrderedDish(OrderedDish orderedDish) {
@@ -147,15 +160,14 @@ public class TableOrdersFragment extends Fragment {
             return;
         }
 
-        displayOrderedDish(orderedDish);
+        dishesOnDisplay.add(displayOrderedDish(orderedDish));
 
         serveButton.setEnabled(true);
 
         if (!unservedOrderedDishes.isEmpty()) {
-            serveButton.setOnClickListener(v -> onServeButtonClicked());
+            setActionButtonToServe();
         } else {
-            serveButton.setText("Clear Table");
-            serveButton.setOnClickListener(v -> onPayButtonClick());
+            setActionButtonToClear();
         }
     }
 
@@ -190,6 +202,16 @@ public class TableOrdersFragment extends Fragment {
 
     public int getTableNumber() {
         return tableNumber;
+    }
+
+    public void clearOrderedDishes() {
+        dishesOnServingTray.clear();
+        unservedOrderedDishes.clear();
+        for (OrderedDishCard card : dishesOnDisplay) {
+            card.destroy();
+        }
+
+        /* remove loading screen. */
     }
 
     /* Inner class representation of a Ordered Dish Entry in fragment. */
@@ -231,7 +253,7 @@ public class TableOrdersFragment extends Fragment {
 
         public void serve() {
             unservedOrderedDishes.remove(this);
-//            ((ViewGroup) rootView.getParent()).removeView(rootView);
+
             showAsServed();
         }
 
@@ -269,6 +291,10 @@ public class TableOrdersFragment extends Fragment {
         public void showAsServed() {
             rootView.setBackground(servedBackground);
             rootView.setClickable(false);
+        }
+
+        public void destroy() {
+            ((ViewGroup) rootView.getParent()).removeView(rootView);
         }
     }
 }

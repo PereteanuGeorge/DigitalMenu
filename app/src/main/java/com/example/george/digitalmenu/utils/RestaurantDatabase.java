@@ -32,4 +32,6 @@ public interface RestaurantDatabase {
     boolean alreadySignedIn();
 
     void listenForSentOrder(String id, Consumer<Order> callback);
+
+    void removeOrders(List<Order> orders, Runnable onRemovedOrders);
 }

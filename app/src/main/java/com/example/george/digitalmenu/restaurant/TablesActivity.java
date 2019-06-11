@@ -202,12 +202,24 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
     @Override
     public void onClearTable(int tableNumber) {
+        /* Clear from db. On success, clear from tableToOrders and update fragment. */
+        List<OrderedDish> dishes = tableToOrders.get(tableNumber);
+        Set<Order> orders = new HashSet<>();
+        for (OrderedDish dish : dishes) {
+            orders.add(dishToOrder.get(dish));
+        }
+
+        db.removeOrders(new ArrayList<>(orders), () -> onRemovedAllOrderedDishes(tableNumber));
+
+        /* Clear from state, so new fragments will have updated state. */
         tableToOrders.get(tableNumber).clear();
-//        List<Order> orders = new ArrayList<>();
-//        List<OrderedDish>
-//
-//
-//        db.removeOrders(restaurantName, )
+        if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
+            fragment.clearOrderedDishes();
+        }
+    }
+
+    private void onRemovedAllOrderedDishes(int tableNumber) {
+
     }
 
 }

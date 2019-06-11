@@ -2,10 +2,13 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
@@ -257,6 +260,35 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void removeOrders(List<Order> orders, Runnable callback) {
+
+        if (orders.isEmpty()) {
+            callback.run();
+        }
+
+        WriteBatch batch = db.batch();
+
+        for (Order order : orders) {
+            DocumentReference docRef = db.collection("restaurantOrders")
+                    .document(restaurantName)
+                    .collection("orders")
+                    .document(order.getId());
+            batch.delete(docRef);
+        }
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    callback.run();
+                } else {
+                    Log.d(TAG, "Orders deletion failed ", task.getException());
+                }
+            }
+        });
     }
 
     @Override
