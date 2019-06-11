@@ -68,5 +68,7 @@ public interface MenuContract {
         void notifyModelInitFailure();
 
         void update(Order order);
+
+        void updateWithEverythingIsServed();
     }
 }

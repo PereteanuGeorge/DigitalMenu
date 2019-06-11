@@ -48,6 +48,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     private Map<Integer, String> confirmMap = new HashMap<Integer, String>() {{
         put(0, "send order");
         put(1, "get bill");
+        put(2, "enter menu");
     }};
 
     public OrderPageFragment() {
@@ -86,6 +87,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
             Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
             if (listener.getConfirmState() == 0) {
                 listener.sendOrder();
+            } else if (listener.getConfirmState() == 1){
+                listener.askForBill();
+                getActivity().getFragmentManager().popBackStack();
             }
             //listener.sendOrder(ORDER);
         });
@@ -189,5 +193,10 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
     public void setOrderedDishes(List<OrderedDish> orderedDishes) {
         this.orderedDishes = orderedDishes;
+    }
+
+    public void setGetBillButton() {
+        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
+        confirmButton.setText("get bill");
     }
 }

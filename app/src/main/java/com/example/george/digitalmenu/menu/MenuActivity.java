@@ -126,6 +126,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         }
     }
 
+    @Override
+    public void updateWithEverythingIsServed() {
+        if (orderPageFragment != null) {
+            orderPageFragment.setGetBillButton();
+        }
+    }
+
     private void displayCategories(Restaurant r) {
         List<String> categories = r.getCategories();
         Map<String, List<Dish>> map = r.getDishesForCategories();
