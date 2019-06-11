@@ -3,10 +3,12 @@ package com.example.george.digitalmenu.menu;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
 import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
@@ -31,7 +34,7 @@ import android.support.v4.util.Consumer;
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 
 /* Responsible for android-OS specific and UI logic */
-public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener {
+public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener, BoardFragmentListener {
 
     public static OrderedDish DISH = new OrderedDish();
 
@@ -41,6 +44,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     MenuContract.Presenter presenter;
     private Map<String, Boolean> open = new HashMap<>();
+
+    private OrderPageFragment fragment = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +66,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private void setCheckoutButton() {
         final View button = findViewById(R.id.order_button);
         button.setOnClickListener(v -> {
-            OrderPageFragment fragment = new OrderPageFragment();
+            fragment = new OrderPageFragment();
             fragment.addListener(this);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.order_fragment_container, fragment);
@@ -74,6 +80,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void displayInfoFood(Dish dish) {
         DISH = new OrderedDish(dish);
         OrderBoardFragment fragment = new OrderBoardFragment();
+        fragment.addListener(this);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.dish_info_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -111,6 +118,16 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
             Toast.makeText(getApplicationContext(), "Authentication failed.",
                     Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public void update(Order order) {
+        for (OrderedDish updatedOrderedDish: order.getDishes()) {
+            OrderedDish localOrderedDish = presenter.updateOrderedDish(updatedOrderedDish);
+            if (fragment != null) {
+                fragment.updateOrderedDish(localOrderedDish);
+            }
+        }
     }
 
     private void displayCategories(Restaurant r) {
@@ -162,11 +179,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         });
     }
 
-    private void displayThemePicture(Restaurant r) {
-        ImageView picture = rootLayout.findViewById(R.id.theme_picture);
-        presenter.fetchThemeImage(r, bm -> picture.setImageBitmap(bm));
-    }
-
     private void displayDish(Dish d, LinearLayout dishPanel) {
 
         /* Create card view with fields. */
@@ -195,7 +207,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         dishCard.setId(View.generateViewId());
 
         // Register click event to presenter.
-        dishCard.setOnClickListener(v -> presenter.onDishItemClick((Dish) d));
+        dishCard.setOnClickListener(v -> presenter.onDishItemClick(d));
     }
 
     private void displayTags(Dish d, LinearLayout tagPanel) {
@@ -218,8 +230,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public void sendOrder(Runnable callback) {
-        presenter.sendOrder(callback);
+    public void sendOrder(Order order) {
+        presenter.sendOrder(order);
+    }
+
+    @Override
+    public void onBackPressed() {
+        fragment = null;
     }
 
     @Override
@@ -228,7 +245,18 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback ) {
-        presenter.listenForOrderedDishUpdate(id, callback);
+    public void goBack() {
+        fragment = null;
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void deleteOrderedDish(OrderedDish dish) {
+        presenter.deleteOrderedDish(dish);
+    }
+
+    @Override
+    public void addDish(OrderedDish dish) {
+        presenter.addDish(dish);
     }
 }

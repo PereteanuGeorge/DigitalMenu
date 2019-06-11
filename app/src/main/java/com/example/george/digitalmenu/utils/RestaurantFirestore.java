@@ -218,13 +218,13 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
-    public void saveOrder(Order order, Runnable callback) {
+    public void saveOrder(Order order, Consumer<Order> callback) {
         db.collection("restaurantOrders").document(restaurantName)
                 .collection("orders").add(order)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         order.setId(task.getResult().getId());
-                        callback.run();
+                        callback.accept(order);
                         Log.d(TAG, "Upload oder successfully");
                     } else {
                         Log.d(TAG, "Uploading failed");
@@ -232,7 +232,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
-    public void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback) {
+    public void listenForSentOrder(String id, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
                 .document(restaurantName)
@@ -251,7 +251,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                             Log.d(TAG, "Current data: " + snapshot.getData());
 
                             //function)
-                            callback.accept(snapshot.toObject(Order.class).getDishes());
+                            callback.accept(snapshot.toObject(Order.class));
                         } else {
                             Log.d(TAG, "Current data: null");
                         }

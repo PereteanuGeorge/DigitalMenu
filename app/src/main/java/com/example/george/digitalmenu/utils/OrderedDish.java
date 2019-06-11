@@ -3,7 +3,6 @@ package com.example.george.digitalmenu.utils;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,8 +84,8 @@ public class OrderedDish {
         return isServed;
     }
 
-    public void setServed(boolean served) {
-        isServed = served;
+    public void setServed(boolean isServed) {
+        this.isServed = isServed;
     }
 
     public void increment() {
@@ -127,8 +126,8 @@ public class OrderedDish {
     }
 
     @Exclude
-    public void setIsSent() {
-        this.isSent = true;
+    public void setIsSent(Boolean isSent) {
+        this.isSent = isSent;
     }
 
     @Exclude
@@ -140,12 +139,19 @@ public class OrderedDish {
         return this.id;
     }
 
-    public void setIsServed(boolean isServed) {
-        this.isServed = isServed;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Exclude
+    public Integer getStatus() {
+        if (isServed) {
+            return 2;
+        }
+        if (isSent) {
+            return 1;
+        }
+        return 0;
     }
 
     public static class IdGenerator {

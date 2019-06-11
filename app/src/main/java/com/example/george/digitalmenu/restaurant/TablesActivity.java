@@ -198,7 +198,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
 
         for (OrderedDish d : servedOrderedDishes) {
-            d.setIsServed(true);
+            d.setServed(true);
         }
 
         db.updateOrderedDishes(restaurantName, new ArrayList<>(updatedOrders));

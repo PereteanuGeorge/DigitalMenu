@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.support.constraint.ConstraintLayout;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -19,8 +20,6 @@ import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +33,24 @@ import static com.example.george.digitalmenu.menu.MenuPresenter.PREVIOUS_ORDERS;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OrderPageFragment extends Fragment {
+public class OrderPageFragment extends Fragment implements BoardFragmentListener{
 
     View orderView;
     private LayoutInflater inflater;
     private List<FragmentListener> listeners = new ArrayList<>();
-    Map<Integer, Pair<OrderedDish, ConstraintLayout>> orderDishMapFromId = new HashMap<>();
+    private Map<Integer, ConstraintLayout> orderDishMap = new HashMap<>();
+    private Map<Integer, String> textStatusMap = new HashMap<Integer, String>() {{
+        put(2, " Served ");
+        put(1, " Sent ");
+        put(0, " Added ");
+    }};
+
+
+    private Map<Integer, Integer>  backgroundStatusMap = new HashMap<Integer, Integer>() {{
+        put(2, R.drawable.servedroundbutton);
+        put(1, R.drawable.sentroundbutton);
+        put(0, R.drawable.addedroundbutton);
+    }};
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -85,8 +96,7 @@ public class OrderPageFragment extends Fragment {
                 Toast.makeText(getActivity(), "Open Payment", Toast.LENGTH_LONG).show();
             } else {
                 for (FragmentListener listener : listeners) {
-                    listener.sendOrder(this::refreshOrderPage);
-                    listener.createNewOrder();
+                    listener.sendOrder(ORDER);
                 }
                 Toast.makeText(getActivity(), "Order Sent", Toast.LENGTH_LONG).show();
             }
@@ -94,15 +104,6 @@ public class OrderPageFragment extends Fragment {
 
     }
 
-    private void refreshOrderPage() {
-        getActivity().getFragmentManager().popBackStack();
-        OrderPageFragment fragment = new OrderPageFragment();
-        fragment.addListener((FragmentListener) getActivity());
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.order_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
     private void displayOrders(LayoutInflater inflater) {
         // init
@@ -110,9 +111,6 @@ public class OrderPageFragment extends Fragment {
         for (Order order: PREVIOUS_ORDERS) {
             for (OrderedDish dish : order.getOrderedDishes()) {
                 displayOrder(inflater, dish, orderPanel);
-            }
-            for (FragmentListener listener: listeners) {
-                listener.listenForOrderedDishUpdate(order.getId(), this::onServe);
             }
         }
         for (OrderedDish dish : ORDER.getOrderedDishes()) {
@@ -129,21 +127,12 @@ public class OrderPageFragment extends Fragment {
         addItem(instruction, orderPanel);
     }
 
-    private void onServe(List<OrderedDish> updatedOrderedDishes)  {
-        for (OrderedDish updatedOrderedDish: updatedOrderedDishes) {
-            Pair<OrderedDish, ConstraintLayout> pair = orderDishMapFromId.get(updatedOrderedDish.getId());
-            OrderedDish localOrederDish = pair.first;
-            if (localOrederDish.isServed() != updatedOrderedDish.isServed()) {
-                localOrederDish.setIsServed(updatedOrderedDish.isServed());
-                updateOrderCard(pair.second);
-            }
-        }
-    }
 
-    private void updateOrderCard(ConstraintLayout orderCard) {
-        TextView nameText = orderCard.findViewById(R.id.name);
-        Toast.makeText(getActivity(), nameText.getText() + " is served", Toast.LENGTH_LONG).show();
-        refreshOrderPage();
+
+    private void updateOrderCard(OrderedDish updatedOrderedDish, ConstraintLayout orderCard) {
+        TextView statusText = orderCard.findViewById(R.id.status);
+        statusText.setText(textStatusMap.get(updatedOrderedDish.getStatus()));
+        statusText.setBackgroundResource(backgroundStatusMap.get(updatedOrderedDish.getStatus()));
     }
 
     private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
@@ -161,10 +150,9 @@ public class OrderPageFragment extends Fragment {
         TextView numberText = orderCard.findViewById(R.id.quantity);
         numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
 
-        setStatus(dish, orderCard);
+        orderDishMap.put(dish.getId(), orderCard);
 
-
-        orderDishMapFromId.put(dish.getId(), new Pair<>(dish, orderCard));
+        updateOrderCard(dish, orderCard);
 
         orderCard.setId(View.generateViewId());
         addItem(orderCard, orderPanel);
@@ -173,23 +161,13 @@ public class OrderPageFragment extends Fragment {
         return orderCard;
     }
 
-    private void setStatus(OrderedDish dish, ConstraintLayout orderCard) {
-
-        TextView statusText = orderCard.findViewById(R.id.status);
-        if (dish.isServed()) {
-            statusText.setText(" Served ");
-            statusText.setBackgroundResource(R.drawable.servedroundbutton);
-        } else if (dish.isSent()) {
-            statusText.setText(" Sent ");
-            statusText.setBackgroundResource(R.drawable.sentroundbutton);
-        }
-    }
 
     private void setOnClick(OrderedDish dish, ConstraintLayout orderCard) {
         orderCard.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Open", Toast.LENGTH_LONG).show();
             DISH = dish;
             OrderBoardFragment fragment = new OrderBoardFragment();
+            fragment.addListener(this);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.dish_info_fragment_container, fragment);
             transaction.addToBackStack(null);
@@ -204,10 +182,31 @@ public class OrderPageFragment extends Fragment {
 
     private void setGoBackButton() {
         View back = orderView.findViewById(R.id.back_button);
-        back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
+        back.setOnClickListener(v -> {
+            for (FragmentListener listener: listeners) {
+                listener.goBack();
+            }
+        });
     }
 
     public void addListener(FragmentListener listener) {
         listeners.add(listener);
+    }
+
+    public void updateOrderedDish(OrderedDish updatedOrderedDish) {
+        ConstraintLayout view = orderDishMap.get(updatedOrderedDish.getId());
+        updateOrderCard(updatedOrderedDish, view);
+    }
+
+    @Override
+    public void addDish(OrderedDish dish) { }
+
+    @Override
+    public void deleteOrderedDish(OrderedDish dish) {
+        for (FragmentListener listener: listeners) {
+            listener.deleteOrderedDish(dish);
+        }
+        LinearLayout orderPanel = orderView.findViewById(R.id.order_panel);
+        orderPanel.removeView(orderDishMap.get(dish.getId()));
     }
 }

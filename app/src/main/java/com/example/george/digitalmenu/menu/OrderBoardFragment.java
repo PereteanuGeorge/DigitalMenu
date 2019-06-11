@@ -1,10 +1,12 @@
 package com.example.george.digitalmenu.menu;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.sip.SipSession;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
@@ -33,7 +37,7 @@ public class OrderBoardFragment extends Fragment {
     private LayoutInflater inflater;
     private OrderedDish dish;
     private View orderView;
-    int counter = 1;
+    private List<BoardFragmentListener> listeners = new ArrayList<>();
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -151,31 +155,22 @@ public class OrderBoardFragment extends Fragment {
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
-            ORDER.delete(dish);
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-            reFreshOrderPage();
-        });
-    }
-
-    private void reFreshOrderPage() {
-        getActivity().getFragmentManager().popBackStack();
-        if (dish.isOrdered()) {
+            for (BoardFragmentListener listener: listeners) {
+                listener.deleteOrderedDish(dish);
+            }
             getActivity().getFragmentManager().popBackStack();
-            OrderPageFragment fragment = new OrderPageFragment();
-            fragment.addListener((FragmentListener) getActivity());
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.order_fragment_container, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
+        });
     }
 
     private void setAddButton() {
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
-        button.setOnClickListener(v -> { ;
-            ORDER.add(dish);
+        button.setOnClickListener(v -> {
+            for (BoardFragmentListener listener: listeners) {
+                listener.addDish(dish);
+            }
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
         });
@@ -184,9 +179,13 @@ public class OrderBoardFragment extends Fragment {
 
     private void setGoBack() {
         View back = orderView.findViewById(R.id.dish_info_back);
-        back.setOnClickListener(v -> reFreshOrderPage());
+        back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
 
         View card = orderView.findViewById(R.id.dish_board);
         card.setOnClickListener(v -> {});
+    }
+
+    public void addListener(BoardFragmentListener listener) {
+        listeners.add(listener);
     }
 }
