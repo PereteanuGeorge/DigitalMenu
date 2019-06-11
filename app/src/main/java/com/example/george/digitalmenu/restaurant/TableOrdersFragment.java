@@ -211,6 +211,8 @@ public class TableOrdersFragment extends Fragment {
             card.destroy();
         }
 
+        dishesOnDisplay.clear();
+
         /* remove loading screen. */
     }
 

@@ -172,7 +172,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         Set<Order> updatedOrders = new HashSet<>();
 
         for (OrderedDish orderedDish : servedOrderedDishes) {
-            Order updatedOrder = dishToOrder.remove(orderedDish);
+            Order updatedOrder = dishToOrder.get(orderedDish);
             if (updatedOrder == null) {
                 throw new RuntimeException("Trying to serve dishes that do not belong to an order.");
             }
@@ -212,6 +212,7 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         db.removeOrders(new ArrayList<>(orders), () -> onRemovedAllOrderedDishes(tableNumber));
 
         /* Clear from state, so new fragments will have updated state. */
+        dishToOrder.clear();
         tableToOrders.get(tableNumber).clear();
         if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
             fragment.clearOrderedDishes();
