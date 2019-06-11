@@ -7,9 +7,9 @@ interface FragmentListener {
 
     void sendOrder(Order order);
 
-    void createNewOrder();
-
     void goBack();
 
     void deleteOrderedDish(OrderedDish dish);
+
+    void askForBill();
 }

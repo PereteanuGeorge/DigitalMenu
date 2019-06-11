@@ -17,12 +17,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +44,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private final String TAG = "Firestore";
 
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private Map<String, ListenerRegistration> listenerMap = new HashMap<>();
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -160,6 +161,32 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
+    public void updateOrderedDishes(List<Order> orders, Consumer<List<Order>> callback) {
+
+        WriteBatch batch = db.batch();
+
+        for (Order order : orders) {
+            /* Find order to update. */
+            String orderId = order.getId();
+            DocumentReference docRef = db.collection("restaurantOrders")
+                    .document(restaurantName)
+                    .collection("orders")
+                    .document(orderId);
+            batch.set(docRef, order);
+        }
+
+        batch.commit().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "updateOrderedDishes:success");
+                callback.accept(orders);
+            } else {
+                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
+            }
+        });
+
+    }
+
+    @Override
     public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
@@ -237,7 +264,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public void listenForSentOrder(String id, Consumer<Order> callback) {
 
-        db.collection("restaurantOrders")
+        ListenerRegistration registration = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("orders")
                 .document(id)
@@ -260,11 +287,21 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         }
                     }
                 });
+        listenerMap.put(id, registration);
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    @Override
+    public void removeListener(String id) {
+        listenerMap.get(id).remove();
+        listenerMap.remove(id);
     }
 
     @Override
     public void removeOrders(List<Order> orders, Runnable callback) {
-
         if (orders.isEmpty()) {
             callback.run();
         }

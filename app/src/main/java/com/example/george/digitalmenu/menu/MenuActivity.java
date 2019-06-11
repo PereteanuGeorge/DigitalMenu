@@ -240,11 +240,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public void createNewOrder() {
-        presenter.createNewOrder();
-    }
-
-    @Override
     public void goBack() {
         fragment = null;
         getFragmentManager().popBackStack();
@@ -253,6 +248,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     @Override
     public void deleteOrderedDish(OrderedDish dish) {
         presenter.deleteOrderedDish(dish);
+    }
+
+    @Override
+    public void askForBill() {
+        presenter.askForBill();
     }
 
     @Override

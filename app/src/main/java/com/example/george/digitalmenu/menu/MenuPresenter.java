@@ -112,6 +112,25 @@ public class MenuPresenter implements MenuContract.Presenter {
         orderedDishMap.remove(dish.getId());
     }
 
+    @Override
+    public void askForBill() {
+        for (Order order: PREVIOUS_ORDERS) {
+            order.setAskingForBill(true);
+        }
+        db.updateOrderedDishes(PREVIOUS_ORDERS, this::onAskForBillComplete);
+        PREVIOUS_ORDERS.clear();
+        ORDER =  new Order();
+    }
+
+    private void onAskForBillComplete(List<Order> orders) {
+        for (Order order: orders) {
+            for (OrderedDish orderedDish: order.getDishes()) {
+                orderedDishMap.remove(orderedDish.getId());
+            }
+            db.removeListener(order.getId());
+        }
+    }
+
     private void onSentComplete(Order order) {
         for (OrderedDish orderedDish: order.getDishes()) {
             orderedDish.setIsSent(true);

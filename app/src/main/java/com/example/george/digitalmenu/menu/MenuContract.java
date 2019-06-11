@@ -37,6 +37,8 @@ public interface MenuContract {
         OrderedDish updateOrderedDish(OrderedDish updateedOrderedDish);
 
         void deleteOrderedDish(OrderedDish dish);
+
+        void askForBill();
     }
 
     interface View {
