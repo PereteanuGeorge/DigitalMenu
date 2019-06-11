@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.ArrayList;
@@ -21,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.main.MainActivity.ORDER;
-import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
-import static com.example.george.digitalmenu.menu.MenuPresenter.PREVIOUS_ORDERS;
 
 
 /**
@@ -31,10 +27,12 @@ import static com.example.george.digitalmenu.menu.MenuPresenter.PREVIOUS_ORDERS;
  */
 public class OrderPageFragment extends Fragment implements BoardFragmentListener{
 
-    View orderView;
-    private LayoutInflater inflater;
-    private List<FragmentListener> listeners = new ArrayList<>();
+    View orderPageView;
+    private FragmentListener listener;
+    private List<OrderedDish> orderedDishes = new ArrayList<>();
+
     private Map<Integer, ConstraintLayout> orderDishMap = new HashMap<>();
+
     private Map<Integer, String> textStatusMap = new HashMap<Integer, String>() {{
         put(2, " Served ");
         put(1, " Sent ");
@@ -47,6 +45,10 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         put(1, R.drawable.sentroundbutton);
         put(0, R.drawable.addedroundbutton);
     }};
+    private Map<Integer, String> confirmMap = new HashMap<Integer, String>() {{
+        put(0, "send order");
+        put(1, "get bill");
+    }};
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -57,45 +59,35 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.inflater = inflater;
-        orderView = inflater.inflate(R.layout.fragment_order, container, false);
+        orderPageView = inflater.inflate(R.layout.fragment_order, container, false);
         displayOrders(inflater);
         setTotalPrice();
         setGoBackButton();
         setConfirmButton();
         setBackgroundClick();
-        return orderView;
+        return orderPageView;
 
     }
 
     private void setBackgroundClick() {
-        orderView.setOnClickListener(v -> {});
+        orderPageView.setOnClickListener(v -> {});
     }
 
     private void setTotalPrice() {
-        TextView totalPrice = orderView.findViewById(R.id.total_price);
-        double sum = 0;
-        for (Order order: PREVIOUS_ORDERS) {
-            sum += order.getTotalPrice();
-        }
-        sum += ORDER.getTotalPrice();
-        totalPrice.setText(String.valueOf(sum));
+        TextView totalPrice = orderPageView.findViewById(R.id.total_price);
+        totalPrice.setText(String.valueOf(listener.getTotalPrice()));
     }
 
     private void setConfirmButton() {
-        Button confirmButton = orderView.findViewById(R.id.confirm_button);
-        if (ORDER.isEmpty()) {
-            confirmButton.setText("Go payment");
-        }
+        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
+        String text = confirmMap.get(listener.getConfirmState());
+        confirmButton.setText(text);
         confirmButton.setOnClickListener(v -> {
-            if (ORDER.isEmpty()) {
-                Toast.makeText(getActivity(), "Open Payment", Toast.LENGTH_LONG).show();
-            } else {
-                for (FragmentListener listener : listeners) {
-                    listener.sendOrder(ORDER);
-                }
-                Toast.makeText(getActivity(), "Order Sent", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+            if (listener.getConfirmState() == 0) {
+                listener.sendOrder();
             }
+            //listener.sendOrder(ORDER);
         });
 
     }
@@ -103,14 +95,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
     private void displayOrders(LayoutInflater inflater) {
         // init
-        LinearLayout orderPanel = orderView.findViewById(R.id.order_panel);
-        for (Order order: PREVIOUS_ORDERS) {
-            for (OrderedDish dish : order.getOrderedDishes()) {
-                displayOrder(inflater, dish, orderPanel);
-            }
-        }
-        for (OrderedDish dish : ORDER.getOrderedDishes()) {
-            displayOrder(inflater, dish, orderPanel);
+        LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
+        for (OrderedDish orderedDish: orderedDishes) {
+            displayOrder(inflater, orderedDish, orderPanel);
         }
         setGobackInstruction(inflater, orderPanel);
 
@@ -161,9 +148,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     private void setOnClick(OrderedDish dish, ConstraintLayout orderCard) {
         orderCard.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Open", Toast.LENGTH_LONG).show();
-            DISH = dish;
             OrderBoardFragment fragment = new OrderBoardFragment();
-            fragment.addListener(this);
+            fragment.setListener(this);
+            fragment.setOrderedDish(dish);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.dish_info_fragment_container, fragment);
             transaction.addToBackStack(null);
@@ -177,16 +164,12 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     }
 
     private void setGoBackButton() {
-        View back = orderView.findViewById(R.id.back_button);
-        back.setOnClickListener(v -> {
-            for (FragmentListener listener: listeners) {
-                listener.goBack();
-            }
-        });
+        View back = orderPageView.findViewById(R.id.back_button);
+        back.setOnClickListener(v -> listener.goBack());
     }
 
-    public void addListener(FragmentListener listener) {
-        listeners.add(listener);
+    public void setListener(FragmentListener listener) {
+        this.listener = listener;
     }
 
     public void updateOrderedDish(OrderedDish updatedOrderedDish) {
@@ -199,10 +182,12 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
     @Override
     public void deleteOrderedDish(OrderedDish dish) {
-        for (FragmentListener listener: listeners) {
-            listener.deleteOrderedDish(dish);
-        }
-        LinearLayout orderPanel = orderView.findViewById(R.id.order_panel);
+        listener.deleteOrderedDish(dish);
+        LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
         orderPanel.removeView(orderDishMap.get(dish.getId()));
+    }
+
+    public void setOrderedDishes(List<OrderedDish> orderedDishes) {
+        this.orderedDishes = orderedDishes;
     }
 }

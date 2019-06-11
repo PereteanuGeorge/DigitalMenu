@@ -19,12 +19,10 @@ import com.example.george.digitalmenu.utils.RestaurantQrCodeScanner;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 
-    public static Order ORDER = new Order();
-    public static String USERNAME = "Default";
-    public static Integer TABLENUMBER = 0;
+    public static final String USERNAME = "Default";
+    public static final String INTENT_KEY = "bestmangal";
 
     private QrCodeScanner scanner;
-    public static final String INTENT_KEY = "bestmangal";
     private MainContract.Presenter presenter;
     private Context context;
 
@@ -48,8 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void switchToMenuActivity(String s) {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        USERNAME = getIntent().getStringExtra("username");
-        ORDER.setName(USERNAME);
+        intent.putExtra(USERNAME, getIntent().getStringExtra("username"));
         Log.d("MainActivity", "Table number in Main is " + Order.tableNumber);
         intent.putExtra(INTENT_KEY, s);
         startActivity(intent);

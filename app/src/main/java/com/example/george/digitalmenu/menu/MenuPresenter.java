@@ -18,12 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
+import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 public class MenuPresenter implements MenuContract.Presenter {
 
-    public static final List<Order> PREVIOUS_ORDERS = new ArrayList<>();
+    private  Order currentOrder = new Order();
+    private List<Order> previousOrders = new ArrayList<>();
     private MenuContract.View view;
     private RestaurantDatabase db;
     private static Table TABLE = new Table();
@@ -76,14 +77,14 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void cleanOrder() {
-        PREVIOUS_ORDERS.clear();
-        ORDER = new Order();
+        previousOrders.clear();
+        currentOrder = new Order();
     }
 
     @Override
     public void createNewOrder() {
-        PREVIOUS_ORDERS.add(ORDER);
-        ORDER = new Order();
+        previousOrders.add(currentOrder);
+        currentOrder = new Order();
     }
 
     @Override
@@ -107,13 +108,13 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void sendOrder(Order order) {
-        db.saveOrder(order, this::onSentComplete);
+    public void sendOrder() {
+        db.saveOrder(currentOrder, this::onSentComplete);
     }
 
     @Override
     public void addDish(OrderedDish dish) {
-        ORDER.add(dish);
+        currentOrder.add(dish);
         orderedDishMap.put(dish.getId(), dish);
     }
 
@@ -126,8 +127,43 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void deleteOrderedDish(OrderedDish dish) {
-        ORDER.delete(dish);
+        currentOrder.delete(dish);
         orderedDishMap.remove(dish.getId());
+    }
+
+    @Override
+    public Double getTotalPrice() {
+        Double sum = 0.0;
+        for (Order order: previousOrders) {
+            sum += order.getTotalPrice();
+        }
+        sum += currentOrder.getTotalPrice();
+        return roundDouble(sum,2);
+    }
+
+    @Override
+    public void setOrderUserName(String text) {
+        currentOrder.setName(text);
+    }
+
+    @Override
+    public List<OrderedDish> getOrderedDishes() {
+        List<OrderedDish> orderedDishes = new ArrayList<>();
+        for (Order order: previousOrders) {
+            orderedDishes.addAll(order.getDishes());
+        }
+        orderedDishes.addAll(currentOrder.getDishes());
+        return orderedDishes;
+    }
+
+
+    //Refactor this
+    @Override
+    public Integer getConfirmState() {
+        if (currentOrder.isEmpty()) {
+            return 1;
+        }
+        return 0;
     }
 
     private void onSentComplete(Order order) {
