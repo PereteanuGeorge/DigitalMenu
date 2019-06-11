@@ -3,7 +3,6 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
-import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -39,4 +38,7 @@ public interface RestaurantDatabase {
     String getRestaurantName();
 
     void removeListener(String id);
+    void saveTable(String username, Integer tableNumber);
+
+    void listenForTableWithId(Integer tableNumber, Consumer<Table> callback);
 }

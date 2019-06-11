@@ -10,6 +10,8 @@ public interface EntryContract {
         void switchToLoginActivity();
 
         void switchToTablesActivity(String s);
+
+        void switchToFakeNameActivity();
     }
 
     interface Presenter {

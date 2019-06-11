@@ -17,7 +17,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".restaurant.TablesActivity"></activity>
         <activity android:name=".restaurant.LoginActivity" />
         <activity android:name=".restaurant.EntryActivity" />
@@ -31,6 +32,10 @@
         <activity
             android:name=".menu.MenuActivity"
             android:label="@string/app_name" />
+
+        <activity
+            android:name=".restaurant.FakeNameActivity"
+            android:label="Fake Name" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"

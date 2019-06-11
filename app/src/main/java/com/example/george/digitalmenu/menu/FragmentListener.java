@@ -5,11 +5,14 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 
 interface FragmentListener {
 
-    void sendOrder(Order order);
+    void sendOrder();
 
     void goBack();
 
     void deleteOrderedDish(OrderedDish dish);
 
     void askForBill();
+    Double getTotalPrice();
+
+    Integer getConfirmState();
 }

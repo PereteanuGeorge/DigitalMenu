@@ -7,7 +7,10 @@ import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
+import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
+
+import java.util.List;
 
 public interface MenuContract {
     interface Presenter {
@@ -28,17 +31,30 @@ public interface MenuContract {
 
         void createNewOrder();
 
-        void listenForOrderedDishUpdate(String id, Consumer<Order> callback);
+        void saveUserToTable(String username, Integer tableNumber);
 
-        void sendOrder(Order order);
+        void listenForTableWithId(Integer tableNumber,  Consumer<Table> callback);
+
+        void addNewTable(Table table);
+        void listenForOrderedDishUpdate(String id, Consumer<Order> callback);
+        
 
         void addDish(OrderedDish dish);
 
-        OrderedDish updateOrderedDish(OrderedDish updateedOrderedDish);
+        OrderedDish updateOrderedDish(OrderedDish updatedOrderedDish);
 
         void deleteOrderedDish(OrderedDish dish);
 
         void askForBill();
+        Double getTotalPrice();
+
+        void setOrderUserName(String text);
+
+        List<OrderedDish> getOrderedDishes();
+
+        void sendOrder();
+
+        Integer getConfirmState();
     }
 
     interface View {

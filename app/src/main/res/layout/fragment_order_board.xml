@@ -53,6 +53,23 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
+        <ImageButton
+            android:id="@+id/share_button"
+            android:layout_width="27dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorWhite"
+            android:src="@drawable/baseline_share_black_18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.971"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
         <Button
             android:id="@+id/operation_button"
             android:layout_width="80dp"
@@ -101,6 +118,7 @@
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout3"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_marginStart="8dp"

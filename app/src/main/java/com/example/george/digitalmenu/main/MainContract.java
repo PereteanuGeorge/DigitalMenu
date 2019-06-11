@@ -4,7 +4,6 @@ public interface MainContract {
     interface Presenter {
 
         void onViewCompleteCreate();
-
     }
 
     interface View {

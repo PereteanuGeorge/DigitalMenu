@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
@@ -18,10 +19,10 @@ import com.example.george.digitalmenu.utils.RestaurantQrCodeScanner;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 
-    public static Order ORDER = new Order();
+    public static final String USERNAME = "Default";
+    public static final String INTENT_KEY = "bestmangal";
 
     private QrCodeScanner scanner;
-    public static final String INTENT_KEY = "bestmangal";
     private MainContract.Presenter presenter;
     private Context context;
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void switchToMenuActivity(String s) {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(USERNAME, getIntent().getStringExtra("username"));
+        Log.d("MainActivity", "Table number in Main is " + Order.tableNumber);
         intent.putExtra(INTENT_KEY, s);
         startActivity(intent);
     }

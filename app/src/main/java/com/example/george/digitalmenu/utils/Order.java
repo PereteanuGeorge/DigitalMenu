@@ -1,5 +1,6 @@
 package com.example.george.digitalmenu.utils;
 
+import com.example.george.digitalmenu.restaurant.FakeNameActivity;
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
@@ -12,15 +13,17 @@ public class Order {
     private List<OrderedDish> dishes = new ArrayList<>();
     public static Integer tableNumber;
     private String id;
+    private String name;
     private Boolean isAskingForBill = false;
 
     public Order() {}
 
-    public Order(Double totalPrice, List<OrderedDish> dishes, Integer tableNumber, Boolean isAskingForBill) {
+    public Order(Double totalPrice, List<OrderedDish> dishes, Integer tableNumber, Boolean isAskingForBill, String name) {
         this.totalPrice = totalPrice;
         this.dishes = dishes;
         this.tableNumber = tableNumber;
         this.isAskingForBill = isAskingForBill;
+        this.name = FakeNameActivity.username;
     }
 
 
@@ -90,5 +93,13 @@ public class Order {
     @Exclude
     public boolean isEmpty() {
         return dishes.isEmpty();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -46,6 +46,10 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     private Map<String, ListenerRegistration> listenerMap = new HashMap<>();
 
+    private HashMap<Order, String> orderToId = new HashMap<>();
+
+    public static List<String> users;
+
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -190,31 +194,31 @@ public class RestaurantFirestore implements RestaurantDatabase {
     public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
-            .document(restaurantName)
-            .collection("orders")
-            .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                .document(restaurantName)
+                .collection("orders")
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
 
-                for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
-                    if (change.getNewIndex() == -1) {
-                        continue;
-                    }
+                    for (DocumentChange change : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (change.getNewIndex() == -1) {
+                            continue;
+                        }
 
-                    if (change.getType() != DocumentChange.Type.ADDED) {
-                        continue;
-                    }
+                        if (change.getType() != DocumentChange.Type.ADDED) {
+                            continue;
+                        }
 
-                    String id = change.getDocument().getId();
-                    if (id.equals("nullOrder")) {
-                        continue;
-                    }
+                        String id = change.getDocument().getId();
+                        if (id.equals("nullOrder")) {
+                            continue;
+                        }
 
-                    QueryDocumentSnapshot document = change.getDocument();
-                    Order order = document.toObject(Order.class);
-                    order.setId(document.getId());
+                        QueryDocumentSnapshot document = change.getDocument();
+                        Order order = document.toObject(Order.class);
+                        order.setId(document.getId());
 //                    orderToId.put(order, id);
-                    callback.accept(order);
-            }
-        });
+                        callback.accept(order);
+                    }
+                });
     }
 
     @Override
@@ -300,6 +304,70 @@ public class RestaurantFirestore implements RestaurantDatabase {
         listenerMap.remove(id);
     }
 
+    public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
+        Log.d(TAG,"Numaru in db e " + tableNumber);
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("tables")
+                .document(String.valueOf(tableNumber))
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot snapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        Log.d(TAG,"Snapshot e " + snapshot.getData());
+                        if (snapshot != null && snapshot.exists()) {
+                            users = (List<String>) snapshot.getData().get("users");
+
+                            Log.d(TAG, "Current data: " + snapshot.getData());
+
+                            //function)
+                            callback.accept(snapshot.toObject(Table.class));
+                        } else {
+                            Log.d(TAG, "Current data: null");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void saveTable(String username, Integer tableNumber) {
+        DocumentReference ref = db.collection("restaurantOrders")
+                .document(restaurantName).collection("tables").document(String.valueOf(tableNumber));
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Table table;
+                    if(document.exists()) {
+                        Log.d(TAG, "Catched table" + tableNumber);
+                        table = document.toObject(Table.class);
+                        table.add(username);
+                    } else {
+                        Log.d(TAG, "Table" + tableNumber + " is not exist");
+                        table = new Table(tableNumber);
+                        table.add(username);
+                    }
+                    ref.set(table).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Successfully saved table" + tableNumber);
+                            } else {
+                                Log.d(TAG, "Failed to save table" + tableNumber);
+                            }
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "Failed to catch table" + tableNumber);
+                }
+            }
+        });
+    }
+
     @Override
     public void removeOrders(List<Order> orders, Runnable callback) {
         if (orders.isEmpty()) {
@@ -315,6 +383,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     .document(order.getId());
             batch.delete(docRef);
         }
+
 
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
