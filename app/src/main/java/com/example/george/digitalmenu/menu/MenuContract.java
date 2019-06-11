@@ -4,12 +4,11 @@ import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
 import com.example.george.digitalmenu.utils.Dish;
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
-
-import java.util.List;
 
 public interface MenuContract {
     interface Presenter {
@@ -28,17 +27,22 @@ public interface MenuContract {
 
         void cleanOrder();
 
-        void sendOrder(Runnable callback);
-
         void createNewOrder();
-
-        void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback);
 
         void saveUserToTable(String username, Integer tableNumber);
 
         void listenForTableWithId(Integer tableNumber,  Consumer<Table> callback);
 
         void addNewTable(Table table);
+        void listenForOrderedDishUpdate(String id, Consumer<Order> callback);
+
+        void sendOrder(Order order);
+
+        void addDish(OrderedDish dish);
+
+        OrderedDish updateOrderedDish(OrderedDish updateedOrderedDish);
+
+        void deleteOrderedDish(OrderedDish dish);
     }
 
     interface View {
@@ -50,5 +54,7 @@ public interface MenuContract {
         void displayMenu(Restaurant r);
 
         void notifyModelInitFailure();
+
+        void update(Order order);
     }
 }

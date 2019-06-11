@@ -23,14 +23,14 @@ public interface RestaurantDatabase {
 
     void init(Runnable success, Runnable failure);
 
-    void saveOrder(Order order, Runnable callback);
+    void saveOrder(Order order, Consumer<Order> callback);
 
     void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
-    void updateOrderedDishes(String restaurantName, Order order, List<OrderedDish> newDishes);
+    void updateOrderedDishes(String restaurantName, List<Order> orders);
 
     boolean alreadySignedIn();
 
-    void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback);
+    void listenForSentOrder(String id, Consumer<Order> callback);
 
     void saveTable(String username, Integer tableNumber);
 

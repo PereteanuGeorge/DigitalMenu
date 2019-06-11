@@ -18,12 +18,12 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,7 +32,6 @@ import java.util.concurrent.Executors;
 // Adapter implementation for firebase solution.
 public class RestaurantFirestore implements RestaurantDatabase {
 
-    public static final Map<Integer, OrderedDish> ORDER_DISH_MAP = new HashMap<>();
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
@@ -128,23 +127,20 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
-    public void updateOrderedDishes(String restaurantName, Order order, List<OrderedDish> newDishes) {
+    public void updateOrderedDishes(String restaurantName, List<Order> orders) {
 
-        /* Find order to update. */
-        String orderId = order.getId();
+        WriteBatch batch = db.batch();
 
-        DocumentReference docRef = db.collection("restaurantOrders")
-                .document(restaurantName)
-                .collection("orders")
-                .document(orderId);
+        for (Order order : orders) {
+            /* Find order to update. */
+            String orderId = order.getId();
 
-        docRef.set(order).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "updateOrderedDishes:success");
-            } else {
-                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
-            }
-        });
+            DocumentReference docRef = db.collection("restaurantOrders")
+                    .document(restaurantName)
+                    .collection("orders")
+                    .document(orderId);
+
+            batch.set(docRef, order);
 
 //        docRef.update("dishes", Arrays.asList(newDishes)).addOnCompleteListener(task -> {
 //            if (task.isSuccessful()) {
@@ -153,6 +149,16 @@ public class RestaurantFirestore implements RestaurantDatabase {
 //                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
 //            }
 //        });
+        }
+
+        batch.commit().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "updateOrderedDishes:success");
+            } else {
+                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
+            }
+        });
+
     }
 
     @Override
@@ -217,13 +223,13 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
-    public void saveOrder(Order order, Runnable callback) {
+    public void saveOrder(Order order, Consumer<Order> callback) {
         db.collection("restaurantOrders").document(restaurantName)
                 .collection("orders").add(order)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         order.setId(task.getResult().getId());
-                        callback.run();
+                        callback.accept(order);
                         Log.d(TAG, "Upload oder successfully");
                     } else {
                         Log.d(TAG, "Uploading failed");
@@ -231,7 +237,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 });
     }
 
-    public void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback) {
+    public void listenForSentOrder(String id, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
                 .document(restaurantName)
@@ -250,7 +256,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                             Log.d(TAG, "Current data: " + snapshot.getData());
 
                             //function)
-                            callback.accept(snapshot.toObject(Order.class).getDishes());
+                            callback.accept(snapshot.toObject(Order.class));
                         } else {
                             Log.d(TAG, "Current data: null");
                         }

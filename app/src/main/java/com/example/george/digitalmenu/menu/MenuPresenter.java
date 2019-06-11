@@ -14,7 +14,9 @@ import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.ORDER;
 import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
@@ -25,6 +27,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     private MenuContract.View view;
     private RestaurantDatabase db;
     private static Table TABLE = new Table();
+    private Map<Integer, OrderedDish> orderedDishMap = new HashMap<>();
 
     public MenuPresenter() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -78,21 +81,13 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void sendOrder(Runnable callback) {
-        db.saveOrder(ORDER, callback);
-    }
-
-    @Override
     public void createNewOrder() {
-        for (OrderedDish  orderedDish: ORDER.getDishes()) {
-            orderedDish.setIsSent();
-        }
         PREVIOUS_ORDERS.add(ORDER);
         ORDER = new Order();
     }
 
     @Override
-    public void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback) {
+    public void listenForOrderedDishUpdate(String id, Consumer<Order> callback) {
         db.listenForSentOrder(id, callback);
     }
 
@@ -109,6 +104,43 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void addNewTable(Table table) {
         TABLE = table;
+    }
+
+    @Override
+    public void sendOrder(Order order) {
+        db.saveOrder(order, this::onSentComplete);
+    }
+
+    @Override
+    public void addDish(OrderedDish dish) {
+        ORDER.add(dish);
+        orderedDishMap.put(dish.getId(), dish);
+    }
+
+    @Override
+    public OrderedDish updateOrderedDish(OrderedDish updatedOrderedDish) {
+        OrderedDish localOrderedDish = orderedDishMap.get(updatedOrderedDish.getId());
+        localOrderedDish.setServed(updatedOrderedDish.isServed());
+        return localOrderedDish;
+    }
+
+    @Override
+    public void deleteOrderedDish(OrderedDish dish) {
+        ORDER.delete(dish);
+        orderedDishMap.remove(dish.getId());
+    }
+
+    private void onSentComplete(Order order) {
+        for (OrderedDish orderedDish: order.getDishes()) {
+            orderedDish.setIsSent(true);
+        }
+        view.update(order);
+        createNewOrder();
+        listenForOrderedDishUpdate(order.getId(), this::onServe);
+    }
+
+    private void onServe(Order order)  {
+        view.update(order);
     }
 
     private void fetchData(String restaurantName) {
