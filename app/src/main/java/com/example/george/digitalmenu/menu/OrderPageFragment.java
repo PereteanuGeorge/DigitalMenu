@@ -2,12 +2,8 @@ package com.example.george.digitalmenu.menu;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.LocaleList;
 import android.support.constraint.ConstraintLayout;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +89,11 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         }
         confirmButton.setOnClickListener(v -> {
             if (ORDER.isEmpty()) {
-                Toast.makeText(getActivity(), "Open Payment", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Ask for bill", Toast.LENGTH_LONG).show();
+                for (FragmentListener listener : listeners) {
+                    listener.askForBill();
+                }
+                getActivity().getFragmentManager().popBackStack();
             } else {
                 for (FragmentListener listener : listeners) {
                     listener.sendOrder(ORDER);
@@ -208,5 +208,13 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         }
         LinearLayout orderPanel = orderView.findViewById(R.id.order_panel);
         orderPanel.removeView(orderDishMap.get(dish.getId()));
+
+        // Following should be refactor
+        if (ORDER.isEmpty()) {
+            Button confirmButton = orderView.findViewById(R.id.confirm_button);
+            if (ORDER.isEmpty()) {
+                confirmButton.setText("Go payment");
+            }
+        }
     }
 }

@@ -29,7 +29,13 @@ public interface RestaurantDatabase {
     void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
     void updateOrderedDishes(String restaurantName, List<Order> orders);
 
+    void updateOrderedDishes(List<Order> orders, Consumer<List<Order>> callback);
+
     boolean alreadySignedIn();
 
     void listenForSentOrder(String id, Consumer<Order> callback);
+
+    String getRestaurantName();
+
+    void removeListener(String id);
 }
