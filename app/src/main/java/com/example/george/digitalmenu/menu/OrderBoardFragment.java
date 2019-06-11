@@ -20,11 +20,7 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static com.example.george.digitalmenu.menu.MenuActivity.DISH;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,12 +29,17 @@ public class OrderBoardFragment extends Fragment {
 
 
     private LayoutInflater inflater;
-    private OrderedDish dish;
+    private OrderedDish orderedDish;
     private View orderView;
-    private List<BoardFragmentListener> listeners = new ArrayList<>();
+    private BoardFragmentListener listener;
 
     public OrderBoardFragment() {
         // Required empty public constructor
+    }
+
+    public static OrderBoardFragment newInstance() {
+        OrderBoardFragment fragment = new OrderBoardFragment();
+        return fragment;
     }
 
 
@@ -46,7 +47,6 @@ public class OrderBoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.dish = DISH;
         this.inflater = inflater;
         this.orderView = inflater.inflate(R.layout.fragment_order_board, container, false);
 
@@ -59,25 +59,25 @@ public class OrderBoardFragment extends Fragment {
     private void setInformation() {
 
         ImageView picture = orderView.findViewById(R.id.picture);
-        picture.setImageBitmap(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
+        picture.setImageBitmap(BitmapFactory.decodeByteArray(orderedDish.getPicture(),0, orderedDish.getPicture().length));
 
         TextView infoText = orderView.findViewById(R.id.description);
-        infoText.setText(dish.getDescription());
+        infoText.setText(orderedDish.getDescription());
 
 
         TextView nameText = orderView.findViewById(R.id.name);
-        nameText.setText(dish.getName());
+        nameText.setText(orderedDish.getName());
 
         TextView priceText = orderView.findViewById(R.id.price);
-        priceText.setText(String.valueOf(dish.getPrice()));
+        priceText.setText(String.valueOf(orderedDish.getPrice()));
 
         TextView currencyText = orderView.findViewById(R.id.currency);
-        currencyText.setText(String.valueOf(dish.getCurrency()));
+        currencyText.setText(String.valueOf(orderedDish.getCurrency()));
 
         TextView descriptionText = orderView.findViewById(R.id.description);
-        descriptionText.setText(dish.getDescription());
+        descriptionText.setText(orderedDish.getDescription());
 
-        setOptions(dish.getOptions(), orderView.findViewById(R.id.options_panel));
+        setOptions(orderedDish.getOptions(), orderView.findViewById(R.id.options_panel));
 
         Button increment = orderView.findViewById(R.id.increment);
         Button decrement = orderView.findViewById(R.id.decrement);
@@ -97,13 +97,13 @@ public class OrderBoardFragment extends Fragment {
         });
 
 
-        if (dish.isSent()) {
+        if (orderedDish.isSent()) {
             setSentButton();
             increment.setVisibility(View.GONE);
             decrement.setVisibility(View.GONE);
-            count.setText(String.valueOf(dish.getNumber()) + "X");
+            count.setText(String.valueOf(orderedDish.getNumber()) + "X");
         } else {
-            if (dish.isOrdered()) {
+            if (orderedDish.isOrdered()) {
                 setDeleteButton();
             } else {
                 setAddButton();
@@ -123,14 +123,14 @@ public class OrderBoardFragment extends Fragment {
 
 
     private void setNumberOfPortions(Button increment, Button decrement, TextView count) {
-        count.setText(String.valueOf(dish.getNumber()));
+        count.setText(String.valueOf(orderedDish.getNumber()));
         increment.setOnClickListener(view -> {
-            dish.increment();
-            count.setText(String.valueOf(dish.getNumber()));
+            orderedDish.increment();
+            count.setText(String.valueOf(orderedDish.getNumber()));
         });
         decrement.setOnClickListener(view -> {
-            dish.decrement();
-            count.setText(String.valueOf(dish.getNumber()));
+            orderedDish.decrement();
+            count.setText(String.valueOf(orderedDish.getNumber()));
         });
     }
 
@@ -148,10 +148,10 @@ public class OrderBoardFragment extends Fragment {
         optionText.setChecked(isChecked);
 
         optionText.setOnClickListener(v -> {
-            if (!DISH.isSent()) {
+            if (!orderedDish.isSent()) {
                 optionText.setChecked(!optionText.isChecked());
                 Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
-                dish.put(optionText.getText().toString(), optionText.isChecked());
+                orderedDish.put(optionText.getText().toString(), optionText.isChecked());
             } else {
                 Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG).show();
             }
@@ -166,9 +166,7 @@ public class OrderBoardFragment extends Fragment {
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-            for (BoardFragmentListener listener: listeners) {
-                listener.deleteOrderedDish(dish);
-            }
+            listener.deleteOrderedDish(orderedDish);
             getActivity().getFragmentManager().popBackStack();
         });
     }
@@ -178,9 +176,7 @@ public class OrderBoardFragment extends Fragment {
         button.setText("ADD");
         button.setBackgroundColor(Color.parseColor("#4CAF50"));
         button.setOnClickListener(v -> {
-            for (BoardFragmentListener listener: listeners) {
-                listener.addDish(dish);
-            }
+            listener.addDish(orderedDish);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
         });
@@ -195,7 +191,11 @@ public class OrderBoardFragment extends Fragment {
         card.setOnClickListener(v -> {});
     }
 
-    public void addListener(BoardFragmentListener listener) {
-        listeners.add(listener);
+    public void setListener(BoardFragmentListener listener) {
+        this.listener = listener;
+    }
+
+    public void setOrderedDish(OrderedDish orderedDish) {
+        this.orderedDish = orderedDish;
     }
 }

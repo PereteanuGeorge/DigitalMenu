@@ -29,20 +29,17 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
+import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
 
 /* Responsible for android-OS specific and UI logic */
 public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener, BoardFragmentListener {
 
-    public static OrderedDish DISH = new OrderedDish();
-
+    //public static OrderedDish DISH = new OrderedDish();
     private static final String TAG = "MenuActivity";
-
     private ConstraintLayout rootLayout;
-
     MenuContract.Presenter presenter;
     private Map<String, Boolean> open = new HashMap<>();
-
-    private OrderPageFragment fragment = null;
+    private OrderPageFragment orderPageFragment = null;
 
 
     @Override
@@ -53,6 +50,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = ServiceRegistry.getInstance().getService(MenuContract.Presenter.class);
         presenter.registerView(this);
+        presenter.setOrderUserName(getIntent().getStringExtra(USERNAME));
 
         setScanButton();
         setCheckoutButton();
@@ -63,10 +61,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private void setCheckoutButton() {
         final View button = findViewById(R.id.order_button);
         button.setOnClickListener(v -> {
-            fragment = new OrderPageFragment();
-            fragment.addListener(this);
+            orderPageFragment = new OrderPageFragment();
+            orderPageFragment.setListener(this);
+            orderPageFragment.setOrderedDishes(presenter.getOrderedDishes());
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.order_fragment_container, fragment);
+            transaction.replace(R.id.order_fragment_container, orderPageFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         });
@@ -75,11 +74,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
     @Override
     public void displayInfoFood(Dish dish) {
-        DISH = new OrderedDish(dish);
-        OrderBoardFragment fragment = new OrderBoardFragment();
-        fragment.addListener(this);
+        OrderBoardFragment orderBoardFragment = OrderBoardFragment.newInstance();
+        orderBoardFragment.setOrderedDish(new OrderedDish(dish));
+        orderBoardFragment.setListener(this);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.dish_info_fragment_container, fragment);
+        transaction.replace(R.id.dish_info_fragment_container, orderBoardFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -121,8 +120,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void update(Order order) {
         for (OrderedDish updatedOrderedDish: order.getDishes()) {
             OrderedDish localOrderedDish = presenter.updateOrderedDish(updatedOrderedDish);
-            if (fragment != null) {
-                fragment.updateOrderedDish(localOrderedDish);
+            if (orderPageFragment != null) {
+                orderPageFragment.updateOrderedDish(localOrderedDish);
             }
         }
     }
@@ -227,29 +226,35 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public void sendOrder(Order order) {
-        presenter.sendOrder(order);
+    public void sendOrder() {
+        presenter.sendOrder();
     }
 
     @Override
     public void onBackPressed() {
-        fragment = null;
+        orderPageFragment = null;
     }
 
-    @Override
-    public void createNewOrder() {
-        presenter.createNewOrder();
-    }
 
     @Override
     public void goBack() {
-        fragment = null;
+        orderPageFragment = null;
         getFragmentManager().popBackStack();
     }
 
     @Override
     public void deleteOrderedDish(OrderedDish dish) {
         presenter.deleteOrderedDish(dish);
+    }
+
+    @Override
+    public Double getTotalPrice() {
+        return presenter.getTotalPrice();
+    }
+
+    @Override
+    public Integer getConfirmState() {
+        return presenter.getConfirmState();
     }
 
     @Override
