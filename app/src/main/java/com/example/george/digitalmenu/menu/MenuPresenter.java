@@ -10,6 +10,7 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
+import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     public static final List<Order> PREVIOUS_ORDERS = new ArrayList<>();
     private MenuContract.View view;
     private RestaurantDatabase db;
+    private static Table TABLE = new Table();
 
     public MenuPresenter() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -99,12 +101,31 @@ public class MenuPresenter implements MenuContract.Presenter {
         db.saveTable(username, tableNumber);
     }
 
+    @Override
+    public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
+        db.listenForTableWithId(tableNumber, callback);
+    }
+
+    @Override
+    public void addNewTable(Table table) {
+        TABLE = table;
+    }
+
     private void fetchData(String restaurantName) {
         db.getRestaurant(restaurantName, this::onFetchDataComplete);
     }
 
     private void onFetchDataComplete(Restaurant r) {
         saveUserToTable(USERNAME, Order.tableNumber);
+        setListenToTable();
         view.displayMenu(r);
+    }
+
+    private void setListenToTable() {
+        listenForTableWithId(Order.tableNumber, this::onNewTable);
+    }
+
+    private void onNewTable(Table table) {
+        addNewTable(table);
     }
 }

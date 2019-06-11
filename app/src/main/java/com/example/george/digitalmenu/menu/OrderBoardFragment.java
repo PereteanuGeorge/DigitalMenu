@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -81,6 +82,18 @@ public class OrderBoardFragment extends Fragment {
         Button decrement = orderView.findViewById(R.id.decrement);
 
         TextView count = orderView.findViewById(R.id.counter);
+
+        ImageButton shareButton = orderView.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserListFragment fragment = new UserListFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.list_of_users_fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
 
         if (dish.isSent()) {

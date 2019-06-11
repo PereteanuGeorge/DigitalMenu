@@ -46,6 +46,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private HashMap<Order, String> orderToId = new HashMap<>();
 
+    public static List<String> users;
+
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -249,6 +251,35 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
                             //function)
                             callback.accept(snapshot.toObject(Order.class).getDishes());
+                        } else {
+                            Log.d(TAG, "Current data: null");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
+        Log.d(TAG,"Numaru in db e " + tableNumber);
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("tables")
+                .document(String.valueOf(tableNumber))
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot snapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        Log.d(TAG,"Snapshot e " + snapshot.getData());
+                        if (snapshot != null && snapshot.exists()) {
+                            users = (List<String>) snapshot.getData().get("users");
+
+                            Log.d(TAG, "Current data: " + snapshot.getData());
+
+                            //function)
+                            callback.accept(snapshot.toObject(Table.class));
                         } else {
                             Log.d(TAG, "Current data: null");
                         }

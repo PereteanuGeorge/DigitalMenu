@@ -33,4 +33,6 @@ public interface RestaurantDatabase {
     void listenForSentOrder(String id, Consumer<List<OrderedDish>> callback);
 
     void saveTable(String username, Integer tableNumber);
+
+    void listenForTableWithId(Integer tableNumber, Consumer<Table> callback);
 }

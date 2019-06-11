@@ -6,6 +6,7 @@ import android.support.v4.util.Consumer;
 import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
+import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.List;
@@ -34,6 +35,10 @@ public interface MenuContract {
         void listenForOrderedDishUpdate(String id, Consumer<List<OrderedDish>> callback);
 
         void saveUserToTable(String username, Integer tableNumber);
+
+        void listenForTableWithId(Integer tableNumber,  Consumer<Table> callback);
+
+        void addNewTable(Table table);
     }
 
     interface View {
