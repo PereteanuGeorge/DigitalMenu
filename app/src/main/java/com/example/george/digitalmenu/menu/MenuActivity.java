@@ -127,6 +127,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
                 orderPageFragment.updateOrderedDish(localOrderedDish);
             }
         }
+        if (orderPageFragment != null) {
+            orderPageFragment.setTotalPrice();
+        }
     }
 
     @Override
@@ -140,6 +143,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void updateWithAddedDish(OrderedDish dish) {
         if (orderPageFragment != null) {
             orderPageFragment.updateWithAddedDish(dish);
+        }
+    }
+
+    @Override
+    public void updatePrice() {
+        if (orderPageFragment != null) {
+            orderPageFragment.setTotalPrice();
         }
     }
 
@@ -300,6 +310,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.shareToFriends(orderedDish, nameMap);
     }
 
-    ;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.leaveRestaurant();
+    }
 
 }

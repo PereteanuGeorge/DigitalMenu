@@ -51,4 +51,6 @@ public interface RestaurantDatabase {
     void removeUserFromTable(String userName, Integer tableID);
 
     void removeSharedOrderListener();
+
+    void removeSharedDishWithId(OrderedDish dish, Integer tableID, Consumer<OrderedDish> callback);
 }

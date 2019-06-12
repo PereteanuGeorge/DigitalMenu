@@ -34,9 +34,10 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     private List<OrderedDish> orderedDishes = new ArrayList<>();
     int counter = 0;
 
-    private Map<Integer, ConstraintLayout> orderDishMap = new HashMap<>();
+    private Map<String, ConstraintLayout> orderDishMap = new HashMap<>();
 
     private Map<Integer, String> textStatusMap = new HashMap<Integer, String>() {{
+        put(3, " Shared ");
         put(2, " Served ");
         put(1, " Sent ");
         put(0, " Added ");
@@ -44,6 +45,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
 
     private Map<Integer, Integer>  backgroundStatusMap = new HashMap<Integer, Integer>() {{
+        put(3, R.drawable.sharedroundbutton);
         put(2, R.drawable.servedroundbutton);
         put(1, R.drawable.sentroundbutton);
         put(0, R.drawable.addedroundbutton);
@@ -74,7 +76,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         orderPageView.setOnClickListener(v -> {});
     }
 
-    private void setTotalPrice() {
+    public void setTotalPrice() {
         TextView totalPrice = orderPageView.findViewById(R.id.total_price);
         totalPrice.setText(String.valueOf(listener.getTotalPrice()));
     }

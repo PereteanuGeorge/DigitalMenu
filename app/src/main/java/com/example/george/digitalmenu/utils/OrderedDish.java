@@ -20,13 +20,15 @@ public class OrderedDish {
     private boolean ordered = false;
     private boolean isServed = false;
     private boolean isSent = false;
-    private Integer id;
+    private String id;
     private Integer sharingNumber;
+    private boolean isShared = false;
+    private boolean isManageable = true;
 
     public OrderedDish() {}
 
     public OrderedDish(String name, Integer number, Map<String, Boolean> options,
-                       Double price, Boolean isServed, Integer id) {
+                       Double price, Boolean isServed, String id) {
         this.name = name;
         this.number = number;
         this.options = options;
@@ -137,16 +139,21 @@ public class OrderedDish {
         return this.isSent;
     }
 
-    public Integer getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     @Exclude
     public Integer getStatus() {
+
+        if (isShared && !isManageable) {
+            return 3;
+        }
+
         if (isServed) {
             return 2;
         }
@@ -170,12 +177,32 @@ public class OrderedDish {
         this.dish = dish;
     }
 
+    @Exclude
+    public void setIsShared(boolean isShared) {
+        this.isShared = isShared;
+    }
+
+    @Exclude
+    public boolean isShared() {
+        return isShared;
+    }
+
+    @Exclude
+    public void setIsManageable(boolean isManageable) {
+        this.isManageable = isManageable;
+    }
+
+    @Exclude
+    public boolean isManageable() {
+        return this.isManageable;
+    }
+
     public static class IdGenerator {
 
         private static int count;
 
-        public static int generate() {
-            return ++count;
+        public static String generate() {
+            return String.valueOf(++count);
         }
     }
 }

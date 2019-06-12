@@ -84,5 +84,7 @@ public interface MenuContract {
         void updateWithEverythingIsServed();
 
         void updateWithAddedDish(OrderedDish dish);
+
+        void updatePrice();
     }
 }

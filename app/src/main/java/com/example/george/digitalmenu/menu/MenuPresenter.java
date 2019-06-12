@@ -26,9 +26,10 @@ public class MenuPresenter implements MenuContract.Presenter {
     private MenuContract.View view;
     private RestaurantDatabase db;
     private Table table = new Table();
-    private Map<Integer, OrderedDish> orderedDishMap = new HashMap<>();
+    private Map<String, OrderedDish> orderedDishMap = new HashMap<>();
     private Restaurant restaurant = new Restaurant();
     private String userName;
+    private Order sharedOrder = new Order();
 
     public MenuPresenter() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -78,6 +79,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void cleanOrder() {
         previousOrders.clear();
+        sharedOrder = new Order();
         currentOrder = new Order();
         currentOrder.setName(userName);
     }
@@ -114,8 +116,13 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void deleteOrderedDish(OrderedDish dish) {
+        if (dish.isShared()) {
+            db.removeSharedDishWithId(dish, table.getTableID(), this::deleteOrderedDish);
+            return;
+        }
         currentOrder.delete(dish);
         orderedDishMap.remove(dish.getId());
+        view.updatePrice();
     }
 
     @Override
@@ -134,6 +141,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             db.removeListener(order.getId());
         }
         previousOrders.clear();
+        sharedOrder.clean();
         currentOrder =  new Order();
     }
 
@@ -142,6 +150,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         for (Order order: previousOrders) {
                 sum += order.getTotalPrice();
         }
+        sum += sharedOrder.getTotalPrice();
         sum += currentOrder.getTotalPrice();
         return roundDouble(sum,2);
     }
@@ -178,22 +187,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         return currentOrder.isEmpty() && previousOrders.isEmpty();
     }
 
-    @Override
-    public void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap) {
-        SharedDish sharedDish = new SharedDish(orderedDish, getFriendsToShare(nameMap));
-        db.uploadSharedDish(table.getTableID(), sharedDish);
-    }
 
-    private List<String> getFriendsToShare(Map<String, Boolean> nameMap) {
-        List<String> friendsToShare = new ArrayList<>();
-        for(Map.Entry<String,Boolean> friends : nameMap.entrySet()) {
-            if(friends.getValue()) {
-                friendsToShare.add(friends.getKey());
-            }
-        }
-        friendsToShare.add(userName);
-        return friendsToShare;
-    }
 
 
     private void onSentComplete(Order order) {
@@ -207,18 +201,9 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private void onServe(Order order)  {
         view.update(order);
-        if (everythingIsServed()) {
+        if (isAllServed()) {
             view.updateWithEverythingIsServed();
         }
-    }
-
-    private boolean everythingIsServed() {
-        for (OrderedDish orderedDish: getOrderedDishes()) {
-            if (!orderedDish.isServed()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void fetchData(String restaurantName) {
@@ -239,16 +224,6 @@ public class MenuPresenter implements MenuContract.Presenter {
         currentOrder.setName(userName);
     }
 
-    @Override
-    public List<String> getFriends() {
-        List<String> friends = new ArrayList<>();
-        for (String name: table.getUsers()) {
-            if (!name.equals(userName)) {
-                friends.add(name);
-            }
-        }
-        return friends;
-    }
 
     @Override
     public void leaveRestaurant() {
@@ -266,6 +241,22 @@ public class MenuPresenter implements MenuContract.Presenter {
         this.restaurant = restaurant;
     }
 
+
+
+    /* Sharing methods */
+
+    @Override
+    public List<String> getFriends() {
+        List<String> friends = new ArrayList<>();
+        for (String name: table.getUsers()) {
+            if (!name.equals(userName)) {
+                friends.add(name);
+            }
+        }
+        return friends;
+    }
+
+
     private void setListenToTableForSharedDish() {
         db.listenForTableSharedDish(table.getTableID(), this::onNewSharedDish);
     }
@@ -273,15 +264,24 @@ public class MenuPresenter implements MenuContract.Presenter {
     private void onNewSharedDish(SharedDish sharedDish) {
         if (sharedDish.isShareTo(userName)) {
             OrderedDish orderedDish = sharedDish.getOrderedDish();
-            // refactor setID;
-            orderedDish.setId(OrderedDish.IdGenerator.generate());
             orderedDish.setDish(restaurant.getDishWithName(orderedDish.getName()));
             orderedDish.setSharingNumber(sharedDish.getSharingNumber());
-            addDish(orderedDish);
+            orderedDish.setIsShared(true);
+            if (!userName.equals(sharedDish.getManager())) {
+                orderedDish.setIsManageable(false);
+                addSharedDish(orderedDish);
+            } else {
+                orderedDish.setIsManageable(true);
+                addDish(orderedDish);
+            }
         }
     }
 
-    /* Sharing methods */
+    private void addSharedDish(OrderedDish orderedDish) {
+        sharedOrder.add(orderedDish);
+        orderedDishMap.put(orderedDish.getId(), orderedDish);
+        view.updateWithAddedDish(orderedDish);
+    }
 
     @Override
     public void setTable(Table table) {
@@ -305,4 +305,22 @@ public class MenuPresenter implements MenuContract.Presenter {
     private void onNewTableUser(Table table) {
         setTable(table);
     }
+
+    @Override
+    public void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap) {
+        SharedDish sharedDish = new SharedDish(orderedDish, getFriendsToShare(nameMap), userName);
+        db.uploadSharedDish(table.getTableID(), sharedDish);
+    }
+
+    private List<String> getFriendsToShare(Map<String, Boolean> nameMap) {
+        List<String> friendsToShare = new ArrayList<>();
+        for(Map.Entry<String,Boolean> friends : nameMap.entrySet()) {
+            if(friends.getValue()) {
+                friendsToShare.add(friends.getKey());
+            }
+        }
+        friendsToShare.add(userName);
+        return friendsToShare;
+    }
+
 }

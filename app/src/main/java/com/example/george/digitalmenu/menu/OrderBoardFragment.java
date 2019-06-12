@@ -97,12 +97,16 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
             }
         });
 
-
-        if (orderedDish.isSent()) {
+        if (orderedDish.isShared() && !orderedDish.isManageable()) {
+            setSharedButton();
+            increment.setVisibility(View.GONE);
+            decrement.setVisibility(View.GONE);
+            count.setText(orderedDish.getNumber()  +  "/" + orderedDish.getSharingNumber() + "X");
+        } else if (orderedDish.isSent()) {
             setSentButton();
             increment.setVisibility(View.GONE);
             decrement.setVisibility(View.GONE);
-            count.setText(String.valueOf(orderedDish.getNumber()) + "X");
+            count.setText(orderedDish.getNumber()  + "X");
         } else {
             if (orderedDish.isOrdered()) {
                 setDeleteButton();
@@ -111,6 +115,15 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
             }
             setNumberOfPortions(increment, decrement, count);
         }
+    }
+
+    private void setSharedButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("Shared");
+        button.setBackgroundColor(Color.parseColor("#4d4d33"));
+        button.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Shared dishes from others cannot be managed", Toast.LENGTH_LONG).show();
+        });
     }
 
     private void openUserList() {
@@ -127,7 +140,7 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         button.setText("Sent");
         button.setBackgroundColor(Color.parseColor("#FF8C00"));
         button.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG);
+            Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG).show();
         });
     }
 
@@ -158,7 +171,9 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         optionText.setChecked(isChecked);
 
         optionText.setOnClickListener(v -> {
-            if (!orderedDish.isSent()) {
+            if (orderedDish.isShared() && !orderedDish.isManageable()) {
+                Toast.makeText(getActivity(), "Shared dish from other cannot be managed", Toast.LENGTH_LONG).show();
+            } else if (!orderedDish.isSent()) {
                 optionText.setChecked(!optionText.isChecked());
                 Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
                 orderedDish.put(optionText.getText().toString(), optionText.isChecked());
