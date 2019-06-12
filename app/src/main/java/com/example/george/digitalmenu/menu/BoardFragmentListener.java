@@ -6,4 +6,6 @@ interface BoardFragmentListener {
     void addDish(OrderedDish dish);
 
     void deleteOrderedDish(OrderedDish dish);
+
+    void updateOrderedDish(OrderedDish orderedDish);
 }

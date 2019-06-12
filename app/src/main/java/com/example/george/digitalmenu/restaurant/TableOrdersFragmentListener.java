@@ -6,8 +6,9 @@ import java.util.List;
 
 public interface TableOrdersFragmentListener {
 
-    void onOrderDishesServed(int tableNumber, List<OrderedDish> orderedDishes);
+    void onOrderedDishesServed(int tableNumber, List<OrderedDish> orderedDishes);
 
-    void onAllOrdersServed(int tableNumber);
+    void onAllDishesFromOrderServed(int tableNumber);
 
+    void onClearTable(int tableNumber);
 }

@@ -14,19 +14,29 @@ public class Order {
     public static Integer tableNumber;
     private String id;
     private String name;
+    private Boolean isAskingForBill = false;
 
     public Order() {}
 
-    public Order(Double totalPrice, List<OrderedDish> dishes, Integer tableNumber, String name) {
+    public Order(Double totalPrice, List<OrderedDish> dishes, Integer tableNumber, Boolean isAskingForBill, String name) {
         this.totalPrice = totalPrice;
         this.dishes = dishes;
         this.tableNumber = tableNumber;
+        this.isAskingForBill = isAskingForBill;
         this.name = FakeNameActivity.username;
     }
 
 
     public void clean() {
         dishes.clear();
+    }
+
+    public Boolean getAskingForBill() {
+        return isAskingForBill;
+    }
+
+    public void setAskingForBill(Boolean askingForBill) {
+        isAskingForBill = askingForBill;
     }
 
     @Exclude

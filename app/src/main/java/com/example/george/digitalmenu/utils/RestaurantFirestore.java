@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
@@ -24,6 +25,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,6 +44,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private final String TAG = "Firestore";
 
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private Map<String, ListenerRegistration> listenerMap = new HashMap<>();
 
     private HashMap<Order, String> orderToId = new HashMap<>();
 
@@ -162,6 +165,32 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
+    public void updateOrderedDishes(List<Order> orders, Consumer<List<Order>> callback) {
+
+        WriteBatch batch = db.batch();
+
+        for (Order order : orders) {
+            /* Find order to update. */
+            String orderId = order.getId();
+            DocumentReference docRef = db.collection("restaurantOrders")
+                    .document(restaurantName)
+                    .collection("orders")
+                    .document(orderId);
+            batch.set(docRef, order);
+        }
+
+        batch.commit().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "updateOrderedDishes:success");
+                callback.accept(orders);
+            } else {
+                Log.w(TAG, "updateOrderedDishes:failure", task.getException());
+            }
+        });
+
+    }
+
+    @Override
     public void listenForCustomerOrders(String restaurantName, Consumer<Order> callback) {
 
         db.collection("restaurantOrders")
@@ -239,7 +268,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public void listenForSentOrder(String id, Consumer<Order> callback) {
 
-        db.collection("restaurantOrders")
+        ListenerRegistration registration = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("orders")
                 .document(id)
@@ -262,9 +291,19 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         }
                     }
                 });
+        listenerMap.put(id, registration);
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
     @Override
+    public void removeListener(String id) {
+        listenerMap.get(id).remove();
+        listenerMap.remove(id);
+    }
+
     public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
         Log.d(TAG,"Numaru in db e " + tableNumber);
         db.collection("restaurantOrders")
@@ -298,37 +337,65 @@ public class RestaurantFirestore implements RestaurantDatabase {
         DocumentReference ref = db.collection("restaurantOrders")
                 .document(restaurantName).collection("tables").document(String.valueOf(tableNumber));
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            Table table;
-                            if(document.exists()) {
-                                Log.d(TAG, "Catched table" + tableNumber);
-                                table = document.toObject(Table.class);
-                                table.add(username);
-                            } else {
-                                Log.d(TAG, "Table" + tableNumber + " is not exist");
-                                table = new Table(tableNumber);
-                                table.add(username);
-                            }
-                            ref.set(table).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG, "Successfully saved table" + tableNumber);
-                                    } else {
-                                        Log.d(TAG, "Failed to save table" + tableNumber);
-                                    }
-                                }
-                            });
-                        } else {
-                            Log.d(TAG, "Failed to catch table" + tableNumber);
-                        }
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Table table;
+                    if(document.exists()) {
+                        Log.d(TAG, "Catched table" + tableNumber);
+                        table = document.toObject(Table.class);
+                        table.add(username);
+                    } else {
+                        Log.d(TAG, "Table" + tableNumber + " is not exist");
+                        table = new Table(tableNumber);
+                        table.add(username);
                     }
-                });
+                    ref.set(table).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Successfully saved table" + tableNumber);
+                            } else {
+                                Log.d(TAG, "Failed to save table" + tableNumber);
+                            }
+                        }
+                    });
+                } else {
+                    Log.d(TAG, "Failed to catch table" + tableNumber);
+                }
+            }
+        });
     }
 
+    @Override
+    public void removeOrders(List<Order> orders, Runnable callback) {
+        if (orders.isEmpty()) {
+            callback.run();
+        }
+
+        WriteBatch batch = db.batch();
+
+        for (Order order : orders) {
+            DocumentReference docRef = db.collection("restaurantOrders")
+                    .document(restaurantName)
+                    .collection("orders")
+                    .document(order.getId());
+            batch.delete(docRef);
+        }
+
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    callback.run();
+                } else {
+                    Log.d(TAG, "Orders deletion failed ", task.getException());
+                }
+            }
+        });
+    }
 
     @Override
     public void getSignedInUserRestaurantName(Consumer<String> success, Runnable failure) {

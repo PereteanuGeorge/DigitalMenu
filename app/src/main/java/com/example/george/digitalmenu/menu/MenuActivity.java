@@ -126,6 +126,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         }
     }
 
+    @Override
+    public void updateWithEverythingIsServed() {
+        if (orderPageFragment != null) {
+            orderPageFragment.setGetBillButton();
+        }
+    }
+
     private void displayCategories(Restaurant r) {
         List<String> categories = r.getCategories();
         Map<String, List<Dish>> map = r.getDishesForCategories();
@@ -235,7 +242,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         orderPageFragment = null;
     }
 
-
     @Override
     public void goBack() {
         orderPageFragment = null;
@@ -248,17 +254,30 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
+    public void askForBill() {
+        presenter.askForBill();
+    }
+
     public Double getTotalPrice() {
         return presenter.getTotalPrice();
     }
 
     @Override
-    public Integer getConfirmState() {
-        return presenter.getConfirmState();
+    public boolean isAllServed() {
+        return presenter.isAllServed();
+    }
+
+    @Override
+    public boolean isCannotSent() {
+        return presenter.isCannotSent();
     }
 
     @Override
     public void addDish(OrderedDish dish) {
         presenter.addDish(dish);
     }
+
+    @Override
+    public void updateOrderedDish(OrderedDish dish) {};
+
 }

@@ -45,6 +45,7 @@ public interface MenuContract {
 
         void deleteOrderedDish(OrderedDish dish);
 
+        void askForBill();
         Double getTotalPrice();
 
         void setOrderUserName(String text);
@@ -53,7 +54,9 @@ public interface MenuContract {
 
         void sendOrder();
 
-        Integer getConfirmState();
+        boolean isAllServed();
+
+        boolean isCannotSent();
     }
 
     interface View {
@@ -67,5 +70,7 @@ public interface MenuContract {
         void notifyModelInitFailure();
 
         void update(Order order);
+
+        void updateWithEverythingIsServed();
     }
 }

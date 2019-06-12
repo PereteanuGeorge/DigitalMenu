@@ -132,6 +132,24 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
+    public void askForBill() {
+        for (Order order: previousOrders) {
+            order.setAskingForBill(true);
+        }
+        db.updateOrderedDishes(previousOrders, this::onAskForBillComplete);
+    }
+
+    private void onAskForBillComplete(List<Order> orders) {
+        for (Order order : orders) {
+            for (OrderedDish orderedDish : order.getDishes()) {
+                orderedDishMap.remove(orderedDish.getId());
+            }
+            db.removeListener(order.getId());
+        }
+        previousOrders.clear();
+        currentOrder =  new Order();
+    }
+
     public Double getTotalPrice() {
         Double sum = 0.0;
         for (Order order: previousOrders) {
@@ -157,13 +175,24 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
 
-    //Refactor this
+
     @Override
-    public Integer getConfirmState() {
+    public boolean isAllServed() {
+        if (previousOrders.isEmpty()) return false;
         if (currentOrder.isEmpty()) {
-            return 1;
+            for (OrderedDish dish: getOrderedDishes()) {
+                if (!dish.isServed()) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return 0;
+        return false;
+    }
+
+    @Override
+    public boolean isCannotSent() {
+        return currentOrder.isEmpty() && previousOrders.isEmpty();
     }
 
     private void onSentComplete(Order order) {
@@ -177,6 +206,18 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private void onServe(Order order)  {
         view.update(order);
+        if (everythingIsServed()) {
+            view.updateWithEverythingIsServed();
+        }
+    }
+
+    private boolean everythingIsServed() {
+        for (OrderedDish orderedDish: getOrderedDishes()) {
+            if (!orderedDish.isServed()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fetchData(String restaurantName) {
