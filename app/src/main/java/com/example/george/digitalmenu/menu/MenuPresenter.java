@@ -45,6 +45,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         if (!dish.isDownloaded()) {
             db.downloadDishPicture(dish, callback);
             dish.setDownloaded(true);
+            return;
         }
         callback.accept(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
     }
@@ -61,6 +62,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void onViewCompleteCreate() {
+        view.showLoadingScreen();
+
         String restaurantName = view.getRestaurantName();
 
         Runnable success = () -> fetchData(restaurantName);
@@ -260,6 +263,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public String getUserName() {
         return userName;
+    }
+
+    @Override
+    public void onMenuDisplayed() {
+        view.hideLoadingScreen();
     }
 
     private void setRestaurant(Restaurant restaurant) {

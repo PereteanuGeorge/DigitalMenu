@@ -67,6 +67,8 @@ public interface MenuContract {
         void leaveRestaurant();
 
         String getUserName();
+
+        void onMenuDisplayed();
     }
 
     interface View {
@@ -84,5 +86,9 @@ public interface MenuContract {
         void updateWithEverythingIsServed();
 
         void updateWithAddedDish(OrderedDish dish);
+
+        void showLoadingScreen();
+
+        void hideLoadingScreen();
     }
 }
