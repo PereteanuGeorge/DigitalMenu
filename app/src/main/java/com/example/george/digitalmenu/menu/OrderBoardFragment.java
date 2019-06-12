@@ -89,7 +89,7 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
 
         TextView count = orderView.findViewById(R.id.counter);
 
-        ImageButton shareButton = orderView.findViewById(R.id.share_button);
+        View shareButton = orderView.findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
