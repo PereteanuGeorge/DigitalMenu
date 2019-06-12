@@ -267,7 +267,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             orderedDish.setId(OrderedDish.IdGenerator.generate());
             orderedDish.setDish(restaurant.getDishWithName(orderedDish.getName()));
             orderedDish.setSharingNumber(sharedDish.getSharingNumber());
-            addDish(orderedDish);g
+            addDish(orderedDish);
         }
     }
 
