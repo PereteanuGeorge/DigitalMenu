@@ -20,7 +20,11 @@ import android.widget.Toast;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.example.george.digitalmenu.menu.UserListFragment.NUMBER_OF_FRIENDS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +37,7 @@ public class OrderBoardFragment extends Fragment {
     private View orderView;
     private BoardFragmentListener listener;
     public static String DISH_TO_SHARE;
+    public static List<Integer> friendsAtEachTime = new ArrayList<>();
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -181,7 +186,8 @@ public class OrderBoardFragment extends Fragment {
             listener.addDish(orderedDish);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
-            //UserListFragment.friendsToShare.clear();
+            friendsAtEachTime.add(NUMBER_OF_FRIENDS);
+            UserListFragment.friendsToShare.clear();
         });
     }
 

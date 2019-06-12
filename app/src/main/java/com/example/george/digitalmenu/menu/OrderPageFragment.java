@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.menu.UserListFragment.NUMBER_OF_FRIENDS;
+import static com.example.george.digitalmenu.menu.OrderBoardFragment.friendsAtEachTime;
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 
@@ -32,6 +32,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     View orderPageView;
     private FragmentListener listener;
     private List<OrderedDish> orderedDishes = new ArrayList<>();
+    int counter = 0;
 
     private Map<Integer, ConstraintLayout> orderDishMap = new HashMap<>();
 
@@ -99,7 +100,10 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         // init
         LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
         for (OrderedDish orderedDish: orderedDishes) {
-            displayOrder(inflater, orderedDish, orderPanel);
+            if(friendsAtEachTime.get(counter) != null) {
+                displayOrder(inflater, orderedDish, orderPanel, friendsAtEachTime.get(counter));
+                counter++;
+            }
         }
         setGobackInstruction(inflater, orderPanel);
 
@@ -120,7 +124,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         statusText.setBackgroundResource(backgroundStatusMap.get(updatedOrderedDish.getStatus()));
     }
 
-    private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
+    private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel, Integer value) {
         ConstraintLayout orderCard = (ConstraintLayout) inflater.inflate(R.layout.order_card, orderPanel, false);
 
 
@@ -129,12 +133,12 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
 
         TextView priceText = orderCard.findViewById(R.id.price);
-        Double priceDivided = roundDouble(dish.getPrice() / NUMBER_OF_FRIENDS, 2);
+        Double priceDivided = roundDouble(dish.getPrice() / value, 2);
         priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(priceDivided)));
 
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
-        Double quantityDivided = roundDouble(dish.getNumber().doubleValue() / NUMBER_OF_FRIENDS, 2);
+        Double quantityDivided = roundDouble(dish.getNumber().doubleValue() / value, 2);
         numberText.setText(String.valueOf(quantityDivided).concat("X"));
 
         orderDishMap.put(dish.getId(), orderCard);
