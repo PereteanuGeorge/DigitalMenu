@@ -87,7 +87,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
        View view = findViewById(R.id.scan_button);
        view.setOnClickListener(v -> {
            presenter.cleanOrder();
-           startActivity(new Intent(getApplicationContext(), MainActivity.class));
+           presenter.leaveRestaurant();
+           Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+           intent.putExtra("username", presenter.getUserName());
+           startActivity(intent);
        });
     }
 

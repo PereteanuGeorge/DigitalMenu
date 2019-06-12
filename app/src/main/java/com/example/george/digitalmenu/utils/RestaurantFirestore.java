@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -51,6 +52,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
     private HashMap<Order, String> orderToId = new HashMap<>();
 
     public static List<String> users;
+    private ListenerRegistration sharedOrderListener;
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -356,11 +358,12 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void listenForTableSharedDish(Integer tableID, Consumer<SharedDish> callback) {
-        db.collection("restaurantOrders")
+        sharedOrderListener = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("tables")
                 .document(String.valueOf(tableID))
-                .collection("sharedOrders")
+                .collection("s" +
+                        "haredOrders")
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
                     for (DocumentChange change: queryDocumentSnapshots.getDocumentChanges()) {
                         if (change.getNewIndex() == -1) {
@@ -381,6 +384,29 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         callback.accept(sharedDish);
                     }
                 });
+    }
+
+
+    /* Figure out what will happen if tableID not exist, or the path does not contain "users" field*/
+    @Override
+    public void removeUserFromTable(String userName, Integer tableID) {
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("tables")
+                .document(String.valueOf(tableID))
+                .update("users", FieldValue.arrayRemove(userName))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Succeed to remove " + userName + " in Table " + tableID);
+                    } else {
+                        Log.d(TAG, "Failed to remove " + userName + " in Table " + tableID);
+                    }
+                });
+    }
+
+    @Override
+    public void removeSharedOrderListener() {
+        sharedOrderListener.remove();
     }
 
     @Override

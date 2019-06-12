@@ -47,4 +47,8 @@ public interface RestaurantDatabase {
     void uploadSharedDish(Integer tableID, SharedDish sharedDish);
 
     void listenForTableSharedDish(Integer tableID, Consumer<SharedDish> callback);
+
+    void removeUserFromTable(String userName, Integer tableID);
+
+    void removeSharedOrderListener();
 }

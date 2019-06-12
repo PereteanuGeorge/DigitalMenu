@@ -63,6 +63,10 @@ public interface MenuContract {
         void setUserName(String stringExtra);
 
         List<String> getFriends();
+
+        void leaveRestaurant();
+
+        String getUserName();
     }
 
     interface View {

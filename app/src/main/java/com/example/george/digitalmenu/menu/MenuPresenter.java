@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 public class MenuPresenter implements MenuContract.Presenter {
@@ -250,6 +248,18 @@ public class MenuPresenter implements MenuContract.Presenter {
             }
         }
         return friends;
+    }
+
+    @Override
+    public void leaveRestaurant() {
+        cleanOrder();
+        db.removeUserFromTable(userName, table.getTableID());
+        db.removeSharedOrderListener();
+    }
+
+    @Override
+    public String getUserName() {
+        return userName;
     }
 
     private void setRestaurant(Restaurant restaurant) {

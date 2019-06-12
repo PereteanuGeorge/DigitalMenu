@@ -39,4 +39,13 @@ public class Table {
     public void setUsers(List<String> users) {
         this.users = users;
     }
+
+    public void remove(String userName) {
+        List<String> newUser = new ArrayList<>();
+        for (String user: users) {
+            if (!user.equals(userName)) {
+                newUser.add(user);
+            }
+        }
+    }
 }
