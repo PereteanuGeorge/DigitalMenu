@@ -6,6 +6,7 @@ import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.george.digitalmenu.menu.UserListFragment.NUMBER_OF_FRIENDS;
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 public class Order {
@@ -37,7 +38,7 @@ public class Order {
     public Double getTotalPrice() {
         Double price = 0.0;
         for (OrderedDish dish : dishes) {
-            price += dish.getPrice();
+            price += (dish.getPrice() / NUMBER_OF_FRIENDS);
         }
         return roundDouble(price, 2);
     }

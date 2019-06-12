@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.RestaurantFirestore;
@@ -25,10 +23,9 @@ import java.util.Map;
  */
 public class UserListFragment extends Fragment {
 
-    ListView listView;
-    ArrayAdapter<String> adapter;
     private Map<String, Boolean> nameMap = new HashMap<>();
-
+    public static List<String> friendsToShare = new ArrayList<>();
+    public static Integer NUMBER_OF_FRIENDS;
 
     public UserListFragment() {
         // Required empty public constructor
@@ -44,32 +41,37 @@ public class UserListFragment extends Fragment {
         LinearLayout namePanel = view.findViewById(R.id.name_panel);
         List<String> users = RestaurantFirestore.users;
         for (String user: users) {
-            CheckedTextView nameView = (CheckedTextView) inflater.inflate(R.layout.user_text, namePanel, false);
-            nameView.setText(user);
-            nameMap.put(user, false);
-            nameView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    nameView.setChecked(!nameView.isChecked());
-                    nameMap.put(user, nameView.isChecked());
-                }
-            });
-            nameView.setId(View.generateViewId());
-            namePanel.addView(nameView);
+            displayUsersFromCurrentTable(inflater, namePanel, user);
         }
         Button confirm = view.findViewById(R.id.confirm_friends);
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<String> friendsToShare = new ArrayList<>();
-                for(Map.Entry<String,Boolean> friends : nameMap.entrySet()) {
-                    if(friends.getValue()) {
-                        friendsToShare.add(friends.getKey());
-                    }
-                }
-                System.out.println("Friends to share are " + friendsToShare);
-            }
+        confirm.setOnClickListener(view2 -> {
+            getFriendsToShare();
+            getActivity().getFragmentManager().popBackStack();
         });
         return view;
     }
+
+    private void displayUsersFromCurrentTable(LayoutInflater inflater, LinearLayout namePanel, String user) {
+        CheckedTextView nameView = (CheckedTextView) inflater.inflate(R.layout.user_text, namePanel, false);
+        nameView.setText(user);
+        nameMap.put(user, false);
+        nameView.setOnClickListener(view1 -> {
+            nameView.setChecked(!nameView.isChecked());
+            nameMap.put(user, nameView.isChecked());
+        });
+        nameView.setId(View.generateViewId());
+        namePanel.addView(nameView);
+    }
+
+    private void getFriendsToShare() {
+        for(Map.Entry<String,Boolean> friends : nameMap.entrySet()) {
+            if(friends.getValue()) {
+                friendsToShare.add(friends.getKey());
+            }
+        }
+        //Including myself
+        NUMBER_OF_FRIENDS = friendsToShare.size() + 1;
+        System.out.println("Friends to share are " + friendsToShare);
+    }
+
 }

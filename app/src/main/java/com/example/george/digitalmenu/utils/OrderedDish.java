@@ -63,7 +63,7 @@ public class OrderedDish {
 
     public Double getPrice() {
         if (dish != null) {
-            this.price = this.number * dish.getPrice();
+                this.price = this.number * dish.getPrice();
         }
         return roundDouble(price, 2);
     }

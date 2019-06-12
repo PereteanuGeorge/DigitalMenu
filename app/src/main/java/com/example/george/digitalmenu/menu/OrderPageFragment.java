@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.george.digitalmenu.menu.UserListFragment.NUMBER_OF_FRIENDS;
+import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 
 /**
@@ -127,11 +129,13 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
 
         TextView priceText = orderCard.findViewById(R.id.price);
-        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(dish.getPrice())));
+        Double priceDivided = roundDouble(dish.getPrice() / NUMBER_OF_FRIENDS, 2);
+        priceText.setText(String.valueOf(dish.getCurrency()).concat(String.valueOf(priceDivided)));
 
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
-        numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
+        Double quantityDivided = roundDouble(dish.getNumber().doubleValue() / NUMBER_OF_FRIENDS, 2);
+        numberText.setText(String.valueOf(quantityDivided).concat("X"));
 
         orderDishMap.put(dish.getId(), orderCard);
 

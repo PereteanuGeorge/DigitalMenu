@@ -135,7 +135,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     public Double getTotalPrice() {
         Double sum = 0.0;
         for (Order order: previousOrders) {
-            sum += order.getTotalPrice();
+                sum += order.getTotalPrice();
         }
         sum += currentOrder.getTotalPrice();
         return roundDouble(sum,2);

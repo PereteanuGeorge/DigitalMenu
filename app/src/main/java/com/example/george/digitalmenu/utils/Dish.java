@@ -3,7 +3,6 @@ package com.example.george.digitalmenu.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.ArrayList;

@@ -32,6 +32,7 @@ public class OrderBoardFragment extends Fragment {
     private OrderedDish orderedDish;
     private View orderView;
     private BoardFragmentListener listener;
+    public static String DISH_TO_SHARE;
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -66,6 +67,7 @@ public class OrderBoardFragment extends Fragment {
 
 
         TextView nameText = orderView.findViewById(R.id.name);
+        DISH_TO_SHARE = orderedDish.getName();
         nameText.setText(orderedDish.getName());
 
         TextView priceText = orderView.findViewById(R.id.price);
@@ -179,6 +181,7 @@ public class OrderBoardFragment extends Fragment {
             listener.addDish(orderedDish);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
+            //UserListFragment.friendsToShare.clear();
         });
     }
 
