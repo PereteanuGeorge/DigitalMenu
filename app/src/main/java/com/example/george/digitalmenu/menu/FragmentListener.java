@@ -14,5 +14,7 @@ interface FragmentListener {
     void askForBill();
     Double getTotalPrice();
 
-    Integer getConfirmState();
+    boolean isAllServed();
+
+    boolean isCannotSent();
 }

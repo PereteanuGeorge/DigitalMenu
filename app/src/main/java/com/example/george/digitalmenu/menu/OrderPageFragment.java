@@ -45,11 +45,6 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         put(1, R.drawable.sentroundbutton);
         put(0, R.drawable.addedroundbutton);
     }};
-    private Map<Integer, String> confirmMap = new HashMap<Integer, String>() {{
-        put(0, "send order");
-        put(1, "get bill");
-        put(2, "enter menu");
-    }};
 
     public OrderPageFragment() {
         // Required empty public constructor
@@ -80,20 +75,41 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     }
 
     private void setConfirmButton() {
-        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
-        String text = confirmMap.get(listener.getConfirmState());
-        confirmButton.setText(text);
-        confirmButton.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
-            if (listener.getConfirmState() == 0) {
-                listener.sendOrder();
-            } else if (listener.getConfirmState() == 1){
-                listener.askForBill();
-                getActivity().getFragmentManager().popBackStack();
-            }
-            //listener.sendOrder(ORDER);
-        });
+        if (listener.isAllServed()) {
+            setAskForBillButton();
+        } else if (listener.isCannotSent()) {
+            setCannotSentButton();
+        } else {
+            setSentButton();
+        }
 
+    }
+
+    private void setSentButton() {
+        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
+        confirmButton.setText(" send order ");
+        confirmButton.setOnClickListener(v -> {
+            listener.sendOrder();
+            Toast.makeText(getActivity(), confirmButton.getText(), Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void setCannotSentButton() {
+        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
+        confirmButton.setText(" send order ");
+        confirmButton.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Cannot send empty orders", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void setAskForBillButton() {
+        Button confirmButton = orderPageView.findViewById(R.id.confirm_button);
+        confirmButton.setText(" Ask Bill ");
+        confirmButton.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), confirmButton.getText(), Toast.LENGTH_LONG).show();
+            listener.askForBill();
+            getActivity().getFragmentManager().popBackStack();
+        });
     }
 
 
@@ -116,16 +132,19 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
 
 
-    private void updateOrderCard(OrderedDish updatedOrderedDish, ConstraintLayout orderCard) {
-        TextView statusText = orderCard.findViewById(R.id.status);
-        statusText.setText(textStatusMap.get(updatedOrderedDish.getStatus()));
-        statusText.setBackgroundResource(backgroundStatusMap.get(updatedOrderedDish.getStatus()));
-    }
-
     private ConstraintLayout displayOrder(LayoutInflater inflater, OrderedDish dish, LinearLayout orderPanel) {
         ConstraintLayout orderCard = (ConstraintLayout) inflater.inflate(R.layout.order_card, orderPanel, false);
+        orderDishMap.put(dish.getId(), orderCard);
+        showOnOrderCard(dish, orderCard);
 
+        orderCard.setId(View.generateViewId());
+        addItem(orderCard, orderPanel);
 
+        setOnClick(dish, orderCard);
+        return orderCard;
+    }
+
+    private void showOnOrderCard(OrderedDish dish, ConstraintLayout orderCard) {
         TextView nameText = orderCard.findViewById(R.id.name);
         nameText.setText(dish.getName());
 
@@ -137,15 +156,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         TextView numberText = orderCard.findViewById(R.id.quantity);
         numberText.setText(String.valueOf(dish.getNumber()).concat("X"));
 
-        orderDishMap.put(dish.getId(), orderCard);
-
-        updateOrderCard(dish, orderCard);
-
-        orderCard.setId(View.generateViewId());
-        addItem(orderCard, orderPanel);
-
-        setOnClick(dish, orderCard);
-        return orderCard;
+        TextView statusText = orderCard.findViewById(R.id.status);
+        statusText.setText(textStatusMap.get(dish.getStatus()));
+        statusText.setBackgroundResource(backgroundStatusMap.get(dish.getStatus()));
     }
 
 
@@ -176,9 +189,12 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         this.listener = listener;
     }
 
+    @Override
     public void updateOrderedDish(OrderedDish updatedOrderedDish) {
         ConstraintLayout view = orderDishMap.get(updatedOrderedDish.getId());
-        updateOrderCard(updatedOrderedDish, view);
+        showOnOrderCard(updatedOrderedDish, view);
+        setTotalPrice();
+        setConfirmButton();
     }
 
     @Override
@@ -189,6 +205,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         listener.deleteOrderedDish(dish);
         LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
         orderPanel.removeView(orderDishMap.get(dish.getId()));
+        setConfirmButton();
     }
 
     public void setOrderedDishes(List<OrderedDish> orderedDishes) {

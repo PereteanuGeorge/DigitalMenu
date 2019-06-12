@@ -54,7 +54,9 @@ public interface MenuContract {
 
         void sendOrder();
 
-        Integer getConfirmState();
+        boolean isAllServed();
+
+        boolean isCannotSent();
     }
 
     interface View {

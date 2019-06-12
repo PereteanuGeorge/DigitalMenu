@@ -175,16 +175,24 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
 
-    //Refactor this
+
     @Override
-    public Integer getConfirmState() {
-        if (previousOrders.isEmpty() && currentOrder.isEmpty()) {
-            return 2;
-        }
+    public boolean isAllServed() {
+        if (previousOrders.isEmpty()) return false;
         if (currentOrder.isEmpty()) {
-            return 1;
+            for (OrderedDish dish: getOrderedDishes()) {
+                if (!dish.isServed()) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return 0;
+        return false;
+    }
+
+    @Override
+    public boolean isCannotSent() {
+        return currentOrder.isEmpty() && previousOrders.isEmpty();
     }
 
     private void onSentComplete(Order order) {

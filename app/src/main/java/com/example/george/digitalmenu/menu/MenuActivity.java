@@ -263,12 +263,21 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
-    public Integer getConfirmState() {
-        return presenter.getConfirmState();
+    public boolean isAllServed() {
+        return presenter.isAllServed();
+    }
+
+    @Override
+    public boolean isCannotSent() {
+        return presenter.isCannotSent();
     }
 
     @Override
     public void addDish(OrderedDish dish) {
         presenter.addDish(dish);
     }
+
+    @Override
+    public void updateOrderedDish(OrderedDish dish) {};
+
 }

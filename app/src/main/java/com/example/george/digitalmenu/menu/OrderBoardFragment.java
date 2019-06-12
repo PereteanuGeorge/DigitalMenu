@@ -185,7 +185,10 @@ public class OrderBoardFragment extends Fragment {
 
     private void setGoBack() {
         View back = orderView.findViewById(R.id.dish_info_back);
-        back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
+        back.setOnClickListener(v -> {
+            getActivity().getFragmentManager().popBackStack();
+            listener.updateOrderedDish(orderedDish);
+        });
 
         View card = orderView.findViewById(R.id.dish_board);
         card.setOnClickListener(v -> {});
