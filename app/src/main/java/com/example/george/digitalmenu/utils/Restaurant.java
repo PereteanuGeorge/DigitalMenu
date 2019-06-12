@@ -97,4 +97,12 @@ public class Restaurant {
         this.name = name;
     }
 
+    public Dish getDishWithName(String name) {
+        for (Dish dish: dishes) {
+            if (dish.getName().equals(name)) {
+                return dish;
+            }
+        }
+        return null;
+    }
 }

@@ -27,8 +27,10 @@ public class MenuPresenter implements MenuContract.Presenter {
     private List<Order> previousOrders = new ArrayList<>();
     private MenuContract.View view;
     private RestaurantDatabase db;
-    private static Table TABLE = new Table();
+    private Table table = new Table();
     private Map<Integer, OrderedDish> orderedDishMap = new HashMap<>();
+    private Restaurant restaurant = new Restaurant();
+    private String userName;
 
     public MenuPresenter() {
         this.db = ServiceRegistry.getInstance().getService(RestaurantDatabase.class);
@@ -79,6 +81,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     public void cleanOrder() {
         previousOrders.clear();
         currentOrder = new Order();
+        currentOrder.setName(userName);
     }
 
     @Override
@@ -93,21 +96,6 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void saveUserToTable(String username, Integer tableNumber) {
-        db.saveTable(username, tableNumber);
-    }
-
-    @Override
-    public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
-        db.listenForTableWithId(tableNumber, callback);
-    }
-
-    @Override
-    public void addNewTable(Table table) {
-        TABLE = table;
-    }
-
-    @Override
     public void sendOrder() {
         db.saveOrder(currentOrder, this::onSentComplete);
     }
@@ -116,6 +104,7 @@ public class MenuPresenter implements MenuContract.Presenter {
     public void addDish(OrderedDish dish) {
         currentOrder.add(dish);
         orderedDishMap.put(dish.getId(), dish);
+        view.updateWithAddedDish(dish);
     }
 
     @Override
@@ -132,6 +121,24 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
+    public void askForBill() {
+        for (Order order: previousOrders) {
+            order.setAskingForBill(true);
+        }
+        db.updateOrderedDishes(previousOrders, this::onAskForBillComplete);
+    }
+
+    private void onAskForBillComplete(List<Order> orders) {
+        for (Order order : orders) {
+            for (OrderedDish orderedDish : order.getDishes()) {
+                orderedDishMap.remove(orderedDish.getId());
+            }
+            db.removeListener(order.getId());
+        }
+        previousOrders.clear();
+        currentOrder =  new Order();
+    }
+
     public Double getTotalPrice() {
         Double sum = 0.0;
         for (Order order: previousOrders) {
@@ -141,10 +148,6 @@ public class MenuPresenter implements MenuContract.Presenter {
         return roundDouble(sum,2);
     }
 
-    @Override
-    public void setOrderUserName(String text) {
-        currentOrder.setName(text);
-    }
 
     @Override
     public List<OrderedDish> getOrderedDishes() {
@@ -157,14 +160,43 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
 
-    //Refactor this
+
     @Override
-    public Integer getConfirmState() {
+    public boolean isAllServed() {
+        if (previousOrders.isEmpty()) return false;
         if (currentOrder.isEmpty()) {
-            return 1;
+            for (OrderedDish dish: getOrderedDishes()) {
+                if (!dish.isServed()) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return 0;
+        return false;
     }
+
+    @Override
+    public boolean isCannotSent() {
+        return currentOrder.isEmpty() && previousOrders.isEmpty();
+    }
+
+    @Override
+    public void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap) {
+        SharedDish sharedDish = new SharedDish(orderedDish, getFriendsToShare(nameMap));
+        db.uploadSharedDish(table.getTableID(), sharedDish);
+    }
+
+    private List<String> getFriendsToShare(Map<String, Boolean> nameMap) {
+        List<String> friendsToShare = new ArrayList<>();
+        for(Map.Entry<String,Boolean> friends : nameMap.entrySet()) {
+            if(friends.getValue()) {
+                friendsToShare.add(friends.getKey());
+            }
+        }
+        friendsToShare.add(userName);
+        return friendsToShare;
+    }
+
 
     private void onSentComplete(Order order) {
         for (OrderedDish orderedDish: order.getDishes()) {
@@ -177,6 +209,18 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     private void onServe(Order order)  {
         view.update(order);
+        if (everythingIsServed()) {
+            view.updateWithEverythingIsServed();
+        }
+    }
+
+    private boolean everythingIsServed() {
+        for (OrderedDish orderedDish: getOrderedDishes()) {
+            if (!orderedDish.isServed()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fetchData(String restaurantName) {
@@ -184,16 +228,71 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     private void onFetchDataComplete(Restaurant r) {
-        saveUserToTable(USERNAME, Order.tableNumber);
-        setListenToTable();
+        setRestaurant(r);
+        saveUserToTable(userName, Order.tableNumber);
+        table.setTableID(Order.tableNumber);
+        setListenToTableForNewUsers();
+        setListenToTableForSharedDish();
         view.displayMenu(r);
     }
 
-    private void setListenToTable() {
-        listenForTableWithId(Order.tableNumber, this::onNewTable);
+    public void setUserName(String userName) {
+        this.userName = userName;
+        currentOrder.setName(userName);
     }
 
-    private void onNewTable(Table table) {
-        addNewTable(table);
+    @Override
+    public List<String> getFriends() {
+        List<String> friends = new ArrayList<>();
+        for (String name: table.getUsers()) {
+            if (!name.equals(userName)) {
+                friends.add(name);
+            }
+        }
+        return friends;
+    }
+
+    private void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    private void setListenToTableForSharedDish() {
+        db.listenForTableSharedDish(table.getTableID(), this::onNewSharedDish);
+    }
+
+    private void onNewSharedDish(SharedDish sharedDish) {
+        if (sharedDish.isShareTo(userName)) {
+            OrderedDish orderedDish = sharedDish.getOrderedDish();
+            // refactor setID;
+            orderedDish.setId(OrderedDish.IdGenerator.generate());
+            orderedDish.setDish(restaurant.getDishWithName(orderedDish.getName()));
+            orderedDish.setSharingNumber(sharedDish.getSharingNumber());
+            addDish(orderedDish);g
+        }
+    }
+
+    /* Sharing methods */
+
+    @Override
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    @Override
+    public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
+        db.listenForTableWithId(tableNumber, callback);
+    }
+
+    @Override
+    public void saveUserToTable(String username, Integer tableNumber) {
+        db.saveTable(username, tableNumber);
+    }
+
+    private void setListenToTableForNewUsers() {
+        listenForTableWithId(Order.tableNumber, this::onNewTableUser);
+    }
+
+    private void onNewTableUser(Table table) {
+        setTable(table);
     }
 }

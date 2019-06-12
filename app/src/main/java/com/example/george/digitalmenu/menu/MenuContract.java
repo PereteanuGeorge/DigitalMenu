@@ -11,6 +11,7 @@ import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MenuContract {
     interface Presenter {
@@ -35,7 +36,7 @@ public interface MenuContract {
 
         void listenForTableWithId(Integer tableNumber,  Consumer<Table> callback);
 
-        void addNewTable(Table table);
+        void setTable(Table table);
         void listenForOrderedDishUpdate(String id, Consumer<Order> callback);
         
 
@@ -45,15 +46,23 @@ public interface MenuContract {
 
         void deleteOrderedDish(OrderedDish dish);
 
+        void askForBill();
+        
         Double getTotalPrice();
-
-        void setOrderUserName(String text);
 
         List<OrderedDish> getOrderedDishes();
 
         void sendOrder();
 
-        Integer getConfirmState();
+        boolean isAllServed();
+
+        boolean isCannotSent();
+
+        void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap);
+
+        void setUserName(String stringExtra);
+
+        List<String> getFriends();
     }
 
     interface View {
@@ -67,5 +76,9 @@ public interface MenuContract {
         void notifyModelInitFailure();
 
         void update(Order order);
+
+        void updateWithEverythingIsServed();
+
+        void updateWithAddedDish(OrderedDish dish);
     }
 }

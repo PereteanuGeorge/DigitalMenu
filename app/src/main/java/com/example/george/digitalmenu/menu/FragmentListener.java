@@ -1,6 +1,9 @@
 package com.example.george.digitalmenu.menu;
 
+import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
+
+import java.util.List;
 
 interface FragmentListener {
 
@@ -10,7 +13,13 @@ interface FragmentListener {
 
     void deleteOrderedDish(OrderedDish dish);
 
+    void askForBill();
+
     Double getTotalPrice();
 
-    Integer getConfirmState();
+    boolean isAllServed();
+
+    boolean isCannotSent();
+
+    List<String> getFriends();
 }

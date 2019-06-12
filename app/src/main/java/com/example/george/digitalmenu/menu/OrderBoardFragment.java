@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.menu.UserListFragment.NUMBER_OF_FRIENDS;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OrderBoardFragment extends Fragment {
+public class OrderBoardFragment extends Fragment implements UserListFragmentListener{
 
 
     private LayoutInflater inflater;
@@ -95,11 +93,7 @@ public class OrderBoardFragment extends Fragment {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserListFragment fragment = new UserListFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.list_of_users_fragment_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                openUserList();
             }
         });
 
@@ -117,6 +111,15 @@ public class OrderBoardFragment extends Fragment {
             }
             setNumberOfPortions(increment, decrement, count);
         }
+    }
+
+    private void openUserList() {
+        UserListFragment fragment = new UserListFragment();
+        fragment.setListener(this);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.list_of_users_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void setSentButton() {
@@ -186,15 +189,16 @@ public class OrderBoardFragment extends Fragment {
             listener.addDish(orderedDish);
             Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
             getActivity().getFragmentManager().popBackStack();
-            friendsAtEachTime.add(NUMBER_OF_FRIENDS);
-            UserListFragment.friendsToShare.clear();
         });
     }
 
 
     private void setGoBack() {
         View back = orderView.findViewById(R.id.dish_info_back);
-        back.setOnClickListener(v -> getActivity().getFragmentManager().popBackStack());
+        back.setOnClickListener(v -> {
+            getActivity().getFragmentManager().popBackStack();
+            listener.updateOrderedDish(orderedDish);
+        });
 
         View card = orderView.findViewById(R.id.dish_board);
         card.setOnClickListener(v -> {});
@@ -206,5 +210,27 @@ public class OrderBoardFragment extends Fragment {
 
     public void setOrderedDish(OrderedDish orderedDish) {
         this.orderedDish = orderedDish;
+    }
+
+
+    @Override
+    public void setSharing(Map<String, Boolean> nameMap) {
+        setShareButton(nameMap);
+    }
+
+    @Override
+    public List<String> getFriends() {
+        return listener.getFriends();
+    }
+
+    private void setShareButton(Map<String, Boolean> nameMap) {
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("Share");
+        button.setBackgroundColor(Color.parseColor("#4CAF50"));
+        button.setOnClickListener(v -> {
+            listener.shareToFriends(orderedDish, nameMap);
+            Toast.makeText(getActivity(), "Shared", Toast.LENGTH_SHORT).show();
+            getActivity().getFragmentManager().popBackStack();
+        });
     }
 }

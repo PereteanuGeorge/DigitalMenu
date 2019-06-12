@@ -50,7 +50,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = ServiceRegistry.getInstance().getService(MenuContract.Presenter.class);
         presenter.registerView(this);
-        presenter.setOrderUserName(getIntent().getStringExtra(USERNAME));
+        presenter.setUserName(getIntent().getStringExtra(USERNAME));
 
         setScanButton();
         setCheckoutButton();
@@ -123,6 +123,20 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
             if (orderPageFragment != null) {
                 orderPageFragment.updateOrderedDish(localOrderedDish);
             }
+        }
+    }
+
+    @Override
+    public void updateWithEverythingIsServed() {
+        if (orderPageFragment != null) {
+            orderPageFragment.setGetBillButton();
+        }
+    }
+
+    @Override
+    public void updateWithAddedDish(OrderedDish dish) {
+        if (orderPageFragment != null) {
+            orderPageFragment.updateWithAddedDish(dish);
         }
     }
 
@@ -235,7 +249,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         orderPageFragment = null;
     }
 
-
     @Override
     public void goBack() {
         orderPageFragment = null;
@@ -248,17 +261,42 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
+    public void askForBill() {
+        presenter.askForBill();
+    }
+
     public Double getTotalPrice() {
         return presenter.getTotalPrice();
     }
 
     @Override
-    public Integer getConfirmState() {
-        return presenter.getConfirmState();
+    public boolean isAllServed() {
+        return presenter.isAllServed();
+    }
+
+    @Override
+    public boolean isCannotSent() {
+        return presenter.isCannotSent();
+    }
+
+    @Override
+    public List<String> getFriends() {
+        return presenter.getFriends();
     }
 
     @Override
     public void addDish(OrderedDish dish) {
         presenter.addDish(dish);
     }
+
+    @Override
+    public void updateOrderedDish(OrderedDish dish) {}
+
+    @Override
+    public void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap) {
+        presenter.shareToFriends(orderedDish, nameMap);
+    }
+
+    ;
+
 }

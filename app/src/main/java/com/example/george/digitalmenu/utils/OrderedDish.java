@@ -21,6 +21,7 @@ public class OrderedDish {
     private boolean isServed = false;
     private boolean isSent = false;
     private Integer id;
+    private Integer sharingNumber;
 
     public OrderedDish() {}
 
@@ -43,6 +44,7 @@ public class OrderedDish {
         this.price = dish.getPrice();
         this.ordered = false;
         this.id = IdGenerator.generate();
+        this.sharingNumber = 1;
     }
 
     public Integer getNumber() {
@@ -152,6 +154,20 @@ public class OrderedDish {
             return 1;
         }
         return 0;
+    }
+
+    public void setSharingNumber(Integer sharingNumber) {
+        this.sharingNumber = sharingNumber;
+    }
+
+    @Exclude
+    public Integer getSharingNumber() {
+        return this.sharingNumber;
+    }
+
+    @Exclude
+    public void setDish(Dish dish) {
+        this.dish = dish;
     }
 
     public static class IdGenerator {

@@ -4,6 +4,8 @@ package com.example.george.digitalmenu.utils;
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
+import com.example.george.digitalmenu.menu.SharedDish;
+
 import java.util.List;
 
 // Adapter interface for database.
@@ -28,11 +30,21 @@ public interface RestaurantDatabase {
     void listenForCustomerOrders(String restaurantName, Consumer<Order> callback);
     void updateOrderedDishes(String restaurantName, List<Order> orders);
 
+    void updateOrderedDishes(List<Order> orders, Consumer<List<Order>> callback);
+
     boolean alreadySignedIn();
 
     void listenForSentOrder(String id, Consumer<Order> callback);
 
+    void removeOrders(List<Order> orders, Runnable onRemovedOrders);
+    String getRestaurantName();
+
+    void removeListener(String id);
     void saveTable(String username, Integer tableNumber);
 
     void listenForTableWithId(Integer tableNumber, Consumer<Table> callback);
+
+    void uploadSharedDish(Integer tableID, SharedDish sharedDish);
+
+    void listenForTableSharedDish(Integer tableID, Consumer<SharedDish> callback);
 }
