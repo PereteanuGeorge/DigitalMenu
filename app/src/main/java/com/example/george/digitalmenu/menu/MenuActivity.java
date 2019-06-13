@@ -202,6 +202,15 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void updateWithDeletedDishWithId(String id) {
         if (orderPageFragment != null) {
             orderPageFragment.updateWithDeletedDishWithId(id);
+            orderPageFragment.setTotalPrice();
+        }
+    }
+
+    @Override
+    public void updateWithModifiedDish(OrderedDish orderedDish) {
+        if (orderPageFragment != null) {
+            orderPageFragment.updateWithModifiedDish(orderedDish);
+            orderPageFragment.setTotalPrice();
         }
     }
 
@@ -360,6 +369,11 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     @Override
     public List<String> getFriends() {
         return presenter.getFriends();
+    }
+
+    @Override
+    public void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter) {
+        presenter.deleteOrderedDishWithCounter(orderedDish, deleteCounter);
     }
 
     @Override

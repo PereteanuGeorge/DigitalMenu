@@ -219,6 +219,11 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     }
 
     @Override
+    public void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter) {
+        listener.deleteOrderedDishWithCounter(orderedDish, deleteCounter);
+    }
+
+    @Override
     public void addDish(OrderedDish dish) { }
 
     @Override
@@ -248,5 +253,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     public void updateWithDeletedDishWithId(String id) {
         LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
         orderPanel.removeView(orderDishMap.get(id));
+    }
+
+    public void updateWithModifiedDish(OrderedDish orderedDish) {
+        showOnOrderCard(orderedDish, orderDishMap.get(orderedDish.getId()));
     }
 }

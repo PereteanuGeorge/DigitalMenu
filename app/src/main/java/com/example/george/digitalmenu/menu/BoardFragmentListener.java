@@ -15,4 +15,6 @@ interface BoardFragmentListener {
     void shareToFriends(OrderedDish orderedDish, Map<String, Boolean> nameMap);
 
     List<String> getFriends();
+
+    void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter);
 }

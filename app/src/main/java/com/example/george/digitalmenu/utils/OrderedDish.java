@@ -113,7 +113,7 @@ public class OrderedDish {
     }
 
     public void decrement() {
-        number = max(1, --number);
+        number = max(0, --number);
     }
 
     public void put(String text, boolean checked) {
@@ -227,6 +227,11 @@ public class OrderedDish {
     @Exclude
     public void setNameMap(Map<String, Boolean> nameMap) {
         this.nameMap = nameMap;
+    }
+
+    @Exclude
+    public Dish getDish() {
+        return this.dish;
     }
 
     public static class IdGenerator {

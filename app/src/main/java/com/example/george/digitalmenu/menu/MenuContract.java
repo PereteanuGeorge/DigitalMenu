@@ -69,6 +69,8 @@ public interface MenuContract {
         String getUserName();
 
         void onMenuDisplayed();
+
+        void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter);
     }
 
     interface View {
@@ -93,5 +95,7 @@ public interface MenuContract {
         void updatePrice();
 
         void updateWithDeletedDishWithId(String id);
+
+        void updateWithModifiedDish(OrderedDish orderedDish);
     }
 }

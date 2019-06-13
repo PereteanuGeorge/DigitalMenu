@@ -128,7 +128,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         }
         currentOrder.delete(dish);
         orderedDishMap.remove(dish.getId());
-        view.updatePrice();
+        view.updateWithDeletedDishWithId(dish.getId());
     }
 
     @Override
@@ -257,6 +257,18 @@ public class MenuPresenter implements MenuContract.Presenter {
     @Override
     public void onMenuDisplayed() {
         view.hideLoadingScreen();
+    }
+
+    @Override
+    public void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter) {
+        for (int i = 1; i <= deleteCounter; i++) {
+            orderedDish.decrement();
+        }
+        if (orderedDish.getNumber() == 0) {
+            deleteOrderedDish(orderedDish);
+        } else {
+            view.updateWithModifiedDish(orderedDish);
+        }
     }
 
     private void setRestaurant(Restaurant restaurant) {

@@ -29,12 +29,13 @@ import static com.example.george.digitalmenu.utils.OrderStatus.READY;
 import static com.example.george.digitalmenu.utils.OrderStatus.SENT;
 import static com.example.george.digitalmenu.utils.OrderStatus.SERVED;
 import static com.example.george.digitalmenu.utils.OrderStatus.SHARED;
+import static java.lang.Math.min;
+import static java.lang.StrictMath.max;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class OrderBoardFragment extends Fragment implements UserListFragmentListener{
-
 
     private LayoutInflater inflater;
     private OrderedDish orderedDish;
@@ -44,6 +45,8 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     private View decrement;
     private View shareButton;
     private TextView count;
+    private int deleteCounter;
+
     private Map<OrderStatus, Runnable> buttonMap = new HashMap<OrderStatus, Runnable>() {{
         put(READY, () -> setAddButton());
         put(ADDED, () -> setDeleteButton());
@@ -149,7 +152,11 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         button.setBackgroundColor(Color.parseColor("#F44336"));
         button.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-            listener.deleteOrderedDish(orderedDish); // TODO: consider isShared dish
+            if (orderedDish.isShared()) {
+                listener.deleteOrderedDish(orderedDish);
+            } else {
+                listener.deleteOrderedDishWithCounter(orderedDish, deleteCounter);
+            }
             getActivity().getFragmentManager().popBackStack();
         });
     }
@@ -168,21 +175,34 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
 
     private void setCounters() {
         count.setText(String.valueOf(orderedDish.getNumber()));
-        increment.setOnClickListener(view -> {
-            orderedDish.increment();
+        if (orderedDish.getStatus().equals(ADDED) && !orderedDish.isShared()) {
+            int originalNumber = orderedDish.getNumber();
+            deleteCounter = 0;
+            count.setText(String.valueOf(deleteCounter));
+            increment.setOnClickListener(view -> {
+                deleteCounter = min(++deleteCounter, originalNumber);
+                count.setText(String.valueOf(deleteCounter));
+            });
+            decrement.setOnClickListener(view -> {
+                deleteCounter = max(--deleteCounter, 0);
+                count.setText(String.valueOf(deleteCounter));
+            });
+        } else if (orderedDish.getStatus().equals(READY)){
             count.setText(String.valueOf(orderedDish.getNumber()));
-            setPrice();
-        });
-        decrement.setOnClickListener(view -> {
-            orderedDish.decrement();
-            count.setText(String.valueOf(orderedDish.getNumber()));
-            setPrice();
-        });
+            increment.setOnClickListener(view -> {
+                orderedDish.increment();
+                count.setText(String.valueOf(orderedDish.getNumber()));
+            });
+            decrement.setOnClickListener(view -> {
+                orderedDish.decrement();
+                count.setText(String.valueOf(orderedDish.getNumber()));
+            });
+        }
     }
 
     private void setPrice() {
         TextView priceText = orderView.findViewById(R.id.price);
-        priceText.setText(String.valueOf(orderedDish.getPrice()));
+        priceText.setText(String.valueOf(orderedDish.getDish().getPrice()));
     }
 
 

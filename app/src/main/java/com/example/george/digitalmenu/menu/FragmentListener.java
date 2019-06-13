@@ -22,4 +22,6 @@ interface FragmentListener {
     boolean isCannotSent();
 
     List<String> getFriends();
+
+    void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter);
 }
