@@ -18,11 +18,11 @@ public interface MenuContract {
 
         void registerView(View view);
 
-        void fetchDishImage(Dish d, Consumer<Bitmap> callback);
+        void fetchDishImage(Dish d, Consumer<byte[]> callback);
 
-        void fetchTagImage(Tag t, Consumer<Bitmap> callback);
+        void fetchTagImage(Tag t, Consumer<byte[]> callback);
 
-        void fetchThemeImage(Restaurant r, Consumer<Bitmap> callback);
+        void fetchThemeImage(Restaurant r, Consumer<byte[]> callback);
 
         void onViewCompleteCreate();
 

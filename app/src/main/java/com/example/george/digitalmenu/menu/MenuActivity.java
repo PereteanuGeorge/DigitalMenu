@@ -48,7 +48,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private ConstraintLayout loadingView;
 
     private CountDownLatch latch;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +96,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
            intent.putExtra("username", presenter.getUserName());
            startActivity(intent);
+           finish();
        });
     }
 
@@ -229,11 +229,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ImageView categoryPicture = categoryCard.findViewById(R.id.category_picture);
         if (dishes.size() > 0) {
             presenter.fetchDishImage(dishes.get(0), bm -> {
-                categoryPicture.setImageBitmap(bm);
+                Glide.with(this).load(bm).into(categoryPicture);
+//                categoryPicture.setImageBitmap(bm);
                 latch.countDown();
             });
         } else {
             latch.countDown();
+
         }
 
         displayDishes(dishes, categoryCard, c);
@@ -278,7 +280,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         currencyText.setText(String.valueOf(d.getCurrency()));
 
         ImageView foodImage = dishCard.findViewById(R.id.picture);
-        presenter.fetchDishImage(d, bm -> foodImage.setImageBitmap(bm));
+        presenter.fetchDishImage(d, bm -> {
+            Glide.with(this).load(bm).into(foodImage);
+//            foodImage.setImageBitmap(bm);
+        });
 
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
 
@@ -303,7 +308,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ConstraintLayout tag = (ConstraintLayout) inflater.inflate(R.layout.tag_card, tagPanel, false);
 
         ImageView tagIcon = tag.findViewById(R.id.tag_icon);
-        presenter.fetchTagImage(t, bm -> tagIcon.setImageBitmap(bm));
+        presenter.fetchTagImage(t, bm -> {
+            Glide.with(this).load(bm).into(tagIcon);
+//            tagIcon.setImageBitmap(bm);
+        });
 
         tag.setId(View.generateViewId());
         tagPanel.addView(tag);

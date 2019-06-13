@@ -11,11 +11,11 @@ public interface RestaurantDatabase {
 
     void getRestaurant(String restaurant, Consumer<Restaurant> callback);
 
-    void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback);
+    void downloadDishPicture(Dish dish, final Consumer<byte[]> callback);
 
-    void downloadThemePicture(Restaurant restaurant, Consumer<Bitmap> callback);
+    void downloadThemePicture(Restaurant restaurant, Consumer<byte[]> callback);
 
-    void downloadTagPicture(Tag tag, Consumer<Bitmap> callback);
+    void downloadTagPicture(Tag tag, Consumer<byte[]> callback);
 
     void signInWithEmailAndPassword(String email, String password, Runnable success, Runnable failure);
 

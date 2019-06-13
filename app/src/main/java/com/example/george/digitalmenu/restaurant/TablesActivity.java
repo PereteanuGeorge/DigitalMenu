@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
@@ -153,7 +154,10 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
 
     private void displayThemePicture(Restaurant r) {
         ImageView restaurantLogo = findViewById(R.id.restaurantLogo);
-        db.downloadThemePicture(r, bm -> restaurantLogo.setImageBitmap(bm));
+        db.downloadThemePicture(r, bm -> {
+            Glide.with(this).load(bm).into(restaurantLogo);
+//            restaurantLogo.setImageBitmap(bm);
+        });
     }
 
     private void displayTableEntries(Restaurant r) {
