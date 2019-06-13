@@ -182,7 +182,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
                 .inflate(R.layout.loading, rootLayout, false);
         rootLayout.addView(loadingView);
         ImageView gifView = loadingView.findViewById(R.id.menu_loading_view);
-        Glide.with(this).asGif().load(R.drawable.menu_loading).into(gifView);
+        Glide.with(this).load(R.drawable.menu_loading).into(gifView);
     }
 
     @Override
@@ -191,8 +191,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
             /* Loading screen not displayed. */
             return;
         }
-
+        ImageView gifView = loadingView.findViewById(R.id.menu_loading_view);
+        Glide.with(this).clear(gifView);
         ((ViewGroup) loadingView.getParent()).removeView(loadingView);
+        loadingView = null;
     }
 
     public void updatePrice() {
@@ -241,8 +243,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         ImageView categoryPicture = categoryCard.findViewById(R.id.category_picture);
         if (dishes.size() > 0) {
             presenter.fetchDishImage(dishes.get(0), bm -> {
-                Glide.with(this).load(bm).into(categoryPicture);
-//                categoryPicture.setImageBitmap(bm);
+//                Glide.with(this).load(bm).into(categoryPicture);
+                categoryPicture.setImageBitmap(bm);
                 latch.countDown();
             });
         } else {
@@ -293,8 +295,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         ImageView foodImage = dishCard.findViewById(R.id.picture);
         presenter.fetchDishImage(d, bm -> {
-            Glide.with(this).load(bm).into(foodImage);
-//            foodImage.setImageBitmap(bm);
+//            Glide.with(this).load(bm).into(foodImage);
+            foodImage.setImageBitmap(bm);
         });
 
         displayTags(d, dishCard.findViewById(R.id.tag_panel));
@@ -321,8 +323,8 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         ImageView tagIcon = tag.findViewById(R.id.tag_icon);
         presenter.fetchTagImage(t, bm -> {
-            Glide.with(this).load(bm).into(tagIcon);
-//            tagIcon.setImageBitmap(bm);
+//            Glide.with(this).load(bm).into(tagIcon);
+            tagIcon.setImageBitmap(bm);
         });
 
         tag.setId(View.generateViewId());
@@ -396,6 +398,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     public void onDestroy() {
         super.onDestroy();
         presenter.leaveRestaurant();
+//        hideLoadingScreen();
     }
 
 }

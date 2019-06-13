@@ -45,22 +45,22 @@ public class MenuPresenter implements MenuContract.Presenter {
 
 
     @Override
-    public void fetchDishImage(Dish dish, Consumer<byte[]> callback) {
+    public void fetchDishImage(Dish dish, Consumer<Bitmap> callback) {
         if (!dish.isDownloaded()) {
             db.downloadDishPicture(dish, callback);
             dish.setDownloaded(true);
             return;
         }
-        callback.accept(dish.getPicture());
+        callback.accept(BitmapFactory.decodeByteArray(dish.getPicture(), 0, dish.getPicture().length));
     }
 
     @Override
-    public void fetchTagImage(Tag t, Consumer<byte[]> callback) {
+    public void fetchTagImage(Tag t, Consumer<Bitmap> callback) {
         db.downloadTagPicture(t, callback);
     }
 
     @Override
-    public void fetchThemeImage(Restaurant r, Consumer<byte[]> callback) {
+    public void fetchThemeImage(Restaurant r, Consumer<Bitmap> callback) {
         db.downloadThemePicture(r, callback);
     }
 

@@ -77,7 +77,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
         });
     }
 
-    public void downloadDishPicture(Dish dish, final Consumer<byte[]> callback) {
+    public void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback) {
         ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
         for (int i = 0; i < NUMBER_OF_CORES; i++) {
             executorService.submit((Callable<Object>) () -> {
@@ -87,7 +87,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                     dish.setPicture(bytes);
                     Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
 
-                    callback.accept(bytes);
+                    callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + dish.getName() + " falied", e));
                 return dish;
             });
@@ -95,26 +95,26 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     @Override
-    public void downloadThemePicture(Restaurant restaurant, Consumer<byte[]> callback) {
+    public void downloadThemePicture(Restaurant restaurant, Consumer<Bitmap> callback) {
         StorageReference ref = storage.getReferenceFromUrl(restaurant.getPic_url());
         ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
 
             restaurant.setPicture(bytes);
             Log.d(TAG, "Download picture for " + restaurant + " succeeded");
-            callback.accept(bytes);
+            callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 
         }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + restaurant + " falied", e));
     }
 
     @Override
-    public void downloadTagPicture(Tag tag, Consumer<byte[]> callback) {
+    public void downloadTagPicture(Tag tag, Consumer<Bitmap> callback) {
         StorageReference ref = storage.getReferenceFromUrl(tag.getPic_url());
         Log.d(TAG, "Downloading picture for " + tag);
         ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
 
             tag.setPicture(bytes);
             Log.d(TAG, "Download picture for " + tag + " succeeded");
-            callback.accept(bytes);
+            callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
 
         }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + tag + " falied", e));
     }
