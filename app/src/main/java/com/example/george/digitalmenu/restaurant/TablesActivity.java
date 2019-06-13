@@ -206,16 +206,18 @@ public class TablesActivity extends AppCompatActivity implements TableOrdersFrag
         List<OrderedDish> dishes = tableToOrders.get(tableNumber);
         Set<Order> orders = new HashSet<>();
         for (OrderedDish dish : dishes) {
-            orders.add(dishToOrder.get(dish));
+            orders.add(dishToOrder.remove(dish));
         }
 
         db.removeOrders(new ArrayList<>(orders), () -> onRemovedAllOrderedDishes(tableNumber));
 
         /* Clear from state, so new fragments will have updated state. */
-        dishToOrder.clear();
+        /* Clear only dishes from the table. */
+//        dishToOrder.clear();
         tableToOrders.get(tableNumber).clear();
         if (fragment != null && (fragment.getTableNumber() == tableNumber)) {
-            fragment.clearOrderedDishes();
+            fragment.destroyDisplayedOrderedDishes();
+            fragment.resetFragment();
         }
     }
 

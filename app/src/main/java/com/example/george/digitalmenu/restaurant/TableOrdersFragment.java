@@ -76,6 +76,15 @@ public class TableOrdersFragment extends Fragment {
         return fragment;
     }
 
+    public void resetFragment() {
+        undisplayedOrderedDishes.clear();
+        dishesOnServingTray.clear();
+        unservedOrderedDishes.clear();
+        dishesOnDisplay.clear();
+
+        setActionButtonToServe();
+        serveButton.setEnabled(false);
+    }
 
     private void onServeButtonClicked() {
 
@@ -204,16 +213,10 @@ public class TableOrdersFragment extends Fragment {
         return tableNumber;
     }
 
-    public void clearOrderedDishes() {
-        dishesOnServingTray.clear();
-        unservedOrderedDishes.clear();
+    public void destroyDisplayedOrderedDishes() {
         for (OrderedDishCard card : dishesOnDisplay) {
             card.destroy();
         }
-
-        dishesOnDisplay.clear();
-
-        /* remove loading screen. */
     }
 
     /* Inner class representation of a Ordered Dish Entry in fragment. */
