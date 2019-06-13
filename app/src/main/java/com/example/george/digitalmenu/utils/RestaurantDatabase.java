@@ -4,8 +4,6 @@ package com.example.george.digitalmenu.utils;
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
-import com.example.george.digitalmenu.menu.SharedDish;
-
 import java.util.List;
 
 // Adapter interface for database.
@@ -51,4 +49,6 @@ public interface RestaurantDatabase {
     void removeUserFromTable(String userName, Integer tableID);
 
     void removeSharedOrderListener();
+
+    void removeSharedDishWithId(OrderedDish dish, Integer tableID, Consumer<OrderedDish> callback);
 }

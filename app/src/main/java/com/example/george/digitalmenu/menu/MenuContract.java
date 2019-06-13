@@ -90,5 +90,7 @@ public interface MenuContract {
         void showLoadingScreen();
 
         void hideLoadingScreen();
+        void updatePrice();
+
     }
 }

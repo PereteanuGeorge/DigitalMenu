@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
-import com.example.george.digitalmenu.menu.SharedDish;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -362,8 +360,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                 .document(restaurantName)
                 .collection("tables")
                 .document(String.valueOf(tableID))
-                .collection("s" +
-                        "haredOrders")
+                .collection("sharedOrders")
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
                     for (DocumentChange change: queryDocumentSnapshots.getDocumentChanges()) {
                         if (change.getNewIndex() == -1) {
@@ -381,6 +378,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
                         QueryDocumentSnapshot document = change.getDocument();
                         SharedDish sharedDish = document.toObject(SharedDish.class);
+                        sharedDish.getOrderedDish().setId(document.getId());
                         callback.accept(sharedDish);
                     }
                 });
@@ -407,6 +405,31 @@ public class RestaurantFirestore implements RestaurantDatabase {
     @Override
     public void removeSharedOrderListener() {
         sharedOrderListener.remove();
+    }
+
+
+    //Need to use callback
+    @Override
+    public void removeSharedDishWithId(OrderedDish dish, Integer tableID, Consumer<OrderedDish> callback) {
+        db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("tables")
+                .document(String.valueOf(tableID))
+                .collection("sharedOrders")
+                .document(dish.getId())
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Succeed to delete shared dish" + dish);
+                            dish.setIsShared(false);
+                            callback.accept(dish);
+                        } else {
+                            Log.d(TAG, "Failed to delete shared dish" + dish);
+                        }
+                    }
+                });
     }
 
     @Override

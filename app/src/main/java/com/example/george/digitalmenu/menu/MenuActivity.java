@@ -93,7 +93,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private void setScanButton() {
        View view = findViewById(R.id.scan_button);
        view.setOnClickListener(v -> {
-           presenter.cleanOrder();
            presenter.leaveRestaurant();
            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
            intent.putExtra("username", presenter.getUserName());
@@ -155,6 +154,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
                 orderPageFragment.updateOrderedDish(localOrderedDish);
             }
         }
+        if (orderPageFragment != null) {
+            orderPageFragment.setTotalPrice();
+        }
     }
 
     @Override
@@ -188,6 +190,12 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         }
 
         ((ViewGroup) loadingView.getParent()).removeView(loadingView);
+    }
+
+    public void updatePrice() {
+        if (orderPageFragment != null) {
+            orderPageFragment.setTotalPrice();
+        }
     }
 
     private void displayCategories(Restaurant r) {
@@ -352,6 +360,10 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         presenter.shareToFriends(orderedDish, nameMap);
     }
 
-    ;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.leaveRestaurant();
+    }
 
 }

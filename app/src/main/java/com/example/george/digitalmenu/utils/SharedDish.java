@@ -1,6 +1,5 @@
-package com.example.george.digitalmenu.menu;
+package com.example.george.digitalmenu.utils;
 
-import com.example.george.digitalmenu.utils.OrderedDish;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
@@ -11,12 +10,14 @@ import java.util.List;
 public class SharedDish {
     List<String> users = new ArrayList<>();
     OrderedDish orderedDish = new OrderedDish();
+    private String manager;
 
     public SharedDish() {}
 
-    public SharedDish(OrderedDish orderedDish, List<String> users) {
+    public SharedDish(OrderedDish orderedDish, List<String> users, String manager) {
         this.orderedDish = orderedDish;
         this.users = users;
+        this.manager = manager;
     }
 
     public  List<String>  getUsers() {
@@ -48,5 +49,13 @@ public class SharedDish {
 
     public void setOrderedDish(OrderedDish orderedDish) {
         this.orderedDish = orderedDish;
+    }
+
+    public String getManager() {
+        return this.manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
     }
 }

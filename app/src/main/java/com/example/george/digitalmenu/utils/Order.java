@@ -23,7 +23,7 @@ public class Order {
         this.dishes = dishes;
         this.tableNumber = tableNumber;
         this.isAskingForBill = isAskingForBill;
-        this.name = FakeNameActivity.username;
+        this.name = name;
     }
 
 
@@ -78,7 +78,7 @@ public class Order {
 
     public void add(OrderedDish dish) {
         dishes.add(dish);
-        dish.setIsOrdered();
+        dish.setIsAdded();
     }
 
     @Exclude
