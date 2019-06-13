@@ -23,7 +23,7 @@ public class Order {
         this.dishes = dishes;
         this.tableNumber = tableNumber;
         this.isAskingForBill = isAskingForBill;
-        this.name = FakeNameActivity.username;
+        this.name = name;
     }
 
 
