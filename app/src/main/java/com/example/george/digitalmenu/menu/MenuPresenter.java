@@ -6,6 +6,7 @@ import android.support.v4.util.Consumer;
 
 import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
+import com.example.george.digitalmenu.utils.OrderStatus;
 import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 public class MenuPresenter implements MenuContract.Presenter {
@@ -164,6 +166,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             orderedDishes.addAll(order.getDishes());
         }
         orderedDishes.addAll(currentOrder.getDishes());
+        orderedDishes.addAll(sharedOrder.getDishes());
         return orderedDishes;
     }
 
@@ -174,7 +177,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         if (previousOrders.isEmpty()) return false;
         if (currentOrder.isEmpty()) {
             for (OrderedDish dish: getOrderedDishes()) {
-                if (!dish.isServed()) {
+                if (!(dish.getStatus().equals(OrderStatus.SHARED)) && !dish.isServed()) {
                     return false;
                 }
             }

@@ -126,10 +126,10 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     private void displayOrders(LayoutInflater inflater) {
         // init
         LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
+        setGobackInstruction(inflater, orderPanel);
         for (OrderedDish orderedDish: orderedDishes) {
             displayOrder(inflater, orderedDish, orderPanel);
         }
-        setGobackInstruction(inflater, orderPanel);
     }
 
     private void setGobackInstruction(LayoutInflater inflater, LinearLayout orderPanel) {
@@ -146,7 +146,8 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
         showOnOrderCard(dish, orderCard);
 
         orderCard.setId(View.generateViewId());
-        addItem(orderCard, orderPanel);
+
+        orderPanel.addView(orderCard, orderPanel.getChildCount()-1);
 
         setOnClick(dish, orderCard);
         return orderCard;
@@ -240,5 +241,7 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     public void updateWithAddedDish(OrderedDish dish) {
         LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
         displayOrder(inflater, dish, orderPanel);
+
+        /*refactor this, add item to second last part*/
     }
 }
