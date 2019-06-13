@@ -92,5 +92,6 @@ public interface MenuContract {
         void hideLoadingScreen();
         void updatePrice();
 
+        void updateWithDeletedDishWithId(String id);
     }
 }

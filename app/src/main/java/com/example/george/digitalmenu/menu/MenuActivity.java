@@ -198,6 +198,13 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         }
     }
 
+    @Override
+    public void updateWithDeletedDishWithId(String id) {
+        if (orderPageFragment != null) {
+            orderPageFragment.updateWithDeletedDishWithId(id);
+        }
+    }
+
     private void displayCategories(Restaurant r) {
         List<String> categories = r.getCategories();
         Map<String, List<Dish>> map = r.getDishesForCategories();

@@ -244,4 +244,9 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
         /*refactor this, add item to second last part*/
     }
+
+    public void updateWithDeletedDishWithId(String id) {
+        LinearLayout orderPanel = orderPageView.findViewById(R.id.order_panel);
+        orderPanel.removeView(orderDishMap.get(id));
+    }
 }
