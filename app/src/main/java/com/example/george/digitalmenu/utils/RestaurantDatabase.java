@@ -51,4 +51,10 @@ public interface RestaurantDatabase {
     void removeSharedOrderListener();
 
     void removeSharedDishWithId(OrderedDish dish, Integer tableID, Consumer<OrderedDish> callback);
+
+    void listenForRemovedSharedDishes(Integer tableID, Consumer<String> callback);
+
+    void removeRemovingShareOrderListener();
+
+    void removeNewUserListener();
 }

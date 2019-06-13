@@ -2,6 +2,7 @@ package com.example.george.digitalmenu.menu;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +10,13 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
 import com.example.george.digitalmenu.utils.Dish;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
 import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
@@ -41,6 +45,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     private Map<String, Boolean> open = new HashMap<>();
     private OrderPageFragment orderPageFragment = null;
 
+    private ConstraintLayout loadingView;
+
+    private CountDownLatch latch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +114,28 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         TextView restaurantName = rootLayout.findViewById(R.id.restaurant_Name);
         restaurantName.setText(r.getName());
 
+        /* Only notify menu complete display after categories pictures displayed on view. */
+        latch = new CountDownLatch(r.getCategories().size());
         displayCategories(r);
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    latch.await();
+                    Log.d("SAKDMSADKS", "KASMDKSD");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                presenter.onMenuDisplayed();
+            }
+        }.execute();
     }
 
     @Override
@@ -146,9 +174,34 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
     }
 
     @Override
+    public void showLoadingScreen() {
+        loadingView = (ConstraintLayout) getLayoutInflater()
+                .inflate(R.layout.loading, rootLayout, false);
+        rootLayout.addView(loadingView);
+        ImageView gifView = loadingView.findViewById(R.id.menu_loading_view);
+        Glide.with(this).asGif().load(R.drawable.menu_loading).into(gifView);
+    }
+
+    @Override
+    public void hideLoadingScreen() {
+        if (loadingView == null) {
+            /* Loading screen not displayed. */
+            return;
+        }
+
+        ((ViewGroup) loadingView.getParent()).removeView(loadingView);
+    }
+
     public void updatePrice() {
         if (orderPageFragment != null) {
             orderPageFragment.setTotalPrice();
+        }
+    }
+
+    @Override
+    public void updateWithDeletedDishWithId(String id) {
+        if (orderPageFragment != null) {
+            orderPageFragment.updateWithDeletedDishWithId(id);
         }
     }
 
@@ -175,7 +228,12 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         ImageView categoryPicture = categoryCard.findViewById(R.id.category_picture);
         if (dishes.size() > 0) {
-            presenter.fetchDishImage(dishes.get(0), bm -> categoryPicture.setImageBitmap(bm));
+            presenter.fetchDishImage(dishes.get(0), bm -> {
+                categoryPicture.setImageBitmap(bm);
+                latch.countDown();
+            });
+        } else {
+            latch.countDown();
         }
 
         displayDishes(dishes, categoryCard, c);

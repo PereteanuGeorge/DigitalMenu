@@ -102,4 +102,15 @@ public class Order {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void deleteWithId(String id) {
+        OrderedDish target = new OrderedDish();
+        for (OrderedDish dish: dishes) {
+            if (dish.getId().equals(id)) {
+                target = dish;
+                break;
+            }
+        }
+        delete(target);
+    }
 }

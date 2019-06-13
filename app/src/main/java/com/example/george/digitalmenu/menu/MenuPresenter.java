@@ -49,6 +49,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         if (!dish.isDownloaded()) {
             db.downloadDishPicture(dish, callback);
             dish.setDownloaded(true);
+            return;
         }
         callback.accept(BitmapFactory.decodeByteArray(dish.getPicture(),0, dish.getPicture().length));
     }
@@ -65,6 +66,8 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void onViewCompleteCreate() {
+        view.showLoadingScreen();
+
         String restaurantName = view.getRestaurantName();
 
         Runnable success = () -> fetchData(restaurantName);
@@ -137,11 +140,11 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     private void onAskForBillComplete(List<Order> orders) {
-        detachListners(orders);
+        detachListeners(orders);
         cleanOrder();
     }
 
-    private void detachListners(List<Order> orders) {
+    private void detachListeners(List<Order> orders) {
         for (Order order : orders) {
             for (OrderedDish orderedDish : order.getDishes()) {
                 orderedDishMap.remove(orderedDish.getId());
@@ -222,7 +225,12 @@ public class MenuPresenter implements MenuContract.Presenter {
         table.setTableID(Order.tableNumber);
         setListenToTableForNewUsers();
         setListenToTableForSharedDish();
+        setListenToSharedOrders();
         view.displayMenu(r);
+    }
+
+    private void setListenToSharedOrders() {
+        db.listenForRemovedSharedDishes(table.getTableID(), this::removeSharedDishWithId);
     }
 
     public void setUserName(String userName) {
@@ -233,15 +241,22 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void leaveRestaurant() {
-        detachListners(previousOrders);
+        detachListeners(previousOrders);
         cleanOrder();
         db.removeUserFromTable(userName, table.getTableID());
         db.removeSharedOrderListener();
+        db.removeRemovingShareOrderListener();
+        db.removeNewUserListener();
     }
 
     @Override
     public String getUserName() {
         return userName;
+    }
+
+    @Override
+    public void onMenuDisplayed() {
+        view.hideLoadingScreen();
     }
 
     private void setRestaurant(Restaurant restaurant) {
@@ -300,6 +315,12 @@ public class MenuPresenter implements MenuContract.Presenter {
         sharedOrder.add(orderedDish);
         orderedDishMap.put(orderedDish.getId(), orderedDish);
         view.updateWithAddedDish(orderedDish);
+    }
+
+    private void removeSharedDishWithId(String id) {
+        sharedOrder.deleteWithId(id);
+        orderedDishMap.remove(id);
+        view.updateWithDeletedDishWithId(id);
     }
 
     @Override

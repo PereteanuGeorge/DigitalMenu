@@ -2,6 +2,7 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.nsd.NsdManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -51,6 +53,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public static List<String> users;
     private ListenerRegistration sharedOrderListener;
+    private ListenerRegistration removedSharedDishListenr;
+    private ListenerRegistration newUserListenr;
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -308,7 +312,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
         Log.d(TAG,"Numaru in db e " + tableNumber);
-        db.collection("restaurantOrders")
+        newUserListenr = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("tables")
                 .document(String.valueOf(tableNumber))
@@ -319,7 +323,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
                             Log.w(TAG, "Listen failed.", e);
                             return;
                         }
-                        Log.d(TAG,"Snapshot e " + snapshot.getData());
+                        Log.d(TAG, "Snapshot e " + snapshot.getData());
                         if (snapshot != null && snapshot.exists()) {
                             users = (List<String>) snapshot.getData().get("users");
 
@@ -430,6 +434,38 @@ public class RestaurantFirestore implements RestaurantDatabase {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void listenForRemovedSharedDishes(Integer tableID, Consumer<String> callback) {
+        removedSharedDishListenr = db.collection("restaurantOrders")
+                .document(restaurantName)
+                .collection("tables")
+                .document(String.valueOf(tableID))
+                .collection("sharedOrders")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        List<DocumentChange> documentChanges = queryDocumentSnapshots.getDocumentChanges();
+                        for (DocumentChange change : documentChanges) {
+                            if (change.getType() == DocumentChange.Type.REMOVED) {
+                                callback.accept(change.getDocument().getId());
+                            }
+                        }
+
+                    }
+                });
+
+    }
+
+    @Override
+    public void removeRemovingShareOrderListener() {
+        removedSharedDishListenr.remove();
+    }
+
+    @Override
+    public void removeNewUserListener() {
+        newUserListenr.remove();
     }
 
     @Override
