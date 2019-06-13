@@ -26,10 +26,10 @@ public class OrderedDish {
     private boolean isServed = false;
     private boolean isSent = false;
     private String id;
-    private Integer sharingNumber;
+    private Integer sharingNumber = 1;
     private boolean isShared = false;
     private boolean isManageable = true;
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.DEFAULT;
     private Map<String, Boolean> nameMap = new HashMap<>();
 
     public OrderedDish() {}
@@ -99,6 +99,15 @@ public class OrderedDish {
         this.isServed = isServed;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
     public void increment() {
         number++;
     }
@@ -111,6 +120,14 @@ public class OrderedDish {
         options.put(text, checked);
     }
 
+    @Exclude
+    public String getCurrency() {
+        return dish.getCurrency();
+    }
+
+    @Exclude
+    public void setCurrency(String currency) {
+    }
 
     @Exclude
     public void setIsAdded() {
@@ -132,9 +149,6 @@ public class OrderedDish {
         return dish.getDescription();
     }
 
-    public String getCurrency() {
-        return dish.getCurrency();
-    }
 
     @Exclude
     public void setIsSent(Boolean isSent) {
@@ -144,14 +158,6 @@ public class OrderedDish {
     @Exclude
     public Boolean isSent() {
         return this.isSent;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Exclude
@@ -170,6 +176,7 @@ public class OrderedDish {
         return this.status;
     }
 
+    @Exclude
     public void setSharingNumber(Integer sharingNumber) {
         this.sharingNumber = sharingNumber;
     }

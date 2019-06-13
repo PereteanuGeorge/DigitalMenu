@@ -5,5 +5,6 @@ public enum OrderStatus {
     ADDED,
     SENT,
     SERVED,
-    SHARED;
+    SHARED,
+    DEFAULT;
 }
