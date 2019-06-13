@@ -19,10 +19,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".restaurant.TablesActivity"></activity>
-        <activity android:name=".restaurant.LoginActivity" />
-        <activity android:name=".restaurant.EntryActivity" />
-        <activity android:name=".main.MainActivity">
+        <activity android:name=".restaurant.TablesActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".restaurant.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".restaurant.EntryActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".main.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,11 +35,13 @@
         </activity>
         <activity
             android:name=".menu.MenuActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".restaurant.FakeNameActivity"
-            android:label="Fake Name" />
+            android:label="Fake Name"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"

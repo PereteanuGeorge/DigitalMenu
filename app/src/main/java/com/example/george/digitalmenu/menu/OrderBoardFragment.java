@@ -138,6 +138,12 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     }
 
     public void setDeleteButton() {
+
+        if (orderedDish.isShared()) {
+            increment.setVisibility(View.GONE);
+            decrement.setVisibility(View.GONE);
+        }
+
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("DELETE");
         button.setBackgroundColor(Color.parseColor("#F44336"));
