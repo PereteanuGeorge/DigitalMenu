@@ -137,15 +137,17 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     private void onAskForBillComplete(List<Order> orders) {
+        detachListners(orders);
+        cleanOrder();
+    }
+
+    private void detachListners(List<Order> orders) {
         for (Order order : orders) {
             for (OrderedDish orderedDish : order.getDishes()) {
                 orderedDishMap.remove(orderedDish.getId());
             }
             db.removeListener(order.getId());
         }
-        previousOrders.clear();
-        sharedOrder.clean();
-        currentOrder =  new Order();
     }
 
     public Double getTotalPrice() {
@@ -231,6 +233,7 @@ public class MenuPresenter implements MenuContract.Presenter {
 
     @Override
     public void leaveRestaurant() {
+        detachListners(previousOrders);
         cleanOrder();
         db.removeUserFromTable(userName, table.getTableID());
         db.removeSharedOrderListener();
