@@ -114,6 +114,9 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         TextView restaurantName = rootLayout.findViewById(R.id.restaurant_Name);
         restaurantName.setText(r.getName());
 
+        TextView userName = rootLayout.findViewById(R.id.user_name);
+        userName.setText(presenter.getUserName());
+
         /* Only notify menu complete display after categories pictures displayed on view. */
         latch = new CountDownLatch(r.getCategories().size());
         displayCategories(r);
