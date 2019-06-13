@@ -181,8 +181,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
         loadingView = (ConstraintLayout) getLayoutInflater()
                 .inflate(R.layout.loading, rootLayout, false);
         rootLayout.addView(loadingView);
-        ImageView gifView = loadingView.findViewById(R.id.menu_loading_view);
-        Glide.with(this).load(R.drawable.menu_loading).into(gifView);
     }
 
     @Override
@@ -191,8 +189,6 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
             /* Loading screen not displayed. */
             return;
         }
-        ImageView gifView = loadingView.findViewById(R.id.menu_loading_view);
-        Glide.with(this).clear(gifView);
         ((ViewGroup) loadingView.getParent()).removeView(loadingView);
         loadingView = null;
     }

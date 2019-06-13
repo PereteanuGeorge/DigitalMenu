@@ -4,7 +4,18 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="false"
-    android:background="@color/colorWhite">
+    android:background="@color/colorLoading">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/menu_loading_view"
+        android:text="Majordom"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/edwardian_script_itc"/>
 
     <ImageView
         android:id="@+id/menu_loading_view"
@@ -13,6 +24,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/menu_loading2"
+        android:layout_marginTop="10dp"
+        android:maxWidth="2dp"
+        android:maxHeight="2dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/menu_loading_view"
+        android:text="Loading . . . "
+        android:textSize="20dp"/>
 
 </android.support.constraint.ConstraintLayout>
