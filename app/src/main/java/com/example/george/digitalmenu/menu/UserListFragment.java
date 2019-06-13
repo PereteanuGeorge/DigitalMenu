@@ -11,11 +11,12 @@ import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 
 import com.example.george.digitalmenu.R;
-import com.example.george.digitalmenu.utils.RestaurantFirestore;
+import com.example.george.digitalmenu.utils.OrderStatus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static com.example.george.digitalmenu.utils.OrderStatus.READY;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +25,8 @@ public class UserListFragment extends Fragment{
 
     private Map<String, Boolean> nameMap = new HashMap<>();
     private UserListFragmentListener listener;
+    private OrderStatus status = READY;
+    private View view;
 
     public UserListFragment() {
         // Required empty public constructor
@@ -34,29 +37,47 @@ public class UserListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_list, container, false);
+        view = inflater.inflate(R.layout.fragment_user_list, container, false);
 
         LinearLayout namePanel = view.findViewById(R.id.name_panel);
-        List<String> users = listener.getFriends();
-        for (String user: users) {
+
+        for (String user: listener.getFriends()) {
+            if (!nameMap.containsKey(user)) {
+                nameMap.put(user, false);
+            }
+        }
+
+        for (String user: nameMap.keySet()) {
             displayUsersFromCurrentTable(inflater, namePanel, user);
         }
+
+        if (status == READY) {
+            setConfirmButton();
+        } else {
+            Button confirm = view.findViewById(R.id.confirm_friends);
+            confirm.setVisibility(View.GONE);
+        }
+
+        return view;
+    }
+
+    private void setConfirmButton() {
         Button confirm = view.findViewById(R.id.confirm_friends);
         confirm.setOnClickListener(v -> {
             listener.setSharing(nameMap);
-            //getFriendsToShare();
             getActivity().getFragmentManager().popBackStack();
         });
-        return view;
     }
 
     private void displayUsersFromCurrentTable(LayoutInflater inflater, LinearLayout namePanel, String user) {
         CheckedTextView nameView = (CheckedTextView) inflater.inflate(R.layout.user_text, namePanel, false);
         nameView.setText(user);
-        nameMap.put(user, false);
+        nameView.setChecked(nameMap.get(user));
         nameView.setOnClickListener(view1 -> {
-            nameView.setChecked(!nameView.isChecked());
-            nameMap.put(user, nameView.isChecked());
+            if (status == READY) {
+                nameView.setChecked(!nameView.isChecked());
+                nameMap.put(user, nameView.isChecked());
+            }
         });
         nameView.setId(View.generateViewId());
         namePanel.addView(nameView);
@@ -64,5 +85,13 @@ public class UserListFragment extends Fragment{
 
     public void setListener(UserListFragmentListener listener) {
         this.listener = listener;
+    }
+
+    public void setNameMap(Map<String, Boolean> nameMap) {
+        this.nameMap = nameMap;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

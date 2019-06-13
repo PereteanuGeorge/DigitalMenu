@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.OrderStatus;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
 import java.util.ArrayList;
@@ -20,7 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.george.digitalmenu.menu.OrderBoardFragment.friendsAtEachTime;
+import static com.example.george.digitalmenu.utils.OrderStatus.ADDED;
+import static com.example.george.digitalmenu.utils.OrderStatus.SENT;
+import static com.example.george.digitalmenu.utils.OrderStatus.SERVED;
+import static com.example.george.digitalmenu.utils.OrderStatus.SHARED;
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 
 
@@ -32,23 +36,22 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
     View orderPageView;
     private FragmentListener listener;
     private List<OrderedDish> orderedDishes = new ArrayList<>();
-    int counter = 0;
 
     private Map<String, ConstraintLayout> orderDishMap = new HashMap<>();
 
-    private Map<Integer, String> textStatusMap = new HashMap<Integer, String>() {{
-        put(3, " Shared ");
-        put(2, " Served ");
-        put(1, " Sent ");
-        put(0, " Added ");
+    private Map<OrderStatus, String> textStatusMap = new HashMap<OrderStatus, String>() {{
+        put(SHARED, " Shared ");
+        put(SERVED, " Served ");
+        put(SENT, " Sent ");
+        put(ADDED, " Added ");
     }};
 
 
-    private Map<Integer, Integer>  backgroundStatusMap = new HashMap<Integer, Integer>() {{
-        put(3, R.drawable.sharedroundbutton);
-        put(2, R.drawable.servedroundbutton);
-        put(1, R.drawable.sentroundbutton);
-        put(0, R.drawable.addedroundbutton);
+    private Map<OrderStatus, Integer>  backgroundStatusMap = new HashMap<OrderStatus, Integer>() {{
+        put(SHARED, R.drawable.sharedroundbutton);
+        put(SERVED, R.drawable.servedroundbutton);
+        put(SENT, R.drawable.sentroundbutton);
+        put(ADDED, R.drawable.addedroundbutton);
     }};
     private LayoutInflater inflater;
 

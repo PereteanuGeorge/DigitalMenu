@@ -10,6 +10,7 @@ import com.example.george.digitalmenu.utils.OrderedDish;
 import com.example.george.digitalmenu.utils.Restaurant;
 import com.example.george.digitalmenu.utils.RestaurantDatabase;
 import com.example.george.digitalmenu.utils.ServiceRegistry;
+import com.example.george.digitalmenu.utils.SharedDish;
 import com.example.george.digitalmenu.utils.Table;
 import com.example.george.digitalmenu.utils.Tag;
 
@@ -267,6 +268,7 @@ public class MenuPresenter implements MenuContract.Presenter {
             orderedDish.setDish(restaurant.getDishWithName(orderedDish.getName()));
             orderedDish.setSharingNumber(sharedDish.getSharingNumber());
             orderedDish.setIsShared(true);
+            orderedDish.setNameMap(getNameMap(sharedDish.getUsers()));
             if (!userName.equals(sharedDish.getManager())) {
                 orderedDish.setIsManageable(false);
                 addSharedDish(orderedDish);
@@ -275,6 +277,17 @@ public class MenuPresenter implements MenuContract.Presenter {
                 addDish(orderedDish);
             }
         }
+    }
+
+    private Map<String, Boolean> getNameMap(List<String> users) {
+        Map<String, Boolean> nameMap = new HashMap<>();
+        for (String user: getFriends()) {
+            nameMap.put(user, false);
+        }
+        for (String user: users) {
+            nameMap.put(user, true);
+        }
+        return nameMap;
     }
 
     private void addSharedDish(OrderedDish orderedDish) {

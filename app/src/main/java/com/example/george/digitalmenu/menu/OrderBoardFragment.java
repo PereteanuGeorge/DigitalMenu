@@ -11,18 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.george.digitalmenu.R;
+import com.example.george.digitalmenu.utils.OrderStatus;
 import com.example.george.digitalmenu.utils.OrderedDish;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.george.digitalmenu.utils.OrderStatus.ADDED;
+import static com.example.george.digitalmenu.utils.OrderStatus.READY;
+import static com.example.george.digitalmenu.utils.OrderStatus.SENT;
+import static com.example.george.digitalmenu.utils.OrderStatus.SERVED;
+import static com.example.george.digitalmenu.utils.OrderStatus.SHARED;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,8 +40,17 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     private OrderedDish orderedDish;
     private View orderView;
     private BoardFragmentListener listener;
-    public static String DISH_TO_SHARE;
-    public static List<Integer> friendsAtEachTime = new ArrayList<>();
+    private View increment;
+    private View decrement;
+    private View shareButton;
+    private TextView count;
+    private Map<OrderStatus, Runnable> buttonMap = new HashMap<OrderStatus, Runnable>() {{
+        put(READY, () -> setAddButton());
+        put(ADDED, () -> setDeleteButton());
+        put(SENT, () -> setSentButton());
+        put(SERVED, () -> setServedButton());
+        put(SHARED, () -> setSharedButton());
+    }};
 
     public OrderBoardFragment() {
         // Required empty public constructor
@@ -53,6 +68,10 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         // Inflate the layout for this fragment
         this.inflater = inflater;
         this.orderView = inflater.inflate(R.layout.fragment_order_board, container, false);
+        this.increment = orderView.findViewById(R.id.increment);
+        this.decrement = orderView.findViewById(R.id.decrement);
+        this.shareButton = orderView.findViewById(R.id.share_button);
+        this.count = orderView.findViewById(R.id.counter);
 
         setInformation();
         setGoBack();
@@ -65,59 +84,40 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         ImageView picture = orderView.findViewById(R.id.picture);
         picture.setImageBitmap(BitmapFactory.decodeByteArray(orderedDish.getPicture(),0, orderedDish.getPicture().length));
 
-        TextView infoText = orderView.findViewById(R.id.description);
-        infoText.setText(orderedDish.getDescription());
-
+        TextView descriptionText = orderView.findViewById(R.id.description);
+        descriptionText.setText(orderedDish.getDescription());
 
         TextView nameText = orderView.findViewById(R.id.name);
-        DISH_TO_SHARE = orderedDish.getName();
         nameText.setText(orderedDish.getName());
-
-        TextView priceText = orderView.findViewById(R.id.price);
-        priceText.setText(String.valueOf(orderedDish.getPrice()));
 
         TextView currencyText = orderView.findViewById(R.id.currency);
         currencyText.setText(String.valueOf(orderedDish.getCurrency()));
 
-        TextView descriptionText = orderView.findViewById(R.id.description);
-        descriptionText.setText(orderedDish.getDescription());
-
         setOptions(orderedDish.getOptions(), orderView.findViewById(R.id.options_panel));
 
-        Button increment = orderView.findViewById(R.id.increment);
-        Button decrement = orderView.findViewById(R.id.decrement);
+        setPrice();
 
-        TextView count = orderView.findViewById(R.id.counter);
+        setCounters();
 
-        View shareButton = orderView.findViewById(R.id.share_button);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openUserList();
-            }
+        buttonMap.get(orderedDish.getStatus()).run();
+
+        setSharingListButton();
+    }
+
+    private void setServedButton() {
+        increment.setVisibility(View.GONE);
+        decrement.setVisibility(View.GONE);
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("served");
+        button.setBackgroundColor(Color.parseColor("#4267b2"));
+        button.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Served dishes cannot be managed", Toast.LENGTH_LONG).show();
         });
-
-        if (orderedDish.isShared() && !orderedDish.isManageable()) {
-            setSharedButton();
-            increment.setVisibility(View.GONE);
-            decrement.setVisibility(View.GONE);
-            count.setText(orderedDish.getNumber()  +  "/" + orderedDish.getSharingNumber() + "X");
-        } else if (orderedDish.isSent()) {
-            setSentButton();
-            increment.setVisibility(View.GONE);
-            decrement.setVisibility(View.GONE);
-            count.setText(orderedDish.getNumber()  + "X");
-        } else {
-            if (orderedDish.isOrdered()) {
-                setDeleteButton();
-            } else {
-                setAddButton();
-            }
-            setNumberOfPortions(increment, decrement, count);
-        }
     }
 
     private void setSharedButton() {
+        increment.setVisibility(View.GONE);
+        decrement.setVisibility(View.GONE);
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("Shared");
         button.setBackgroundColor(Color.parseColor("#4d4d33"));
@@ -126,16 +126,9 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         });
     }
 
-    private void openUserList() {
-        UserListFragment fragment = new UserListFragment();
-        fragment.setListener(this);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.list_of_users_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
     private void setSentButton() {
+        increment.setVisibility(View.GONE);
+        decrement.setVisibility(View.GONE);
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("Sent");
         button.setBackgroundColor(Color.parseColor("#FF8C00"));
@@ -144,21 +137,49 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         });
     }
 
-
-    private void setNumberOfPortions(Button increment, Button decrement, TextView count) {
-        count.setText(String.valueOf(orderedDish.getNumber()));
-        increment.setOnClickListener(view -> {
-            orderedDish.increment();
-            count.setText(String.valueOf(orderedDish.getNumber()));
+    public void setDeleteButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("DELETE");
+        button.setBackgroundColor(Color.parseColor("#F44336"));
+        button.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
+            listener.deleteOrderedDish(orderedDish); // TODO: consider isShared dish
+            getActivity().getFragmentManager().popBackStack();
         });
-        decrement.setOnClickListener(view -> {
-            orderedDish.decrement();
-            count.setText(String.valueOf(orderedDish.getNumber()));
+    }
+
+    public void setAddButton() {
+        Button button = orderView.findViewById(R.id.operation_button);
+        button.setText("ADD");
+        button.setBackgroundColor(Color.parseColor("#4CAF50"));
+        button.setOnClickListener(v -> {
+            listener.addDish(orderedDish);
+            Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
+            getActivity().getFragmentManager().popBackStack();
         });
     }
 
 
-    //TODO; refactor this
+    private void setCounters() {
+        count.setText(String.valueOf(orderedDish.getNumber()));
+        increment.setOnClickListener(view -> {
+            orderedDish.increment();
+            count.setText(String.valueOf(orderedDish.getNumber()));
+            setPrice();
+        });
+        decrement.setOnClickListener(view -> {
+            orderedDish.decrement();
+            count.setText(String.valueOf(orderedDish.getNumber()));
+            setPrice();
+        });
+    }
+
+    private void setPrice() {
+        TextView priceText = orderView.findViewById(R.id.price);
+        priceText.setText(String.valueOf(orderedDish.getPrice()));
+    }
+
+
     private void setOptions(Map<String, Boolean> options, LinearLayout options_panel) {
         for (String option: options.keySet()) {
             setOption(option, options.get(option), options_panel);
@@ -171,42 +192,15 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         optionText.setChecked(isChecked);
 
         optionText.setOnClickListener(v -> {
-            if (orderedDish.isShared() && !orderedDish.isManageable()) {
-                Toast.makeText(getActivity(), "Shared dish from other cannot be managed", Toast.LENGTH_LONG).show();
-            } else if (!orderedDish.isSent()) {
+            if (orderedDish.isOptionOperatable()) {
                 optionText.setChecked(!optionText.isChecked());
                 Toast.makeText(getActivity(), optionText.getText().toString(), Toast.LENGTH_LONG).show();
                 orderedDish.put(optionText.getText().toString(), optionText.isChecked());
-            } else {
-                Toast.makeText(getActivity(), "Sent dishes cannot be managed", Toast.LENGTH_LONG).show();
             }
         });
         options_panel.setId(View.generateViewId());
         options_panel.addView(optionText);
     }
-
-    private void setDeleteButton() {
-        Button button = orderView.findViewById(R.id.operation_button);
-        button.setText("DELETE");
-        button.setBackgroundColor(Color.parseColor("#F44336"));
-        button.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "Deleted", Toast.LENGTH_SHORT).show();
-            listener.deleteOrderedDish(orderedDish);
-            getActivity().getFragmentManager().popBackStack();
-        });
-    }
-
-    private void setAddButton() {
-        Button button = orderView.findViewById(R.id.operation_button);
-        button.setText("ADD");
-        button.setBackgroundColor(Color.parseColor("#4CAF50"));
-        button.setOnClickListener(v -> {
-            listener.addDish(orderedDish);
-            Toast.makeText(getActivity(), "Added", Toast.LENGTH_SHORT).show();
-            getActivity().getFragmentManager().popBackStack();
-        });
-    }
-
 
     private void setGoBack() {
         View back = orderView.findViewById(R.id.dish_info_back);
@@ -227,15 +221,31 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
         this.orderedDish = orderedDish;
     }
 
-
-    @Override
-    public void setSharing(Map<String, Boolean> nameMap) {
-        setShareButton(nameMap);
-    }
-
     @Override
     public List<String> getFriends() {
         return listener.getFriends();
+    }
+
+    @Override
+    public void setSharing(Map<String, Boolean> nameMap) {
+        orderedDish.setNameMap(nameMap);
+        setShareButton(nameMap);
+    }
+
+    private void setSharingListButton() {
+        View shareButton = orderView.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(view -> openUserList());
+    }
+
+    private void openUserList() {
+        UserListFragment fragment = new UserListFragment();
+        fragment.setListener(this);
+        fragment.setNameMap(orderedDish.getNameMap());
+        fragment.setStatus(orderedDish.getStatus());
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.list_of_users_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void setShareButton(Map<String, Boolean> nameMap) {
@@ -248,4 +258,5 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
             getActivity().getFragmentManager().popBackStack();
         });
     }
+
 }

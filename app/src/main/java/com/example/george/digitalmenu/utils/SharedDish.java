@@ -1,6 +1,5 @@
-package com.example.george.digitalmenu.menu;
+package com.example.george.digitalmenu.utils;
 
-import com.example.george.digitalmenu.utils.OrderedDish;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 

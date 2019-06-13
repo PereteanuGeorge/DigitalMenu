@@ -6,6 +6,11 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.george.digitalmenu.utils.OrderStatus.ADDED;
+import static com.example.george.digitalmenu.utils.OrderStatus.READY;
+import static com.example.george.digitalmenu.utils.OrderStatus.SENT;
+import static com.example.george.digitalmenu.utils.OrderStatus.SERVED;
+import static com.example.george.digitalmenu.utils.OrderStatus.SHARED;
 import static com.example.george.digitalmenu.utils.Utils.roundDouble;
 import static java.lang.StrictMath.max;
 
@@ -17,13 +22,15 @@ public class OrderedDish {
     private Integer number;
     private Map<String, Boolean> options = new HashMap<>();
     private Double price;
-    private boolean ordered = false;
+    private boolean isAdded = false;
     private boolean isServed = false;
     private boolean isSent = false;
     private String id;
     private Integer sharingNumber;
     private boolean isShared = false;
     private boolean isManageable = true;
+    private OrderStatus status;
+    private Map<String, Boolean> nameMap = new HashMap<>();
 
     public OrderedDish() {}
 
@@ -44,7 +51,7 @@ public class OrderedDish {
         this.number = 1;
         this.options = dish.getOptions();
         this.price = dish.getPrice();
-        this.ordered = false;
+        this.isAdded = false;
         this.id = IdGenerator.generate();
         this.sharingNumber = 1;
     }
@@ -97,7 +104,7 @@ public class OrderedDish {
     }
 
     public void decrement() {
-        number = max(0, --number);
+        number = max(1, --number);
     }
 
     public void put(String text, boolean checked) {
@@ -106,13 +113,13 @@ public class OrderedDish {
 
 
     @Exclude
-    public void setIsOrdered() {
-        this.ordered = true;
+    public void setIsAdded() {
+        this.isAdded = true;
     }
 
     @Exclude
-    public Boolean isOrdered() {
-        return ordered;
+    public Boolean isAdded() {
+        return isAdded;
     }
 
     @Exclude
@@ -148,19 +155,19 @@ public class OrderedDish {
     }
 
     @Exclude
-    public Integer getStatus() {
-
+    public OrderStatus getStatus() {
         if (isShared && !isManageable) {
-            return 3;
+            this.status = SHARED;
+        } else if (isServed) {
+            this.status = SERVED;
+        } else if (isSent) {
+            this.status = SENT;
+        } else if (isAdded) {
+            this.status = ADDED;
+        } else  {
+            this.status = READY;
         }
-
-        if (isServed) {
-            return 2;
-        }
-        if (isSent) {
-            return 1;
-        }
-        return 0;
+        return this.status;
     }
 
     public void setSharingNumber(Integer sharingNumber) {
@@ -195,6 +202,24 @@ public class OrderedDish {
     @Exclude
     public boolean isManageable() {
         return this.isManageable;
+    }
+
+    @Exclude
+    public boolean isOptionOperatable() {
+        if (isServed) return false;
+        if (isSent) return  false;
+        if (isShared && !isManageable) return false;
+        return true;
+    }
+
+    @Exclude
+    public Map<String, Boolean> getNameMap() {
+        return this.nameMap;
+    }
+
+    @Exclude
+    public void setNameMap(Map<String, Boolean> nameMap) {
+        this.nameMap = nameMap;
     }
 
     public static class IdGenerator {

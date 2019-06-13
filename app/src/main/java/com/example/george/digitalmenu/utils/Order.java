@@ -78,7 +78,7 @@ public class Order {
 
     public void add(OrderedDish dish) {
         dishes.add(dish);
-        dish.setIsOrdered();
+        dish.setIsAdded();
     }
 
     @Exclude

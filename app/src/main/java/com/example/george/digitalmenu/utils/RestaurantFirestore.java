@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
 import android.util.Log;
 
-import com.example.george.digitalmenu.menu.SharedDish;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

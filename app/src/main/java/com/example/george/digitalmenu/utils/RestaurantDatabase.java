@@ -4,8 +4,6 @@ package com.example.george.digitalmenu.utils;
 import android.graphics.Bitmap;
 import android.support.v4.util.Consumer;
 
-import com.example.george.digitalmenu.menu.SharedDish;
-
 import java.util.List;
 
 // Adapter interface for database.
