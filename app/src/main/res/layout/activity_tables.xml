@@ -27,7 +27,6 @@
                 android:id="@+id/restaurantLogo"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:scaleType="centerCrop" />
 

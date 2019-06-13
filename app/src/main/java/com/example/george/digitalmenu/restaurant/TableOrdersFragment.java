@@ -276,8 +276,8 @@ public class TableOrdersFragment extends Fragment {
             TextView nameText = orderEntry.findViewById(R.id.order_dish_name);
             nameText.setText(orderedDish.getName());
 
-            TextView priceText = orderEntry.findViewById(R.id.order_dish_price);
-            priceText.setText(String.valueOf(orderedDish.getPrice()));
+//            TextView priceText = orderEntry.findViewById(R.id.order_dish_price);
+//            priceText.setText(String.valueOf(orderedDish.getPrice()));
 
             LinearLayout orderDishOptionsList = orderEntry.findViewById(R.id.order_dish_options_list);
 
