@@ -108,8 +108,8 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     }
 
     private void setServedButton() {
-        increment.setVisibility(View.GONE);
-        decrement.setVisibility(View.GONE);
+        increment.setEnabled(false);
+        decrement.setEnabled(false);
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("served");
         button.setBackgroundColor(Color.parseColor("#4267b2"));
@@ -119,8 +119,9 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     }
 
     private void setSharedButton() {
-        increment.setVisibility(View.GONE);
-        decrement.setVisibility(View.GONE);
+        increment.setEnabled(false);
+        decrement.setEnabled(false);
+
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("Shared");
         button.setBackgroundColor(Color.parseColor("#4d4d33"));
@@ -130,8 +131,8 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     }
 
     private void setSentButton() {
-        increment.setVisibility(View.GONE);
-        decrement.setVisibility(View.GONE);
+        increment.setEnabled(false);
+        decrement.setEnabled(false);
         Button button = orderView.findViewById(R.id.operation_button);
         button.setText("Sent");
         button.setBackgroundColor(Color.parseColor("#FF8C00"));
@@ -143,8 +144,8 @@ public class OrderBoardFragment extends Fragment implements UserListFragmentList
     public void setDeleteButton() {
 
         if (orderedDish.isShared()) {
-            increment.setVisibility(View.GONE);
-            decrement.setVisibility(View.GONE);
+            increment.setEnabled(false);
+            decrement.setEnabled(false);
         }
 
         Button button = orderView.findViewById(R.id.operation_button);
