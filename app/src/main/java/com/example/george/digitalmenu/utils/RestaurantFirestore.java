@@ -45,7 +45,6 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     private final String TAG = "Firestore";
 
-    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     private Map<String, ListenerRegistration> listenerMap = new HashMap<>();
 
     private HashMap<Order, String> orderToId = new HashMap<>();
@@ -77,20 +76,16 @@ public class RestaurantFirestore implements RestaurantDatabase {
     }
 
     public void downloadDishPicture(Dish dish, final Consumer<Bitmap> callback) {
-        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
-        for (int i = 0; i < NUMBER_OF_CORES; i++) {
-            executorService.submit((Callable<Object>) () -> {
-                StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
-                ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
+        StorageReference ref = storage.getReferenceFromUrl(dish.getPic_url());
+        ref.getBytes(MAX_DOWNLOAD_SIZE_BYTES).addOnSuccessListener(bytes -> {
 
-                    dish.setPicture(bytes);
-                    Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
+            dish.setPicture(bytes);
+            Log.d(TAG, "Download picture for " + dish.getName() + " succeeded");
 
-                    callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                }).addOnFailureListener(e -> Log.d(TAG, "Download picture for " + dish.getName() + " falied", e));
-                return dish;
-            });
-        }
+            callback.accept(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "Download picture for " + dish.getName() + " falied", e);
+        });
     }
 
     @Override
