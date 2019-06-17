@@ -235,9 +235,12 @@ public class RestaurantFirestore implements RestaurantDatabase {
     @Override
     public void signInWithEmailAndPassword(String email, String password,
                                            Runnable success, Runnable failure) {
-        if (mAuth.getCurrentUser() != null) {
-            success.run();
-        }
+
+//        /* If restaurant signed in, bypass sign in call. */
+//        FirebaseUser user = mAuth.getCurrentUser();
+//        if (user != null && user.getEmail().equals(email)) {
+//            success.run();
+//        }
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
