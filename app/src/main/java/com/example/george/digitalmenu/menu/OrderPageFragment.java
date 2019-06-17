@@ -164,8 +164,13 @@ public class OrderPageFragment extends Fragment implements BoardFragmentListener
 
 
         TextView numberText = orderCard.findViewById(R.id.quantity);
-        Double quantityDivided = roundDouble(dish.getNumber().doubleValue() / dish.getSharingNumber(), 2);
-        numberText.setText(String.valueOf(quantityDivided).concat("X"));
+        String quantityDivided = String.valueOf(roundDouble(dish.getNumber().doubleValue() / dish.getSharingNumber(), 2)).concat("X");
+
+        if (dish.isShared()) {
+            quantityDivided = quantityDivided.concat(",S");
+        }
+
+        numberText.setText(quantityDivided);
 
         TextView statusText = orderCard.findViewById(R.id.status);
         statusText.setText(textStatusMap.get(dish.getStatus()));
