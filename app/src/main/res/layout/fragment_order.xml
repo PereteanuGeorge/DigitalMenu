@@ -93,16 +93,12 @@
             android:id="@+id/totalCurrency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="188dp"
-            android:layout_marginBottom="35dp"
             android:text="£"
-            android:textStyle="bold"
             android:textColor="@color/colorBlack"
             android:textSize="22sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.422"
-            app:layout_constraintStart_toEndOf="@id/total_price" />
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/total_price"
+            app:layout_constraintTop_toTopOf="@id/total_price" />
 
     </android.support.constraint.ConstraintLayout>
 

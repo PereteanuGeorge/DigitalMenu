@@ -96,10 +96,10 @@
             android:id="@+id/currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="$"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/price"
+            app:layout_constraintBottom_toBottomOf="@id/price"
             app:layout_constraintEnd_toStartOf="@+id/price" />
 
         <TextView
@@ -148,15 +148,13 @@
 
         <TextView
             android:id="@+id/counter"
-            android:layout_width="22dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="33dp"
-            android:layout_marginBottom="12dp"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="1"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/decrement"
+            app:layout_constraintEnd_toStartOf="@id/increment"
             app:layout_constraintStart_toEndOf="@+id/decrement"
-            app:layout_constraintStart_toStartOf="@+id/decrement" />
+            app:layout_constraintTop_toTopOf="@id/decrement" />
 
         <Button
             android:id="@+id/decrement"
