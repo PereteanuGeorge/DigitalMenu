@@ -2,7 +2,6 @@ package com.example.george.digitalmenu.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.nsd.NsdManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Consumer;
@@ -53,8 +52,8 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public static List<String> users;
     private ListenerRegistration sharedOrderListener;
-    private ListenerRegistration removedSharedDishListenr;
-    private ListenerRegistration newUserListenr;
+    private ListenerRegistration removedSharedDishListener;
+    private ListenerRegistration newUserListener;
 
     public RestaurantFirestore() {
         db = FirebaseFirestore.getInstance();
@@ -315,7 +314,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     public void listenForTableWithId(Integer tableNumber, Consumer<Table> callback) {
         Log.d(TAG,"Numaru in db e " + tableNumber);
-        newUserListenr = db.collection("restaurantOrders")
+        newUserListener = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("tables")
                 .document(String.valueOf(tableNumber))
@@ -411,7 +410,10 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void removeSharedOrderListener() {
-        sharedOrderListener.remove();
+        if (sharedOrderListener != null) {
+            sharedOrderListener.remove();
+        }
+
     }
 
 
@@ -441,7 +443,7 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void listenForRemovedSharedDishes(Integer tableID, Consumer<String> callback) {
-        removedSharedDishListenr = db.collection("restaurantOrders")
+        removedSharedDishListener = db.collection("restaurantOrders")
                 .document(restaurantName)
                 .collection("tables")
                 .document(String.valueOf(tableID))
@@ -463,12 +465,16 @@ public class RestaurantFirestore implements RestaurantDatabase {
 
     @Override
     public void removeRemovingShareOrderListener() {
-        removedSharedDishListenr.remove();
+        if (removedSharedDishListener != null) {
+            removedSharedDishListener.remove();
+        }
     }
 
     @Override
     public void removeNewUserListener() {
-        newUserListenr.remove();
+        if (newUserListener != null) {
+            newUserListener.remove();
+        }
     }
 
     @Override

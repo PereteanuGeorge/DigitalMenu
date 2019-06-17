@@ -220,6 +220,12 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     private void onFetchDataComplete(Restaurant r) {
+
+        if (Order.tableNumber < 1 || Order.tableNumber > r.getNumberOfTables()) {
+            view.notifyInvalidTable();
+            return;
+        }
+
         setRestaurant(r);
         saveUserToTable(userName, Order.tableNumber);
         table.setTableID(Order.tableNumber);
@@ -269,6 +275,11 @@ public class MenuPresenter implements MenuContract.Presenter {
         } else {
             view.updateWithModifiedDish(orderedDish);
         }
+    }
+
+    @Override
+    public void onInvalidTableDialogOkPressed() {
+        view.restartMainActivity();
     }
 
     private void setRestaurant(Restaurant restaurant) {

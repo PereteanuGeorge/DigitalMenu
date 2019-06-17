@@ -71,6 +71,8 @@ public interface MenuContract {
         void onMenuDisplayed();
 
         void deleteOrderedDishWithCounter(OrderedDish orderedDish, int deleteCounter);
+
+        void onInvalidTableDialogOkPressed();
     }
 
     interface View {
@@ -97,5 +99,9 @@ public interface MenuContract {
         void updateWithDeletedDishWithId(String id);
 
         void updateWithModifiedDish(OrderedDish orderedDish);
+
+        void notifyInvalidTable();
+
+        void restartMainActivity();
     }
 }

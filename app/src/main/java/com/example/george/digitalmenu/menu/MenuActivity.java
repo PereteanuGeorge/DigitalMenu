@@ -1,6 +1,8 @@
 package com.example.george.digitalmenu.menu;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,9 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.george.digitalmenu.R;
 import com.example.george.digitalmenu.main.MainActivity;
+import com.example.george.digitalmenu.restaurant.FakeNameActivity;
 import com.example.george.digitalmenu.utils.Dish;
 import com.example.george.digitalmenu.utils.Order;
 import com.example.george.digitalmenu.utils.OrderedDish;
@@ -33,10 +35,11 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import static com.example.george.digitalmenu.main.MainActivity.INTENT_KEY;
-import static com.example.george.digitalmenu.main.MainActivity.USERNAME;
 
 /* Responsible for android-OS specific and UI logic */
 public class MenuActivity extends AppCompatActivity implements MenuContract.View, FragmentListener, BoardFragmentListener {
+
+    public static final String USERNAME_INTENT_KEY = "MenuActivityUsername";
 
     //public static OrderedDish DISH = new OrderedDish();
     private static final String TAG = "MenuActivity";
@@ -56,7 +59,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
 
         presenter = ServiceRegistry.getInstance().getService(MenuContract.Presenter.class);
         presenter.registerView(this);
-        presenter.setUserName(getIntent().getStringExtra(USERNAME));
+        presenter.setUserName(getIntent().getStringExtra(USERNAME_INTENT_KEY));
 
         setScanButton();
         setCheckoutButton();
@@ -213,6 +216,35 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
             orderPageFragment.updateWithModifiedDish(orderedDish);
             orderPageFragment.setTotalPrice();
         }
+    }
+
+    @Override
+    public void notifyInvalidTable() {
+        new AlertDialog.Builder(MenuActivity.this)
+            .setTitle("Error")
+            .setMessage("Something is wrong with the QR code. Please check with staff of restaurant.")
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    presenter.onInvalidTableDialogOkPressed();
+                }
+            })
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    presenter.onInvalidTableDialogOkPressed();
+                }
+            })
+            .show();
+    }
+
+    @Override
+    public void restartMainActivity() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(MainActivity.USERNAME_INTENT_KEY, presenter.getUserName());
+        startActivity(intent);
+        finish();
     }
 
     private void displayCategories(Restaurant r) {

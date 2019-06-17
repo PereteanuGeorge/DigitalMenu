@@ -13,7 +13,7 @@ import com.example.george.digitalmenu.main.MainActivity;
 
 public class FakeNameActivity extends AppCompatActivity {
 
-    public static String username;
+    private String username;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -35,7 +35,7 @@ public class FakeNameActivity extends AppCompatActivity {
     public void switchToMainActivity(String username) {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("username", username);
+        intent.putExtra(MainActivity.USERNAME_INTENT_KEY, username);
         startActivity(intent);
     }
 
