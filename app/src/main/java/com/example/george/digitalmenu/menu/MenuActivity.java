@@ -97,7 +97,7 @@ public class MenuActivity extends AppCompatActivity implements MenuContract.View
        view.setOnClickListener(v -> {
            presenter.leaveRestaurant();
            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-           intent.putExtra("username", presenter.getUserName());
+           intent.putExtra(MainActivity.USERNAME_INTENT_KEY, presenter.getUserName());
            startActivity(intent);
            finish();
        });
