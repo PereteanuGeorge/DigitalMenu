@@ -156,7 +156,7 @@ public class TableOrdersFragment extends Fragment {
 
     private void setActionButtonToClear() {
         serveButton.setEnabled(true);
-        serveButton.setText("Clear Table");
+        serveButton.setText("Clear");
         serveButton.setOnClickListener(v -> onClearTableButtonClick());
     }
 
