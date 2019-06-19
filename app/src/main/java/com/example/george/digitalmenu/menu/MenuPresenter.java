@@ -253,6 +253,7 @@ public class MenuPresenter implements MenuContract.Presenter {
         db.removeSharedOrderListener();
         db.removeRemovingShareOrderListener();
         db.removeNewUserListener();
+        restaurant = new Restaurant();
     }
 
     @Override
